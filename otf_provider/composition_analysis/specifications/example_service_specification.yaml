@@ -1,0 +1,42 @@
+openapi: 3.0.2
+info:
+  title: Verificator REST Interface
+  description: Rest interface to communicate with the verificator.
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.1
+servers:
+- url: /api
+tags:
+- name: CompositionAnalysis
+  description: all-in-one tag
+paths:
+  /composition_analysis/flow/withError:
+    post:
+      summary: Starts a verification process.
+      tags:
+      - CompositionAnalysis
+      operationId: postFlow
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtendedFlow'
+        required: false
+      responses:
+        '200':
+          description: True if the given flow is correct. False otherwise.
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Couldn't load ontology file.
+components:
+  schemas:
+    ExtendedFlow:
+      type: object
+      properties:
+        placeholder:
+          type: string
+

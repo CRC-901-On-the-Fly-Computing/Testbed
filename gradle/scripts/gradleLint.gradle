@@ -1,0 +1,113 @@
+/**
+ * The nebula lint plugin provides different checks for the dependencies in the
+ * projects gradle files (like a check for unused dependencies).
+ *
+ *
+ * Usage:
+ *
+ * On (sub-)projects you want to lint the gradle files, apply this script and
+ * the plugin with its configuration:
+ *
+ * apply from: 'gradleLint.gradle'
+ * applyGradleLintConfig()
+ */
+
+
+/**
+ * The map of different closures to configure the plugin.
+ */
+def configs = [
+	'default': {
+		gradleLint {
+			rules = [
+//				'all-dependency',                // this rule includes the following rules
+//				'duplicate-dependency-class',    // included in 'all-dependency'
+				'recommended-versions',          // included in 'all-dependency'
+//				'transitive-duplicate-dependency-class', // included in 'all-dependency'
+				'undeclared-dependency',         // included in 'all-dependency'
+				'unused-dependency',             // included in 'all-dependency'
+				'unused-exclude-by-conf',        // included in 'all-dependency'
+				'unused-exclude-by-dep',         // included in 'all-dependency'
+
+
+				'dependency-parentheses',
+//				'dependency-tuple',
+				'deprecated-dependency-configuration',
+				'deprecated-task-operator',
+				'minimum-dependency-version',
+				'multiproject-circular-dependency',
+				'overridden-dependency-version',
+
+
+				'all-nebula-renames'             // this rule includes the following rules
+//				'rename-nebula-clojure',         // included in 'all-nebula-renames'
+//				'rename-nebula-deb',             // included in 'all-nebula-renames'
+//				'rename-nebula-dependency-lock', // included in 'all-nebula-renames'
+//				'rename-nebula-facet',           // included in 'all-nebula-renames'
+//				'rename-nebula-git-scm',         // included in 'all-nebula-renames'
+//				'rename-nebula-info-ci',         // included in 'all-nebula-renames'
+//				'rename-nebula-info',            // included in 'all-nebula-renames'
+//				'rename-nebula-integtest',       // included in 'all-nebula-renames'
+//				'rename-nebula-javadoc-jar',     // included in 'all-nebula-renames'
+//				'rename-nebula-ospackage-application-daemon', // included in 'all-nebula-renames'
+//				'rename-nebula-ospackage-application', // included in 'all-nebula-renames'
+//				'rename-nebula-ospackage',       // included in 'all-nebula-renames'
+//				'rename-nebula-override',        // included in 'all-nebula-renames'
+//				'rename-nebula-release',         // included in 'all-nebula-renames'
+//				'rename-nebula-source-jar',      // included in 'all-nebula-renames'
+//				'rename-nebula-stash'            // included in 'all-nebula-renames'
+			]
+
+			alwaysRun = false
+			autoLintAfterFailure = true
+			reportFormat = 'text'
+		}
+	}
+]
+
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath group: 'com.netflix.nebula', name: 'gradle-lint-plugin'
+	}
+}
+
+
+/**
+ * Applies the plugin to the actual project.
+ */
+ext.applyGradleLintPlugin = {
+	apply plugin: com.netflix.nebula.lint.plugin.GradleLintPlugin
+}
+
+
+/**
+ * Apply and configure the plugin. It is configured with the configuration with
+ * the given name.
+ * The applying of the plugin can be disabled by setting the optional parameter
+ * applyPlugin to false.
+ *
+ * @param configName The name of the plugin configuration; default is 'default'.
+ * @param applyPlugin Whether the plugin is applied; default is true.
+ */
+ext.applyGradleLintConfig = { configName = 'default', boolean applyPlugin = true ->
+
+	def configuration = configs[configName]
+	if (configuration == null) {
+		throw new GradleScriptException("No plugin configuration found with name: ${configName}", null)
+	}
+
+	if (applyPlugin) {
+		applyGradleLintPlugin()
+	}
+
+	configuration()
+}

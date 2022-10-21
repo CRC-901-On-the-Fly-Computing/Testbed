@@ -1,0 +1,77 @@
+openapi: 3.0.2
+info:
+  title: User Creator REST Interface
+  description: >-
+    A simple REST interface that creates a new service_requester for this user
+    in the cluster and returns its URI
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '1.2'
+servers:
+- url: /api
+tags:
+- name: User-Api
+- name: UserCreator
+  description: all-in-one tag
+paths:
+  '/register/{name}':
+    parameters:
+    - $ref: '#/components/parameters/pathName'
+    post:
+      tags:
+      - UserCreator
+      - User-Api
+      description: >-
+        Registers a user by requesting credentials at the credential issuer for
+        the given user attributes.
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attributes'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  /servicerequesters/count:
+    get:
+      tags:
+      - UserCreator
+      - User-Api
+      description: Gets the number of active Service-Requesters.
+      operationId: getNumberServiceRequesters
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+        '500':
+          description: Error in fetching number from system.
+components:
+  schemas:
+    Attributes:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ResponseMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathName:
+      name: name
+      in: path
+      required: true
+      schema:
+        type: string
+

@@ -1,0 +1,35 @@
+<div class="title">
+  <label>
+    <a routerLink="/services">Library</a>
+    <mat-icon>chevron_right</mat-icon>
+    <a [routerLink]="service_id ? '../../' : '../'">{{code_provider_id}}</a>
+    <mat-icon>chevron_right</mat-icon>
+    <span *ngIf="editMode">
+      {{service_id}}
+      <mat-icon>chevron_right</mat-icon>
+      <b>Detail</b>
+    </span>
+    <b *ngIf="!editMode">Add new service</b>
+  </label>
+</div>
+<form class="form">
+
+  <mat-form-field class="full-width">
+    <input readonly matInput placeholder="service_id" [(ngModel)]="dataSource.serviceId" name="service_id" />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <input readonly matInput placeholder="service_policy" [(ngModel)]="dataSource.servicePolicy"
+      name="service_policy" />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <input readonly matInput placeholder="service_specification" [(ngModel)]="dataSource.serviceSpecification"
+      name="service_specification" />
+  </mat-form-field>
+
+  <mat-form-field class="full-width">
+    <input readonly matInput placeholder="hardware" [(ngModel)]="dataSource.hardware" name="hardware" />
+  </mat-form-field>
+
+</form>

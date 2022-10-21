@@ -1,0 +1,610 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "6.0.2 (713b214)",
+        "title": "PostgREST API",
+        "description": "standard public schema"
+    },
+    "host": "postgrest.postgres:3000",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json",
+        "application/vnd.pgrst.object+json",
+        "text/csv"
+    ],
+    "produces": [
+        "application/json",
+        "application/vnd.pgrst.object+json",
+        "text/csv"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "Introspection"
+                ],
+                "summary": "OpenAPI description (this document)",
+                "produces": [
+                    "application/openapi+json",
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/code_provider_registry": {
+            "get": {
+                "tags": [
+                    "code_provider_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.repository_url"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.subfolder"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.tag"
+                    },
+                    {
+                        "$ref": "#/parameters/select"
+                    },
+                    {
+                        "$ref": "#/parameters/order"
+                    },
+                    {
+                        "$ref": "#/parameters/range"
+                    },
+                    {
+                        "$ref": "#/parameters/rangeUnit"
+                    },
+                    {
+                        "$ref": "#/parameters/offset"
+                    },
+                    {
+                        "$ref": "#/parameters/limit"
+                    },
+                    {
+                        "$ref": "#/parameters/preferCount"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "Partial Content"
+                    },
+                    "200": {
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/code_provider_registry"
+                            },
+                            "type": "array"
+                        },
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "code_provider_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/body.code_provider_registry"
+                    },
+                    {
+                        "$ref": "#/parameters/select"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "code_provider_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.repository_url"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.subfolder"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.tag"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "code_provider_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.repository_url"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.subfolder"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.code_provider_registry.tag"
+                    },
+                    {
+                        "$ref": "#/parameters/body.code_provider_registry"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/service_registry": {
+            "get": {
+                "tags": [
+                    "service_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_policy"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.hardware"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.price"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification_proseco"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_description"
+                    },
+                    {
+                        "$ref": "#/parameters/select"
+                    },
+                    {
+                        "$ref": "#/parameters/order"
+                    },
+                    {
+                        "$ref": "#/parameters/range"
+                    },
+                    {
+                        "$ref": "#/parameters/rangeUnit"
+                    },
+                    {
+                        "$ref": "#/parameters/offset"
+                    },
+                    {
+                        "$ref": "#/parameters/limit"
+                    },
+                    {
+                        "$ref": "#/parameters/preferCount"
+                    }
+                ],
+                "responses": {
+                    "206": {
+                        "description": "Partial Content"
+                    },
+                    "200": {
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/service_registry"
+                            },
+                            "type": "array"
+                        },
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "service_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/body.service_registry"
+                    },
+                    {
+                        "$ref": "#/parameters/select"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "service_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_policy"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.hardware"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.price"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification_proseco"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_description"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "service_registry"
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.code_provider_id"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_policy"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.hardware"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.price"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_specification_proseco"
+                    },
+                    {
+                        "$ref": "#/parameters/rowFilter.service_registry.service_description"
+                    },
+                    {
+                        "$ref": "#/parameters/body.service_registry"
+                    },
+                    {
+                        "$ref": "#/parameters/preferReturn"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "code_provider_registry": {
+            "required": [
+                "code_provider_id",
+                "repository_url",
+                "subfolder"
+            ],
+            "properties": {
+                "code_provider_id": {
+                    "maxLength": 20,
+                    "format": "character varying",
+                    "type": "string",
+                    "description": "Note:\nThis is a Primary Key.<pk/>"
+                },
+                "repository_url": {
+                    "maxLength": 2083,
+                    "format": "character varying",
+                    "type": "string"
+                },
+                "subfolder": {
+                    "maxLength": 20,
+                    "format": "character varying",
+                    "type": "string"
+                },
+                "tag": {
+                    "maxLength": 20,
+                    "format": "character varying",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "service_registry": {
+            "required": [
+                "service_id",
+                "code_provider_id",
+                "service_specification",
+                "service_policy"
+            ],
+            "properties": {
+                "service_id": {
+                    "maxLength": 200,
+                    "format": "character varying",
+                    "type": "string",
+                    "description": "Note:\nThis is a Primary Key.<pk/>"
+                },
+                "code_provider_id": {
+                    "maxLength": 20,
+                    "format": "character varying",
+                    "type": "string"
+                },
+                "service_specification": {
+                    "format": "text",
+                    "type": "string"
+                },
+                "service_policy": {
+                    "format": "text",
+                    "type": "string"
+                },
+                "hardware": {
+                    "maxLength": 20,
+                    "format": "character varying",
+                    "type": "string"
+                },
+                "price": {
+                    "default": 1,
+                    "format": "numeric",
+                    "type": "number"
+                },
+                "service_specification_proseco": {
+                    "format": "text",
+                    "type": "string"
+                },
+                "service_description": {
+                    "format": "text",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "parameters": {
+        "preferParams": {
+            "name": "Prefer",
+            "description": "Preference",
+            "required": false,
+            "in": "header",
+            "type": "string",
+            "enum": [
+                "params=single-object"
+            ]
+        },
+        "preferReturn": {
+            "name": "Prefer",
+            "description": "Preference",
+            "required": false,
+            "in": "header",
+            "type": "string",
+            "enum": [
+                "return=representation",
+                "return=minimal",
+                "return=none"
+            ]
+        },
+        "preferCount": {
+            "name": "Prefer",
+            "description": "Preference",
+            "required": false,
+            "in": "header",
+            "type": "string",
+            "enum": [
+                "count=none"
+            ]
+        },
+        "select": {
+            "name": "select",
+            "description": "Filtering Columns",
+            "required": false,
+            "in": "query",
+            "type": "string"
+        },
+        "order": {
+            "name": "order",
+            "description": "Ordering",
+            "required": false,
+            "in": "query",
+            "type": "string"
+        },
+        "range": {
+            "name": "Range",
+            "description": "Limiting and Pagination",
+            "required": false,
+            "in": "header",
+            "type": "string"
+        },
+        "rangeUnit": {
+            "name": "Range-Unit",
+            "description": "Limiting and Pagination",
+            "required": false,
+            "default": "items",
+            "in": "header",
+            "type": "string"
+        },
+        "offset": {
+            "name": "offset",
+            "description": "Limiting and Pagination",
+            "required": false,
+            "in": "query",
+            "type": "string"
+        },
+        "limit": {
+            "name": "limit",
+            "description": "Limiting and Pagination",
+            "required": false,
+            "in": "query",
+            "type": "string"
+        },
+        "body.code_provider_registry": {
+            "name": "code_provider_registry",
+            "description": "code_provider_registry",
+            "required": false,
+            "schema": {
+                "$ref": "#/definitions/code_provider_registry"
+            },
+            "in": "body"
+        },
+        "rowFilter.code_provider_registry.code_provider_id": {
+            "name": "code_provider_id",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.code_provider_registry.repository_url": {
+            "name": "repository_url",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.code_provider_registry.subfolder": {
+            "name": "subfolder",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.code_provider_registry.tag": {
+            "name": "tag",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "body.service_registry": {
+            "name": "service_registry",
+            "description": "service_registry",
+            "required": false,
+            "schema": {
+                "$ref": "#/definitions/service_registry"
+            },
+            "in": "body"
+        },
+        "rowFilter.service_registry.service_id": {
+            "name": "service_id",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.code_provider_id": {
+            "name": "code_provider_id",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.service_specification": {
+            "name": "service_specification",
+            "required": false,
+            "format": "text",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.service_policy": {
+            "name": "service_policy",
+            "required": false,
+            "format": "text",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.hardware": {
+            "name": "hardware",
+            "required": false,
+            "format": "character varying",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.price": {
+            "name": "price",
+            "required": false,
+            "format": "numeric",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.service_specification_proseco": {
+            "name": "service_specification_proseco",
+            "required": false,
+            "format": "text",
+            "in": "query",
+            "type": "string"
+        },
+        "rowFilter.service_registry.service_description": {
+            "name": "service_description",
+            "required": false,
+            "format": "text",
+            "in": "query",
+            "type": "string"
+        }
+    },
+    "externalDocs": {
+        "url": "https://postgrest.org/en/v6.0/api.html",
+        "description": "PostgREST Documentation"
+    }
+}

@@ -1,0 +1,49 @@
+<div class="title">
+  <h2>Basic Services</h2>
+</div>
+<div class="content">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </mat-form-field>
+
+  <table mat-table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="code_provider_id">
+      <th mat-header-cell *matHeaderCellDef> Library </th>
+      <td mat-cell *matCellDef="let element">
+        <a routerLink="./{{element.code_provider_id}}">
+          {{element.code_provider_id}}
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="repository_url">
+      <th mat-header-cell *matHeaderCellDef> Repository URL </th>
+      <td mat-cell *matCellDef="let element"> <a target="_blank" [href]="element.repository_url">
+          <mat-icon class="open_in_new">open_in_new</mat-icon>
+          {{basename(element.repository_url)}}
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="subfolder">
+      <th mat-header-cell *matHeaderCellDef> Subfolder </th>
+      <td mat-cell *matCellDef="let element"> {{element.subfolder}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="tag">
+      <th mat-header-cell *matHeaderCellDef> Tag/Branch </th>
+      <td mat-cell *matCellDef="let element"> {{element.tag}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">  here </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+</div>

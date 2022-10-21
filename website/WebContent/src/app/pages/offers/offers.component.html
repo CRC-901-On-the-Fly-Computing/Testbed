@@ -1,0 +1,55 @@
+<div class="message-box" *ngIf="checked && !requests.length">
+  <p>
+    There is no offer for you. <br>
+    Please <a routerLink="/requester">Send Request</a> first.
+  </p>
+</div>
+
+<div class="requests" *ngIf="requests.length">
+  <div class="request" *ngFor="let r of requests">
+    <label>Offers for request “<b>{{r.requestName}}</b>”</label>
+
+    <div class="offers-container mat-elevation-z8">
+      <mat-table #table [dataSource]="r.offers">
+
+        <ng-container matColumnDef="composition">
+          <mat-header-cell *matHeaderCellDef> Composition </mat-header-cell>
+          <mat-cell *matCellDef="let item"> {{item.compositionID}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="reputation">
+          <mat-header-cell *matHeaderCellDef> Reputation </mat-header-cell>
+          <mat-cell class="reputation-cell" *matCellDef="let item">
+            <app-rating-box [rating]="serviceRatings[item.compositionID]">
+              <app-star [count]="serviceRatings[item.compositionID] ? serviceRatings[item.compositionID].overall : 0"></app-star>
+            </app-rating-box>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="score">
+          <mat-header-cell *matHeaderCellDef> Score </mat-header-cell>
+          <mat-cell *matCellDef="let item"> {{item.offerScore}}%</mat-cell>
+        </ng-container>
+      
+        <ng-container matColumnDef="price">
+          <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+          <mat-cell *matCellDef="let item"> {{item.nonFunctionalProperties.price}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell class="text-right" *matCellDef="let item">
+            <button routerLink="./{{r.requestUUID}}/{{item.offerUUID}}" color="primary" class="buy-btn"
+              mat-raised-button>
+              <mat-icon>shopping_cart</mat-icon>
+              BUY
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>

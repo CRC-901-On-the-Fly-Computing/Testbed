@@ -1,0 +1,2827 @@
+{
+	"info": {
+		"_postman_id": "b0ff0a87-4c81-4e52-b47a-abdc3fa69c00",
+		"name": "OTFTestbed-Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Initialization",
+			"description": null,
+			"item": [
+				{
+					"name": "Add url variables",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "aa5821a5-3bd2-4b6d-a63e-60bab9a07ede",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"if(pm.variables.get(\"use_localhost\") === \"true\"){",
+									"} else {",
+									"    pm.globals.set(\"serviceRequesterURL\", \"kube-master.cs.upb.de:30090\"); ",
+									"    pm.globals.set(\"raterURL\",\"kube-master.cs.upb.de:31669\");",
+									"    pm.globals.set(\"ratingTokenConstructorURL\",\"kube-master.cs.upb.de:32607\");",
+									"    pm.globals.set(\"reputationSystemURL\",\"kube-master.cs.upb.de:30814\");",
+									"    pm.globals.set(\"serviceSpecUploaderURL\",\"kube-master.cs.upb.de:30218\");",
+									"    pm.globals.set(\"otfProviderRegistryURL\",\"kube-master.cs.upb.de:30898\");",
+									"    pm.globals.set(\"requestProcessorURL\",\"kube-master.cs.upb.de:30839\");",
+									"    pm.globals.set(\"requestProcessorURL\",\"kube-master.cs.upb.de:31344\");",
+									"    pm.globals.set(\"fuzzyMatcherURL\",\"kube-master.cs.upb.de:30710\");",
+									"    pm.globals.set(\"configuratorURL\",\"kube-master.cs.upb.de:32002\");",
+									"    pm.globals.set(\"verificatorURL\",\"kube-master.cs.upb.de:30227\");",
+									"    pm.globals.set(\"gatekeeperURL\",\"kube-master.cs.upb.de:30563\");",
+									"    pm.globals.set(\"traditionalMatcherURL\",\"kube-master.cs.upb.de:30862\");",
+									"    pm.globals.set(\"\",\"\");",
+									"    pm.globals.set(\"\",\"\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://postman-echo.com/status/200",
+							"protocol": "https",
+							"host": [
+								"postman-echo",
+								"com"
+							],
+							"path": [
+								"status",
+								"200"
+							]
+						},
+						"description": "We must(!) call a valid url here otherwise variables won't be set ...."
+					},
+					"response": []
+				},
+				{
+					"name": "Service Requester initialize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//200 indicates new initialization, 201 indicates already initialized",
+									"pm.test(\"Status code indicates correct initializisation.\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+									"});",
+									"",
+									"pm.test(\"Newly initialized.\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//Generate random and unique requester name",
+									"",
+									"pm.globals.set(\"requesterUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"requesterName\", \"requester_\"+pm.variables.get(\"requesterUUID\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"url\":\"http://kube-master.cs.upb.de:32714\"}"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/initialize/{{requesterName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"initialize",
+								"{{requesterName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rater initialize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//200 indicates new initialization",
+									"pm.test(\"Status code indicates correct initializisation.\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//Because the service requester already initializes the rater we check it with a temporary raterRequester not used after this call",
+									"pm.globals.set(\"raterUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"raterRequesterName\", \"rater_requester_\"+pm.variables.get(\"raterUUID\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"url\":\"http://kube-master.cs.upb.de:32714\"}"
+						},
+						"url": {
+							"raw": "http://{{raterURL}}/api/rater/initializationcredentials/{{raterRequesterName}}",
+							"protocol": "http",
+							"host": [
+								"{{raterURL}}"
+							],
+							"path": [
+								"api",
+								"rater",
+								"initializationcredentials",
+								"{{raterRequesterName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ratingtokenconstructor initialize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//200 indicates new initialization, 201 indicates already initialized",
+									"pm.test(\"Status code indicates correct initializisation.\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"url\":\"http://kube-master.cs.upb.de:32714\"}"
+						},
+						"url": {
+							"raw": "http://{{ratingTokenConstructorURL}}/api/ratingtokenconstructor/initializationcredentials",
+							"protocol": "http",
+							"host": [
+								"{{ratingTokenConstructorURL}}"
+							],
+							"path": [
+								"api",
+								"ratingtokenconstructor",
+								"initializationcredentials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reputation system initialize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"//200 indicates new initialization",
+									"pm.test(\"Status code indicates correct initializisation.\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"url\":\"http://kube-master.cs.upb.de:32714\"}"
+						},
+						"url": {
+							"raw": "http://{{reputationSystemURL}}/api/repboard/initializationcredentials",
+							"protocol": "http",
+							"host": [
+								"{{reputationSystemURL}}"
+							],
+							"path": [
+								"api",
+								"repboard",
+								"initializationcredentials"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service Specifications",
+			"description": null,
+			"item": [
+				{
+					"name": "ServiceSpecification Upload",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "11983d36-03e2-4485-8257-b5b493ca0671",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "df1b0ff7-b876-4f3f-bd36-100f85d85565",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"serviceSpecUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"serviceSpecName\", \"serviceSpec_\"+pm.variables.get(\"serviceSpecUUID\"));",
+									"pm.globals.set(\"serviceSpecOperationName\", \"serviceSpecOperation_\"+pm.variables.get(\"serviceSpecUUID\"));",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"serviceName\": \"{{serviceSpecName}}\",\n  \"operations\": [\n    {\n\t\t\"operationName\": \"{{serviceSpecOperationName}}\",\n\t\t\"inputParams\": [\n\t\t\t{\n\t\t\t\t\"name\": \"i\",\n\t\t\t\t\"dataType\": \"http://crc901.upb.de/MLTerms#Image\"\n\t\t\t}\n\t\t],\n\t\t\"outputParams\": [\n\t\t\t{\n\t\t\t\t\"name\": \"f\",\n\t\t\t\t\"dataType\": \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n\t\t\t}\n\t\t],\n\t\t\"precondition\": \"represents(i,f)\",\n\t\t\"nonFunctionalProperties\": {\"price\":\"0\"}\n\t}\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://{{serviceSpecUploaderURL}}/service_uploader/",
+							"protocol": "http",
+							"host": [
+								"{{serviceSpecUploaderURL}}"
+							],
+							"path": [
+								"service_uploader",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ServiceSpecification Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Content-Type is present\", function () {",
+									"    pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"serviceName\": \"{{serviceSpecName}}\",\n  \"realizationLink\": \"TBD\",\n  \"operations\": [\n    {\n      \"operationName\": \"improves\",\n      \"flowLink\": \"string\",\n      \"inputParams\": [\n        {\n          \"name\": \"inputImage\",\n          \"dataType\": \"http://crc901.upb.de/MLTerms#Image\"\n        }\n      ],\n      \"outputParams\": [\n        {\n          \"name\": \"improvedImage\",\n          \"dataType\": \"http://crc901.upb.de/MLTerms#Image\"\n        }\n      ],\n      \"precondition\": \"string\",\n      \"effect\": \"ImageTransformation\",\n      \"nonFunctionalProperties\": {\n        \"price\": \"20 EURO\"\n      }\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://{{serviceSpecUploaderURL}}/service_uploader",
+							"protocol": "http",
+							"host": [
+								"{{serviceSpecUploaderURL}}"
+							],
+							"path": [
+								"service_uploader"
+							]
+						},
+						"description": "Updates a service specification"
+					},
+					"response": []
+				},
+				{
+					"name": "ServiceSpecification GET",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{serviceSpecUploaderURL}}/service_uploader/{{serviceSpecName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceSpecUploaderURL}}"
+							],
+							"path": [
+								"service_uploader",
+								"{{serviceSpecName}}"
+							]
+						},
+						"description": "gets the given service specification"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Matcher",
+			"description": null,
+			"item": [
+				{
+					"name": "FuzzyMatcher",
+					"description": null,
+					"item": [
+						{
+							"name": "Fuzzy matcher post reputation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4ef64997-81d2-488e-80bb-6b24ec389ef5",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response is valid json\", function (){",
+											"   var json = JSON.parse(responseBody);",
+											"});",
+											"",
+											"//TODO: modify body and check result",
+											"//TODO: modify URL",
+											"",
+											"console.warn(\"TODO fuzzy matcher\");"
+										]
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a242e49b-9320-4c62-9e51-0d87490c364e",
+										"type": "text/javascript",
+										"exec": [
+											"pm.globals.set(\"fuzzyMatcherServiceToMatch\", \"JPG2FV\")",
+											"",
+											"//TODO",
+											"console.warn(\"This should be enhanced somehow\")"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reputationConditions\": [\n    {\n      \"context\": \"SECURITY\",\n      \"requestedFiveStarRange\": \"FOUR\",\n      \"operator\": \"APPROX_GREATER_OR_EQUAL\"\n    }\n  ],\n  \"matchingResultReq\": {\n    \"matchingType\": \"OTFFuzzyMatchingResultRequirement\",\n    \"minLowerBound\": 0,\n    \"minUpperBound\": 0.5\n  }\n}"
+								},
+								"url": {
+									"raw": "http://{{fuzzyMatcherURL}}/api/matcher/reputation_requests/{{fuzzyMatcherServiceToMatch}}",
+									"protocol": "http",
+									"host": [
+										"{{fuzzyMatcherURL}}"
+									],
+									"path": [
+										"api",
+										"matcher",
+										"reputation_requests",
+										"{{fuzzyMatcherServiceToMatch}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "TraditionalMatcher",
+					"description": null,
+					"item": [
+						{
+							"name": "Traditional matcher post reputation request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8f5310c5-594e-40ac-91d3-4841e7ca67e4",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response is valid json\", function (){",
+											"   var json = JSON.parse(responseBody);",
+											"});",
+											"",
+											"//TODO: modify body and check result",
+											"//TODO: modify URL",
+											"",
+											"console.warn(\"TODO traditional matcher\");",
+											"console.error(\"Is this matcher working?\")"
+										]
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "0e925599-5e17-4ce8-9096-bb3c18e102ea",
+										"type": "text/javascript",
+										"exec": [
+											"pm.globals.set(\"traditionalMatcherServiceToMatch\", \"JPG2FV\")",
+											"",
+											"//TODO",
+											"console.warn(\"This should be enhanced somehow\")"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"reputationConditions\" : [ {\n      \"context\" : \"USABILITY\",\n      \"requestedFiveStarRange\" : \"ONE\",\n      \"operator\" : \"APPROX_GREATER_OR_EQUAL\"\n    }],  \n    \"matchingResultReq\" : {\n    \t\"matchingType\" : \"OTFSimpleMatchingResultRequirement\",\n    \t\"minValue\": 0\n    }\n}"
+								},
+								"url": {
+									"raw": "http://{{traditionalMatcherURL}}/api/matcher/reputation_requests/{{traditionalMatcherServiceToMatch}}",
+									"protocol": "http",
+									"host": [
+										"{{traditionalMatcherURL}}"
+									],
+									"path": [
+										"api",
+										"matcher",
+										"reputation_requests",
+										"{{traditionalMatcherServiceToMatch}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "Configurator",
+			"description": null,
+			"item": [
+				{
+					"name": "Configurator post config composition model",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "832ae01a-5bb7-4453-b3f8-653732ac6213",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"configuratorRequestUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"configuratorRequestOperationName\", \"configurator_\"+pm.variables.get(\"configuratorRequestUUID\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "266b2e81-371f-4e2a-b9f0-938d25c9e0f0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"",
+									"pm.test(\"Got uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"//Replaces leading and tailing \"",
+									"pm.globals.set(\"configuratorAnswerUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"operationName\":\"{{configuratorRequestOperationName}}\",\n\t\"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n\t\"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n\t\"preCondition\":[],\n\t\"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n\t\"nonFunctionalRequirements\":[1000],\n\t\"requester\":\"Requester\",\n\t\"timeout\":10000,\n\t\"matchingSpecification\":{\"qualityInputParams\":0.0,\"qualityOutputParams\":0.0,\"qualityPreconditions\":0.0,\"qualityEffects\":0.0},\n\t\"strategy\":\"E_FAST\",\n\t\"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"ONE\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.0,\"minUpperBound\":0.0}}],\n\t\"callbackURL\":\"http://{{requestProcessorURL}}/api/requestprocessor/compositionmodels/callback\"\n}"
+						},
+						"url": {
+							"raw": "http://{{configuratorURL}}/api/configurator/compositionmodels",
+							"protocol": "http",
+							"host": [
+								"{{configuratorURL}}"
+							],
+							"path": [
+								"api",
+								"configurator",
+								"compositionmodels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Configurator get flow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f73cdd98-3dec-4b41-879f-04bc6f0a1d03",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//TODO: more flow checkup",
+									"console.warn(\"TODO configurator\");"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "35ea3439-f6f5-424a-ae85-b251398b0679",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{configuratorURL}}/api/configurator/compositionmodels/{{configuratorAnswerUUID}}/flows",
+							"protocol": "http",
+							"host": [
+								"{{configuratorURL}}"
+							],
+							"path": [
+								"api",
+								"configurator",
+								"compositionmodels",
+								"{{configuratorAnswerUUID}}",
+								"flows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Verificator",
+			"description": null,
+			"item": [
+				{
+					"name": "Perform Composition Analysis",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "275dbf7e-20fa-4eae-a627-07cdb69e2199",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"flow\" : {\n    \"serviceDescriptionLink\" : \"c72f94ad-edfe-4922-a8ad-d9961805fa8d\",\n    \"serviceOperationName\" : \"Img2FV-SVMClassifier-Boolean2Gender\",\n    \"flowInputMapping\" : [ \"i\" ],\n    \"flowOutputMapping\" : [ \"g\" ],\n    \"flow\" : [ {\n      \"type\" : \"Service\",\n      \"service\" : {\n        \"serviceID\" : \"Img2FV\",\n        \"operationName\" : \"Img2FV\",\n        \"input\" : [ \"a156.i\" ],\n        \"output\" : [ \"a192.f\" ]\n      }\n    }, {\n      \"type\" : \"Service\",\n      \"service\" : {\n        \"serviceID\" : \"SVMClassifier\",\n        \"operationName\" : \"SVMClassifier\",\n        \"input\" : [ \"a192.f\" ],\n        \"output\" : [ \"a237.b\" ]\n      }\n    }, {\n      \"type\" : \"Service\",\n      \"service\" : {\n        \"serviceID\" : \"Boolean2Gender\",\n        \"operationName\" : \"Boolean2Gender\",\n        \"input\" : [ \"a237.b\" ],\n        \"output\" : [ \"a280.g\" ]\n      }\n    } ]\n  },\n  \"uuid\" : \"c72f94ad-edfe-4922-a8ad-d9961805fa8d\",\n  \"serviceSpecifications\" : [ {\n    \"serviceName\" : \"BMP2FV\",\n    \"operations\" : [ {\n      \"operationName\" : \"BMP2FV\",\n      \"inputParams\" : [ {\n        \"name\" : \"i\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Image\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"precondition\" : \"represents(i,f)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"0\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"Boolean2Gender\",\n    \"operations\" : [ {\n      \"operationName\" : \"Boolean2Gender\",\n      \"inputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"g\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Gender\"\n      } ],\n      \"precondition\" : \"encodes(b,g)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"Boolean2Spam\",\n    \"operations\" : [ {\n      \"operationName\" : \"Boolean2Spam\",\n      \"inputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"s\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Spam\"\n      } ],\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"DecisionTreeClassifier\",\n    \"operations\" : [ {\n      \"operationName\" : \"DecisionTreeClassifier\",\n      \"inputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"precondition\" : \"classifiedBy(f,b)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"Img2FV\",\n    \"operations\" : [ {\n      \"operationName\" : \"Img2FV\",\n      \"inputParams\" : [ {\n        \"name\" : \"i\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Image\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"precondition\" : \"represents(i,f)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"20\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"JPG2FV\",\n    \"operations\" : [ {\n      \"operationName\" : \"JPG2FV\",\n      \"inputParams\" : [ {\n        \"name\" : \"i\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Image\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"precondition\" : \"represents(i,f)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"0\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"LogisticRegression\",\n    \"operations\" : [ {\n      \"operationName\" : \"LogisticRegression\",\n      \"inputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"precondition\" : \"classifiedBy(f,b)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"Normalization\",\n    \"operations\" : [ {\n      \"operationName\" : \"Normalization\",\n      \"inputParams\" : [ {\n        \"name\" : \"f1\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"f2\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"Preprocessor\",\n    \"operations\" : [ {\n      \"operationName\" : \"Preprocessor\",\n      \"inputParams\" : [ {\n        \"name\" : \"f1\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"f2\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"RandomForestsClassifier\",\n    \"operations\" : [ {\n      \"operationName\" : \"RandomForestsClassifier\",\n      \"inputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"precondition\" : \"classifiedBy(f,b)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"SVMClassifier\",\n    \"operations\" : [ {\n      \"operationName\" : \"SVMClassifier\",\n      \"inputParams\" : [ {\n        \"name\" : \"f\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Attribute_Vector\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"b\",\n        \"dataType\" : \"http://crc901.upb.de/MLTerms#Boolean\"\n      } ],\n      \"precondition\" : \"classifiedBy(f,b)\",\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"10\"\n      }\n    } ]\n  }, {\n    \"serviceName\" : \"c72f94ad-edfe-4922-a8ad-d9961805fa8d\",\n    \"realizationLink\" : \"no realization\",\n    \"operations\" : [ {\n      \"operationName\" : \"Img2FV-SVMClassifier-Boolean2Gender\",\n      \"inputParams\" : [ {\n        \"name\" : \"i\",\n        \"dataType\" : \"JPGImage\"\n      } ],\n      \"outputParams\" : [ {\n        \"name\" : \"g\",\n        \"dataType\" : \"Gender\"\n      } ],\n      \"nonFunctionalProperties\" : {\n        \"price\" : \"100\"\n      }\n    } ]\n  } ]\n}"
+						},
+						"url": {
+							"raw": "http://{{verificatorURL}}/api/composition_analysis/flow",
+							"protocol": "http",
+							"host": [
+								"{{verificatorURL}}"
+							],
+							"path": [
+								"api",
+								"composition_analysis",
+								"flow"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dbeec1eb-2f7b-447e-a8e2-4f22ec61723e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "b914b8d4-5a1a-47d5-8419-faad60ffcd9a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Gatekeeper",
+			"description": null,
+			"item": [
+				{
+					"name": "Gatekeeper post config composition model",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3d56edb6-4f41-498b-851f-e06abd0588d3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"gatekeeperRequestUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"gatekeeperRequestOperationName\", \"gateKeeper_\"+pm.variables.get(\"gatekeeperRequestUUID\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "58079851-8db0-40f0-96aa-8e405a6b4a05",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"",
+									"pm.test(\"Got uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"//Replaces leading and tailing \"",
+									"pm.globals.set(\"gatekeeperAnswerUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operationName\":\"{{gatekeepterRequestOperationName}}\",\n    \"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n    \"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n    \"preCondition\":[],\n    \"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n    \"nonFunctionalRequirements\":[60],\n    \"requester\":\"http://{{serviceRequesterURL}}/api/requester\",\n    \"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"FOUR\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.5,\"minUpperBound\":0.5}}]\n}"
+						},
+						"url": {
+							"raw": "http://{{gatekeeperURL}}/api/otfprovider_gatekeeper/compositionmodels",
+							"protocol": "http",
+							"host": [
+								"{{gatekeeperURL}}"
+							],
+							"path": [
+								"api",
+								"otfprovider_gatekeeper",
+								"compositionmodels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Gatekeeper get composition model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cdf8b583-de34-4cb2-b98a-c8febcec3e91",
+								"type": "text/javascript",
+								"exec": [
+									"//TODO: more flow checkup",
+									"console.warn(\"TODO configurator\");"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reputationConditions\" : [ {\n      \"context\" : \"OTHER\",\n      \"requestedFiveStarRange\" : \"THREE\",\n      \"operator\" : \"APPROX_GREATER_OR_EQUAL\"\n    }],  \n    \"matchingResultReq\" : {\n      \"matchingType\" : \"OTFFuzzyMatchingResultRequirement\",\n      \"minLowerBound\" : 0.2,\n      \"minUpperBound\" : 0.6\n    }\n}"
+						},
+						"url": {
+							"raw": "http://{{gatekeeperURL}}/api/otfprovider_gatekeeper/compositionmodels/{{gatekeeperRequestUUID}}/flows",
+							"protocol": "http",
+							"host": [
+								"{{gatekeeperURL}}"
+							],
+							"path": [
+								"api",
+								"otfprovider_gatekeeper",
+								"compositionmodels",
+								"{{gatekeeperRequestUUID}}",
+								"flows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Registry",
+			"description": null,
+			"item": [
+				{
+					"name": "Add Domain to OTFProviderRegistry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"domainUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"domainName\", \"domain_\"+pm.variables.get(\"domainUUID\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains/{{domainName}}",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains",
+								"{{domainName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registry get domains",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Body contains domain\", function () {",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"domainName\"));",
+									"});",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register OTFProvider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"//As we get a text back currently we check it",
+									"pm.test(\"Body contains domain and otf provider\", function () {",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"domainName\"));",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"otfProviderName\"));",
+									"});",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"otfProviderUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									"",
+									"pm.globals.set(\"otfProviderName\", \"otfProvider_\"+pm.variables.get(\"otfProviderUUID\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains/{{domainName}}/{{otfProviderName}}",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains",
+								"{{domainName}}",
+								"{{otfProviderName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ServiceRequester",
+			"description": null,
+			"item": [
+				{
+					"name": "Service Requester receive results",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7319ed00-ea8d-43c3-8762-01cbbfa69d85",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//TODO",
+									"console.error(\"Check if second param (domainName) is correct here\")"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"1684bb49-f2b5-4c78-b332-1890029a09bc\""
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/{{requesterName}}/results/{{domainName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"{{requesterName}}",
+								"results",
+								"{{domainName}}"
+							]
+						},
+						"description": "Callback url"
+					},
+					"response": []
+				},
+				{
+					"name": "Service Requester send request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58696868-d8b9-4bd0-a383-a0fc6e2cf398",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Got uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"//Replaces leading and tailing \"",
+									"pm.globals.set(\"serviceRequesterAnswerUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operationName\":\"q1\",\n    \"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n    \"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n    \"preCondition\":[],\n    \"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n    \"nonFunctionalRequirements\":[60],\n    \"requester\":\"http://kube-master.cs.upb.de:30090/api/requester\",\n    \"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"FOUR\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.5,\"minUpperBound\":0.5}}]\n}"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/compositionmodels",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"compositionmodels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Service Request via OTFProviderRegistry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operationName\":\"q1\",\n    \"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n    \"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n    \"preCondition\":[],\n    \"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n    \"nonFunctionalRequirements\":[60],\n    \"requester\":\"http://kube-master.cs.upb.de:30090/api/requester\",\n    \"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"FOUR\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.5,\"minUpperBound\":0.5}}]\n}"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/{{domainName}}/requests/{{requesterName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"{{domainName}}",
+								"requests",
+								"{{requesterName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Requester get offer ID for Requester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"//TODO: check json schema?",
+									"pm.test(\"Valid json body\", function () {",
+									"    pm.response.to.have.jsonBody()",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "http://crc901-tools.cs.upb.de:1340"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/requests/{{requesterName}}/offers",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"requests",
+								"{{requesterName}}",
+								"offers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Requester get offer ID for Requester on specific domain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"//TODO: check json schema?",
+									"pm.test(\"Valid json body\", function () {",
+									"    pm.response.to.have.jsonBody()",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "http://crc901-tools.cs.upb.de:1340"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/{{domainName}}/requests/{{requesterName}}/offers",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"{{domainName}}",
+								"requests",
+								"{{requesterName}}",
+								"offers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Requester get composition model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "http://crc901-tools.cs.upb.de:1340"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/compositionmodels/{{serviceRequesterAnswerUUID}}/flows",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"compositionmodels",
+								"{{serviceRequesterAnswerUUID}}",
+								"flows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Offers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"//TODO: check json schema?",
+									"pm.test(\"Valid json body\", function () {",
+									"    pm.response.to.have.jsonBody()",
+									"});",
+									"",
+									"pm.test(\"Can get offer\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.globals.set(\"offerServiceOperationName\",jsonData[0].flow.serviceOperationName)",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "http://crc901-tools.cs.upb.de:1340"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/offers/{{requesterName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"offers",
+								"{{requesterName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Offer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/{{requesterName}}/acceptedOffers/{{offerServiceOperationName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"{{requesterName}}",
+								"acceptedOffers",
+								"{{offerServiceOperationName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Rating",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a7e9626e-58cf-4796-bc71-11213e7b7d68",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"overallRating\", (Math.floor(Math.random() * 4)+1));",
+									"pm.globals.set(\"usabilityRating\", (Math.floor(Math.random() * 4)+1));",
+									"pm.globals.set(\"performanceRating\", (Math.floor(Math.random() * 4)+1));",
+									"pm.globals.set(\"securityRating\", (Math.floor(Math.random() * 4)+1));",
+									"pm.globals.set(\"otherRating\", (Math.floor(Math.random() * 4)+1));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "dd8e8b35-6994-4105-9cbb-bf711fcd4f57",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"overall\": {{overallRating}},\n  \"usability\": {{usabilityRating}},\n  \"performance\": {{performanceRating}},\n  \"security\": {{securityRating}},\n  \"other\": {{otherRating}}\n}"
+						},
+						"url": {
+							"raw": "http://{{serviceRequesterURL}}/api/requester/{{domainName}}/rating",
+							"protocol": "http",
+							"host": [
+								"{{serviceRequesterURL}}"
+							],
+							"path": [
+								"api",
+								"requester",
+								"{{domainName}}",
+								"rating"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RequestProcessor",
+			"description": null,
+			"item": [
+				{
+					"name": "Request processor post config composition model",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "db3a10d6-1aee-42a9-972e-3fced8635523",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Got valid uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"",
+									"pm.globals.set(\"requestProcessorAnswerUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operationName\":\"q1\",\n    \"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n    \"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n    \"preCondition\":[],\n    \"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n    \"nonFunctionalRequirements\":[60],\n    \"requester\":\"http://{{serviceRequesterURL}}/api/requester\",\n    \"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"FOUR\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.5,\"minUpperBound\":0.5}}]\n}"
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/compositionmodels",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"compositionmodels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request processor configurator callback",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "87debc59-c162-4aca-8af4-37551d2799c9",
+								"type": "text/javascript",
+								"exec": [
+									"//Generate random uuid as a test callback uuid",
+									"",
+									"pm.globals.set(\"randomCallback\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "cfa4690f-260e-4c0b-a30a-303b9b04aa97",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Body is correct\", function () {",
+									"    pm.response.to.have.body(\"\\\"\"+pm.variables.get(\"randomCallback\")+\"\\\"\");",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"{{randomCallback}}\""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/compositionmodels/callback",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"compositionmodels",
+								"callback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request processor get compositionmodel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "70931a7b-d417-4051-9f90-5abcbbb416fe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is valid json\", function (){",
+									"   var json = JSON.parse(responseBody);",
+									"});",
+									"",
+									"console.warn(\"TODO: check for json model in body\")"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/compositionmodels/{{requestProcessorAnswerUUID}}/flows",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"compositionmodels",
+								"{{requestProcessorAnswerUUID}}",
+								"flows"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RefactoredRequestProcessor",
+			"description": null,
+			"item": [
+				{
+					"name": "putRequest",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8ddd158-c46f-4f01-8a55-089f568da83f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"",
+									"pm.test(\"Got uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"//Replaces leading and tailing \"",
+									"pm.globals.set(\"requestProcessorUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/requests/",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"requests",
+								""
+							]
+						},
+						"description": "Starts a new Request (generates the uuid)"
+					},
+					"response": []
+				},
+				{
+					"name": "postConfigCompositionModel",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e32c5e44-0da3-48e7-ab31-787b30a72a10",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"requestProcessorOperationName\", \"requestProcessor_\"+pm.variables.get(\"requestProcessorUUID\"));"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0ba77db8-2d85-4a21-b13f-97c5b9403dcd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"operationName\": \"{{requestProcessorOperationName}}\",\r\n    \"inputParams\": [\r\n        {\r\n            \"name\": \"i\",\r\n            \"datatype\": \"http://crc901.upb.de/MLTerms#Image\"\r\n        }\r\n    ],\r\n    \"outputParams\": [\r\n        {\r\n            \"name\": \"g\",\r\n            \"datatype\": \"http://crc901.upb.de/MLTerms#Gender\"\r\n        }\r\n    ],\r\n    \"preCondition\": [],\r\n    \"effect\": [\r\n        {\r\n            \"name\": \"faceRec\",\r\n            \"params\": [\r\n                \"i\",\r\n                \"g\"\r\n            ]\r\n        }\r\n    ],\r\n    \"nonFunctionalRequirements\": [\r\n        60\r\n    ],\r\n    \"requester\": \"http://{{serviceRequesterURL}}/api/requester\",\r\n    \"reputationRequest\": [\r\n        {\r\n            \"reputationConditions\": [\r\n                {\r\n                    \"context\": \"OTHER\",\r\n                    \"requestedFiveStarRange\": \"FOUR\",\r\n                    \"operator\": \"APPROX_GREATER_OR_EQUAL\"\r\n                }\r\n            ],\r\n            \"matchingResultReq\": {\r\n                \"matchingType\": \"OTFFuzzyMatchingResultRequirement\",\r\n                \"minLowerBound\": 0.5,\r\n                \"minUpperBound\": 0.5\r\n            }\r\n        }\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/requests/{{requestProcessorUUID}}/compositionModel",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"requests",
+								"{{requestProcessorUUID}}",
+								"compositionModel"
+							]
+						},
+						"description": "Sends a configurator request to the specified job."
+					},
+					"response": []
+				},
+				{
+					"name": "putCallback",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3315af1f-8b33-479b-b36e-d4e5d438a5b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.globals.set(\"requestProcessorListenerUUID\", 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8); return v.toString(16); }));",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "63bad402-2cfc-4160-8d3c-0463db40a056",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"callbackURL\":\"https://postman-echo.com/status/200\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/{{requestProcessorUUID}}/callbacks/",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"{{requestProcessorUUID}}",
+								"callbacks",
+								""
+							]
+						},
+						"description": "Adds a new callback."
+					},
+					"response": []
+				},
+				{
+					"name": "putState",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b2631ee9-8437-4f8e-8e9a-59892abaee95",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"//Also checks if the job start worked"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"DECLINED\""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/requests/{{requestProcessorUUID}}/state",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"requests",
+								"{{requestProcessorUUID}}",
+								"state"
+							]
+						},
+						"description": "Changes the state of the given job."
+					},
+					"response": []
+				},
+				{
+					"name": "getState",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "089f43d6-e0af-4938-8adb-f06de90d55ef",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//TODO: check if body is correct",
+									"pm.test('TODO', function() {",
+									"  pm.expect(false).to.be.true",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/requests/{{requestProcessorUUID}}/state",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"requests",
+								"{{requestProcessorUUID}}",
+								"state"
+							]
+						},
+						"description": "Gets the currentState of the request."
+					},
+					"response": []
+				},
+				{
+					"name": "getCompositionModel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cfde2c87-5526-4642-b00a-dd03958d0529",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//TODO: check body",
+									"pm.test('TODO', function() {",
+									"  pm.expect(false).to.be.true",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{requestProcessorURL}}/api/requestprocessor/requests/{{requestProcessorUUID}}/flows",
+							"protocol": "http",
+							"host": [
+								"{{requestProcessorURL}}"
+							],
+							"path": [
+								"api",
+								"requestprocessor",
+								"requests",
+								"{{requestProcessorUUID}}",
+								"flows"
+							]
+						},
+						"description": "Gets the current flows."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deinitialization&Cleanup",
+			"description": "Cleans up globals variables and other changes.",
+			"item": [
+				{
+					"name": "Registry deregister",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"",
+									"//As we get a text back currently we check it",
+									"pm.test(\"Body contains domain and otf provider\", function () {",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"domainName\"));",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"otfProviderName\"));",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains/{{domainName}}/{{otfProviderName}}",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains",
+								"{{domainName}}",
+								"{{otfProviderName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registry delete domain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//As we get a text back currently we check it",
+									"pm.test(\"Body contains domain and deleted string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(pm.variables.get(\"domainName\"));",
+									"    pm.expect(pm.response.text()).to.include(\"Deleted domain\");",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains/{{domainName}}",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains",
+								"{{domainName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Specification delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "97c19bae-a6af-4d98-a20c-382fea786354",
+								"type": "text/javascript",
+								"exec": [
+									"//Test if correct result",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"//Test if deleted",
+									"requestURL = \"http://\"+pm.variables.get(\"serviceSpecUploaderURL\")+\"/service_uploader/\"+pm.variables.get(\"serviceSpecName\");",
+									"pm.sendRequest(requestURL, function (err, response) {",
+									"   pm.test(\"Status code of subrequest is 404\", function () {",
+									"    pm.expect(response).to.have.property('code', 404);",
+									"    }); ",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{serviceSpecUploaderURL}}/service_uploader/{{serviceSpecName}}",
+							"protocol": "http",
+							"host": [
+								"{{serviceSpecUploaderURL}}"
+							],
+							"path": [
+								"service_uploader",
+								"{{serviceSpecName}}"
+							]
+						},
+						"description": "Deletes the given service sepcification"
+					},
+					"response": []
+				},
+				{
+					"name": "Cleanup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e893fcc7-ec68-422f-a977-1736ac6073ae",
+								"type": "text/javascript",
+								"exec": [
+									"if ( pm.variables.get(\"cleanup\") != \"false\"){",
+									"    postman.clearGlobalVariable(\"requesterUUID\");",
+									"    postman.clearGlobalVariable(\"requesterName\");",
+									"    postman.clearGlobalVariable(\"raterUUID\");",
+									"    postman.clearGlobalVariable(\"raterRequesterName\");",
+									"    postman.clearGlobalVariable(\"serviceSpecUUID\");",
+									"    postman.clearGlobalVariable(\"serviceSpecName\");",
+									"    postman.clearGlobalVariable(\"serviceSpecOperationName\");",
+									"    postman.clearGlobalVariable(\"configuratorRequestUUID\");",
+									"    postman.clearGlobalVariable(\"configuratorRequestOperationName\");",
+									"    postman.clearGlobalVariable(\"configuratorAnswerUUID\");",
+									"    postman.clearGlobalVariable(\"gatekeeperRequestUUID\");",
+									"    postman.clearGlobalVariable(\"gatekeeperRequestOperationName\");",
+									"    postman.clearGlobalVariable(\"gatekeeperAnswerUUID\");",
+									"    postman.clearGlobalVariable(\"domainUUID\");",
+									"    postman.clearGlobalVariable(\"domainName\");",
+									"    postman.clearGlobalVariable(\"otfProviderName\");",
+									"    postman.clearGlobalVariable(\"otfProviderUUID\");",
+									"    postman.clearGlobalVariable(\"offerServiceOperationName\");",
+									"    postman.clearGlobalVariable(\"overallRating\");",
+									"    postman.clearGlobalVariable(\"usabilityRating\");",
+									"    postman.clearGlobalVariable(\"performanceRating\");",
+									"    postman.clearGlobalVariable(\"securityRating\");",
+									"    postman.clearGlobalVariable(\"otherRating\");",
+									"    postman.clearGlobalVariable(\"requestProcessorAnswerUUID\");",
+									"    postman.clearGlobalVariable(\"randomCallback\");",
+									"}",
+									"//Stop execution after this request",
+									"postman.setNextRequest(null);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{serviceRequesterURL}}",
+							"host": [
+								"{{serviceRequesterURL}}"
+							]
+						},
+						"description": "Deletes all earlier created vars (except for url vars) as they aren't needed anymore"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Use Once",
+			"description": "In this folder are requests that should *NOT* be called within the tests but may be called manually ",
+			"item": [
+				{
+					"name": "OTFProviderRegistry Bootstrap",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/bootstrap",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"bootstrap"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setNextRequest(null);"
+						],
+						"id": "bb0d4aa8-b691-45ca-95d4-5da7966dcff5",
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"id": "80e29b98-8fbd-4291-bc0d-5981254ebf11",
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "To be included @ the right place",
+			"description": "These requests need to be discussed and added to the right place",
+			"item": [
+				{
+					"name": "Registry send request",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bf513f55-c0be-4d1d-aae9-f530c6d05584",
+								"type": "text/javascript",
+								"exec": [
+									"console.warn(\"The result adress should be determined correctly!\");",
+									"console.warn(\"This is a TODO\");",
+									"console.error(\"Really, this isn't done yet!\");",
+									"pm.globals.set(\"requesterResultAddress\",\"resultAdressToBeDeterminded\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "6451c6fc-5782-4ef6-94ae-a3034a9d2410",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    console.log(\"This test should fail until fixed!\");",
+									"    pm.response.to.have.status(5000);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"operationName\":\"q1\",\n    \"inputParams\":[{\"name\":\"i\",\"datatype\":\"http://crc901.upb.de/MLTerms#Image\"}],\n    \"outputParams\":[{\"name\":\"g\",\"datatype\":\"http://crc901.upb.de/MLTerms#Gender\"}],\n    \"preCondition\":[],\n    \"effect\":[{\"name\":\"faceRec\",\"params\":[\"i\",\"g\"]}],\n    \"nonFunctionalRequirements\":[60],\n    \"requester\":\"http://{{serviceRequesterURL}}/api/requester\",\n    \"reputationRequest\":[{\"reputationConditions\":[{\"context\":\"OTHER\",\"requestedFiveStarRange\":\"FOUR\",\"operator\":\"APPROX_GREATER_OR_EQUAL\"}],\"matchingResultReq\":{\"matchingType\":\"OTFFuzzyMatchingResultRequirement\",\"minLowerBound\":0.5,\"minUpperBound\":0.5}}]\n}"
+						},
+						"url": {
+							"raw": "http://{{otfProviderRegistryURL}}/api/otfpregistry/domains/{{domainName}}/requests/{{requesterResultAddress}}",
+							"protocol": "http",
+							"host": [
+								"{{otfProviderRegistryURL}}"
+							],
+							"path": [
+								"api",
+								"otfpregistry",
+								"domains",
+								"{{domainName}}",
+								"requests",
+								"{{requesterResultAddress}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Configurator get current requests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://kube-master.cs.upb.de:32309/api/configurator/currentRequests",
+							"protocol": "http",
+							"host": [
+								"kube-master",
+								"cs",
+								"upb",
+								"de"
+							],
+							"port": "32309",
+							"path": [
+								"api",
+								"configurator",
+								"currentRequests"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RefactoredGatekeeper",
+			"description": "",
+			"item": [
+				{
+					"name": "Create Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ebf062ba-7484-4c72-85d9-f0728c3de4fe",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"",
+									"pm.test(\"Got uuid\", function () {",
+									"    //Regex to match a uuidv4 with \"\" at the start and end",
+									"    pm.response.to.have.body(new RegExp(\"^\\\"[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}\\\"$\"));",
+									"});",
+									"",
+									"//Replaces leading and tailing \"",
+									"pm.globals.set(\"gatekeeperUUID\", responseBody.replace(\"\\\"\",\"\").replace(\"\\\"\",\"\"));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"callbackURL\":\"https://postman-echo.com/status/200\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{gatekeeperURL}}/api/gatekeeper/requests/uuid",
+							"protocol": "http",
+							"host": [
+								"{{gatekeeperURL}}"
+							],
+							"path": [
+								"api",
+								"gatekeeper",
+								"requests",
+								"uuid"
+							]
+						},
+						"description": "Creates a job in the oft provider through the gatekeeper"
+					},
+					"response": []
+				},
+				{
+					"name": "Attach Callback",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d4d56055-ea1d-40f4-a936-8fb783b25424",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{gatekeeperURL}}/api/gatekeeper/{{gatekeeperUUID}}/callbacks/",
+							"protocol": "http",
+							"host": [
+								"{{gatekeeperURL}}"
+							],
+							"path": [
+								"api",
+								"gatekeeper",
+								"{{gatekeeperUUID}}",
+								"callbacks",
+								""
+							]
+						},
+						"description": "Creates a job in the oft provider through the gatekeeper"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ratingtokenconstructor accept offer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"certificate\": \"<BinaryData>gpACvjvJ/hNxJ8MNmDcgfwvv2uFWe4eMbY3J3+8NM/Rzxys28W53tps54Z3yZq5hvtrY5FEnaDjlunLTlN+xshYwkDJGS5CDm8k8mtcDEDpMKdHKuMm3faJYTkxpKvSodMwalhsrkJFEndx6Jwr2KxOAswuKlUKsUqOIgrIetFg=\",\n    \"element\": {\n        \"x\": \"<BigInteger>8d35de8f3877204644bcdf3650304cfe0e3b0be4e4b3d7c986e0259ebb593c945b9cedda01605eb2801c56a99e42e31687d41dd5c45ba752af57897c9fb2a264195baeb46b89a7e19c614c8c6e58\",\n        \"y\": \"<BigInteger>5db41a36b3755efa7bd3cb394bc89afa99312728e0216f86fbeaf7ecf488ae45d9fc3d28f9e8f275988b51de0f583b57091003cbb8b2de94c5bf5cbea1739dbf26d9ca109208bd5764c58e5abc\"\n    },\n    \"encryptionKey\": \"<BinaryData>rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGphdmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGphdmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAAAojCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAnAcglvRLZQoNFsOMsAcNN0vXXlBfcpkIUemwG11OBcLbQk97S/WNfx8wjDacrsTsckgFgpGf21Q6dkrMDWE0r/xgf9DEyR+OUbtZgeubDb3Owz+5f2H5+bXWcranfW4loqANDwl693hYGdmOmoolAsC8GE657I1oeWp+O/K/090CAwEAAXQABVguNTA5fnIAGWphdmEuc2VjdXJpdHkuS2V5UmVwJFR5cGUAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAZQVUJMSUM=\",\n    \"name\": \"simulatedRequesterTest12345678\"\n}"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:32607/api/ratingtokenconstructor/acceptedOffers/Img2FV-DecisionTreeClassifier-Boolean2Gender",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "32607",
+					"path": [
+						"api",
+						"ratingtokenconstructor",
+						"acceptedOffers",
+						"Img2FV-DecisionTreeClassifier-Boolean2Gender"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gatekeeper post config composition model (request)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"request\":\"{\\n\\t\\\"operationName\\\":\\\"q1\\\",\\n\\t\\\"inputParams\\\":[{\\\"name\\\":\\\"i\\\",\\\"datatype\\\":\\\"http://crc901.upb.de/MLTerms#JPGImage\\\"}],\\n\\t\\\"outputParams\\\":[{\\\"name\\\":\\\"g\\\",\\\"datatype\\\":\\\"http://crc901.upb.de/MLTerms#Gender\\\"}],\\n\\t\\\"preCondition\\\":[],\\n\\t\\\"effect\\\":[{\\\"name\\\":\\\"faceRec\\\",\\\"params\\\":[\\\"i\\\",\\\"g\\\"]}],\\n\\t\\\"nonFunctionalRequirements\\\":[100],\\n\\t\\\"requester\\\":\\\"http://kube-master.cs.upb.de:30090/api/requester\\\",\\n\\t\\\"reputationRequest\\\":[{\\\"reputationConditions\\\":[{\\\"context\\\":\\\"OTHER\\\",\\\"requestedFiveStarRange\\\":\\\"ONE\\\",\\\"operator\\\":\\\"APPROX_GREATER_OR_EQUAL\\\"}],\\\"matchingResultReq\\\":{\\\"matchingType\\\":\\\"OTFFuzzyMatchingResultRequirement\\\",\\\"minLowerBound\\\":0.0,\\\"minUpperBound\\\":0.0}}]\\n}\",\"callbackHandle\":\"{requester}/results/test123\"}"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30563/api/otfprovider_gatekeeper/requests",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30563",
+					"path": [
+						"api",
+						"otfprovider_gatekeeper",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gatekeeper put accepted offer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"certificate\": \"<BinaryData>gpACvjvJ/hNxJ8MNmDcgfwvv2uFWe4eMbY3J3+8NM/Rzxys28W53tps54Z3yZq5hvtrY5FEnaDjlunLTlN+xshYwkDJGS5CDm8k8mtcDEDpMKdHKuMm3faJYTkxpKvSodMwalhsrkJFEndx6Jwr2KxOAswuKlUKsUqOIgrIetFg=\",\n    \"element\": {\n        \"x\": \"<BigInteger>8d35de8f3877204644bcdf3650304cfe0e3b0be4e4b3d7c986e0259ebb593c945b9cedda01605eb2801c56a99e42e31687d41dd5c45ba752af57897c9fb2a264195baeb46b89a7e19c614c8c6e58\",\n        \"y\": \"<BigInteger>5db41a36b3755efa7bd3cb394bc89afa99312728e0216f86fbeaf7ecf488ae45d9fc3d28f9e8f275988b51de0f583b57091003cbb8b2de94c5bf5cbea1739dbf26d9ca109208bd5764c58e5abc\"\n    },\n    \"encryptionKey\": \"<BinaryData>rO0ABXNyABRqYXZhLnNlY3VyaXR5LktleVJlcL35T7OImqVDAgAETAAJYWxnb3JpdGhtdAASTGphdmEvbGFuZy9TdHJpbmc7WwAHZW5jb2RlZHQAAltCTAAGZm9ybWF0cQB+AAFMAAR0eXBldAAbTGphdmEvc2VjdXJpdHkvS2V5UmVwJFR5cGU7eHB0AANSU0F1cgACW0Ks8xf4BghU4AIAAHhwAAAAojCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAnAcglvRLZQoNFsOMsAcNN0vXXlBfcpkIUemwG11OBcLbQk97S/WNfx8wjDacrsTsckgFgpGf21Q6dkrMDWE0r/xgf9DEyR+OUbtZgeubDb3Owz+5f2H5+bXWcranfW4loqANDwl693hYGdmOmoolAsC8GE657I1oeWp+O/K/090CAwEAAXQABVguNTA5fnIAGWphdmEuc2VjdXJpdHkuS2V5UmVwJFR5cGUAAAAAAAAAABIAAHhyAA5qYXZhLmxhbmcuRW51bQAAAAAAAAAAEgAAeHB0AAZQVUJMSUM=\",\n    \"name\": \"simulatedRequesterTest12345678\"\n}"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30563/api/otfprovider_gatekeeper/acceptedOffers/9e8050e0-c51e-4521-81a2-816090b81cb8",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30563",
+					"path": [
+						"api",
+						"otfprovider_gatekeeper",
+						"acceptedOffers",
+						"9e8050e0-c51e-4521-81a2-816090b81cb8"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rater put rating",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \t\"serviceReputation\": {\n\t  \"overall\": 0,\n\t  \"usability\": 0,\n\t  \"performance\": 0,\n\t  \"security\": 0,\n\t  \"other\": 0,\n\t  \"date\": 1506416726123\n\t},\n    \"serializedRatingToken\": \"{\\\"elementA\\\":{\\\"x\\\":\\\"<BigInteger>2c7751662d01a80b061963df29d31c8c6c55a4e2de64d0691c70c198a0ab837731b6bdd1acc5e15352ea6332de1478650168cd9af932a4df792a867bba7c1b8aa5fe0df864cf0a76e6a58f25c575\\\",\\\"y\\\":\\\"<BigInteger>2011a26150a9bf766fce76508b112f364c5203ff54fee0e4b523493f7f0fe200b0c20722c4ec74bb20c9979d6fd847cebb4670d493ea21b67fb9286f6d525b4b46be5dea710d1536ac23fe33bf13\\\"},\\\"itemUserExponentSecret\\\":\\\"<BigInteger>46e6a41b9d89fe8ea4dff26e144045f10c4f7b65\\\"}\",\n    \"serializedItemPublicKey\": \"{\\\"elementG1\\\":{\\\"x\\\":\\\"<BigInteger>1ef2f085aae8a7bb73cbbc9e7cdc7be6175df17da0b6b158c5874bf18b219e58af17562b460cee2c59ebf31279a7a14bd8005da1664b8069891f464c42253701a7dd413aed935a88fd19049b01e2\\\",\\\"y\\\":\\\"<BigInteger>aefc9e0957cd861a85bd5b132a01fb382c3de0346221c796630663a320f2a91ea2e52f0e20450ff8426ecf044b99fbe854e438dd8281199a6e45d6dc97c7df4f3fa72f20992efa0ca7d5ffc82124\\\"},\\\"elementG2\\\":{\\\"x\\\":\\\"<BigInteger>1ef2f085aae8a7bb73cbbc9e7cdc7be6175df17da0b6b158c5874bf18b219e58af17562b460cee2c59ebf31279a7a14bd8005da1664b8069891f464c42253701a7dd413aed935a88fd19049b01e2\\\",\\\"y\\\":\\\"<BigInteger>aefc9e0957cd861a85bd5b132a01fb382c3de0346221c796630663a320f2a91ea2e52f0e20450ff8426ecf044b99fbe854e438dd8281199a6e45d6dc97c7df4f3fa72f20992efa0ca7d5ffc82124\\\"},\\\"elementG2Power\\\":{\\\"x\\\":\\\"<BigInteger>12a7837a2e003136495abc969279704386beddeb8ab0fccbd7b0472780826ba00403405888f283f6d7bf0d5744ced4e6659b3232728ea622a1a13951eeba090b540709affad5e9df04ae0dce9828f\\\",\\\"y\\\":\\\"<BigInteger>8b763f411e5f63418ec1bad9b3d1322bec4f45b4f4f9cec953e0c80ba493e53db2d89015c8af9c2e1cf1ff883419f3fb34ddac1ef4deacee5e1a607e555f33eb2945ea8f355c879fcf7b1ea3a91b\\\"},\\\"keyIssuerAddress\\\":{\\\"thisIsRepresentableRepresentation\\\":true,\\\"representableTypeName\\\":\\\"de.upb.crypto.repsys.impl.common.communication.socket.SocketAddress\\\",\\\"representation\\\":{\\\"hostname\\\":\\\"kube-master.cs.upb.de\\\",\\\"port\\\":\\\"<BigInteger>7f60\\\"}},\\\"keyIssuerName\\\":\\\"aabbcc00\\\",\\\"name\\\":\\\"DecisionTreeClassifier-Boolean2Gender-Img2FV\\\"}\"\n}"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:31669/api/rater/rating",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31669",
+					"path": [
+						"api",
+						"rater",
+						"rating"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rater rjpk",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:31669/api/rater/rjpk",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31669",
+					"path": [
+						"api",
+						"rater",
+						"rjpk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation judge rjpk",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:32714/api/repjudge/rjpk",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "32714",
+					"path": [
+						"api",
+						"repjudge",
+						"rjpk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation system services ID rating",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "http://kube-master.cs.upb.de:32714"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30814/api/repboard/ratings",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30814",
+					"path": [
+						"api",
+						"repboard",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation system get service reputation",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30814/api/repboard/servicereputation/Preprocessor",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30814",
+					"path": [
+						"api",
+						"repboard",
+						"servicereputation",
+						"Preprocessor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation system get messageList",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30814/api/repboard/messageList",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30814",
+					"path": [
+						"api",
+						"repboard",
+						"messageList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation Generator",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "kube-master.cs.upb.de:31148/api/testbed-bootstrapper/repsystemfiller",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31148",
+					"path": [
+						"api",
+						"testbed-bootstrapper",
+						"repsystemfiller"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reputation system getStatistic",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"serviceID\" : \"SVMClassifier\",\n    \"statisticTimeID\" : \"lastyear\",\n    \"statisticTypeID\" : \"minimum\",\n    \"disaggregate\" : true\n}"
+				},
+				"url": {
+					"raw": "http://kube-master.cs.upb.de:30814/api/repboard/getStatistic/",
+					"protocol": "http",
+					"host": [
+						"kube-master",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "30814",
+					"path": [
+						"api",
+						"repboard",
+						"getStatistic",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

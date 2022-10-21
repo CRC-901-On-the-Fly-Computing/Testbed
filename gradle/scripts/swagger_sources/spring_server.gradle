@@ -1,0 +1,117 @@
+/**
+ * Configuration file for the swagger generated spring servers.
+ */
+
+swaggerSources {
+	project {
+		code {
+			components = [
+				'apis'           : true,
+				'apiDocs'        : false,
+				'apiTests'       : false,
+				'models'         : false,
+				'modelDocs'      : false,
+				'modelTests'     : false,
+				'supportingFiles': true
+			]
+			language   = 'spring'
+			library    = 'spring-boot'
+		}
+	}
+}
+
+
+ext.generatorConfig += [
+//	'title'                    : '',
+	'invokerPackage'           : "${-> poc.basePackage}.generated.spring_server",
+	'apiPackage'               : "${-> poc.basePackage}.generated.spring_server.api",
+	'configPackage'            : "${-> poc.basePackage}.generated.spring_server.config",
+	'modelPackage'             : "${-> poc.basePackage}.generated.spring_server.model",
+	'baseImplementationPackage': "${-> poc.basePackage}.impl.spring_server",
+	'java8'                    : 'true',
+	'dateLibrary'              : 'java8',
+	'useTags'                  : 'true',
+	'delegatePattern'          : 'true'
+]
+
+
+// delete unneeded generated files
+def deleteUnneededFiles() {
+	def outputDir = swaggerSources.project.code.outputDir
+
+	delete("${outputDir}/.swagger-codegen")
+	delete("${outputDir}/.swagger-codegen-ignore")
+	delete("${outputDir}/pom.xml")
+	delete("${outputDir}/README.md")
+	delete("${outputDir}/src/main/resources/application.properties")
+	delete fileTree("${outputDir}/src") {
+		include "**/*ApiController.java"
+	}
+}
+
+// set base package to scan for REST request handlers
+def replaceSwaggerDocConfig() {
+	def outputDir = swaggerSources.project.code.outputDir
+
+	def basePackage = project.poc.basePackage
+	def basePackagePath = basePackage.replaceAll('\\.', '/')
+
+	def file = new File("${outputDir}/src/main/java/${basePackagePath}/generated/spring_server/config/SwaggerDocumentationConfig.java")
+	file.write(file.text.replaceAll(
+		"\\.apis\\(RequestHandlerSelectors\\.basePackage\\(\"${basePackage}\\.generated\\.spring_server\\.api\"\\)\\)",
+		".apis(RequestHandlerSelectors.basePackage(\"${basePackage}.impl\"))"))
+}
+
+// add some actions to the code generation
+swaggerSources.project.code.doLast {
+	deleteUnneededFiles()
+	replaceSwaggerDocConfig()
+}
+
+
+apply plugin: 'java-library'
+
+dependencies {
+	// project dependencies
+	api project(':commons')
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	api            group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	api            group: 'io.springfox'              , name: 'springfox-core'
+	implementation group: 'io.springfox'              , name: 'springfox-spi'
+	api            group: 'io.springfox'              , name: 'springfox-spring-web'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.xml.bind'            , name: 'jaxb-api'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	api            group: 'org.apache.tomcat.embed'   , name: 'tomcat-embed-core'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	api            group: 'org.springframework'       , name: 'spring-web'
+	api            group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+}
+
+jar {
+	// HACK: to get different jar file names for equally named generation projects
+	archiveBaseName.set(project.path.substring(1).replaceAll(':', '-').replaceAll('_', '-'))
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+// disable compile warnings for the generated code
+gradle.projectsEvaluated {
+	tasks.withType(JavaCompile) {
+		options.compilerArgs << '-Xlint:none'
+		options.compilerArgs << '-Xlint:-unchecked'
+		options.compilerArgs << '-nowarn'
+		options.deprecation = false
+		options.warnings = false
+	}
+}
+
+// task ordering
+swaggerSources.project.code.dependsOn generateSwaggerConfigFile
+compileJava.dependsOn swaggerSources.project.code
+
+sourceSets.main.java.srcDir "${swaggerSources.project.code.outputDir}/src/main/java"
+sourceSets.main.resources.srcDir "${swaggerSources.project.code.outputDir}/src/main/resources"

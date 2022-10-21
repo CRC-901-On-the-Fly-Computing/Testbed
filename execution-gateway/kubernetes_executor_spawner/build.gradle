@@ -1,0 +1,65 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'kubernetes_executor_spawner'
+	basePackage            = 'de.upb.crc901.otftestbed.kubernetes_spawner'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+	args      = [sfbNexusUsername, sfbNexusPassword, 'nexus.cs.upb.de/sfb901-testbed/']
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'com.spotify'               , name: 'docker-client', classifier: 'shaded'
+	implementation group: 'commons-io'                , name: 'commons-io'
+	implementation group: 'io.fabric8'                , name: 'kubernetes-client', version: '4.3.0'
+	implementation group: 'io.fabric8'                , name: 'kubernetes-model'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.apache.commons'        , name: 'commons-lang3'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework'       , name: 'spring-webmvc'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'commons-lang'              , name: 'commons-lang'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	runtimeOnly    group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+}

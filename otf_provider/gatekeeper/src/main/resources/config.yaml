@@ -1,0 +1,4 @@
+requestProcessor:
+    requestProcessorURL: ""
+    configCompositionURL: "/compositionmodels/{uuid}/requirementSpec"
+    flowURL: "/compositionmodels/{uuid}/flows"

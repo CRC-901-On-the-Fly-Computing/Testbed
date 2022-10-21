@@ -1,0 +1,28 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	applySonarQube               = false
+	applyDocker                  = false
+	applyJenkinsGeneration       = false
+	applyUpdateConfig            = false
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':telemetry')
+
+	// external dependencies
+	implementation group: 'org.graphstream', name: 'gs-core'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'de.upb.crc901'  , name: 'publish-subscribe'
+	runtimeOnly    group: 'org.graphstream', name: 'gs-ui'
+}

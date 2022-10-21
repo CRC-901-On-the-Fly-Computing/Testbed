@@ -1,0 +1,202 @@
+/**
+ * Dependency management for centrally managing the versions of dependencies,
+ * both for projects and for buildscripts. When management is active, the
+ * versions are replaced during dependency resolution depending on the value
+ * in the version property.
+ *
+ * If the version is set to 'artifact',
+ * the artifact version is loaded from the map.
+ * If it is not present, an error occurs.
+ *
+ * If the version is set to 'group',
+ * the group version is loaded from the map.
+ * If it is not present, an error occurs.
+ *
+ * If the version is set to 'artifactFirst',
+ * the artifact version is loaded from the map if present,
+ * otherwise the group version.
+ *
+ * If the version is set to 'groupFirst',
+ * the group version is loaded from the map if present,
+ * otherwise the artifact version.
+ *
+ * If the version is null, empty or 'default',
+ * the `defaultVersionResolutionStrategy` is used, which is one of the above.
+ *
+ * If the version has a different value, it will be retained.
+ *
+ *
+ * Usage:
+ *
+ * First define the group key name used for the group version and the version
+ * maps like so:
+ * ext.defaultGroupVersionKey = '.defaultGroupVersion'
+ * ext.buildscriptDependencyVersions = [
+ *  'org.groupname.bs'       : [
+ *   (defaultGroupVersionKey): '1.2.3',
+ *   'artifact.name.bs'      : '2.3.4'
+ *  ]
+ * ]
+ * ext.projectDependencyVersions = [
+ *  'org.groupname.proj'     : [
+ *   (defaultGroupVersionKey): '1.2.3',
+ *   'artifact.name.proj'    : '2.3.4'
+ *  ]
+ * ]
+ *
+ * Then apply this script.
+ * apply from: gradleScript.dependencyManagement
+ *
+ * Finally add the dependency management to the project and/or buildscript.
+ * configurations.all addBuildscriptDependencyManagement
+ * configurations.all addProjectDependencyManagement
+ *
+ * After that you can declare the dependencies without versions.
+ * dependencies {
+ *  // use default version resolution strategy
+ *  implementation group: 'org.groupname', name: 'artifact.name'
+ *  // use group version
+ *  implementation group: 'org.groupname', name: 'artifact.name', version: 'group'
+ *  // use this individual version '3.2.1'
+ *  implementation group: 'org.groupname', name: 'artifact.name', version: '3.2.1'
+ * }
+ */
+
+
+/**
+ * The default versions resolution strategy.
+ * One of 'artifact', 'group', 'artifactFirst' or 'groupFirst'.
+ */
+ext.defaultVersionResolutionStrategy = 'artifactFirst'
+
+
+/**
+ * Adds the dependency management to the dependency resolution strategies.
+ */
+def setResolutionStrategy = { Closure setTargetDependency ->
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		switch(details.requested.version) {
+			case null:
+			case '':
+			case 'default':
+			case 'artifact':
+			case 'artifactFirst':
+			case 'group':
+			case 'groupFirst':
+				setTargetDependency(details)
+				break
+		}
+	}
+}
+
+/**
+ * Adds the dependency management to a project. To add to a buildscript, use
+ * method `addBuildscriptDependencyManagement`.
+ */
+ext.addProjectDependencyManagement = {
+	def closure = { DependencyResolveDetails details ->
+		details.useTarget getDependencyVersionForProject([
+			group  : details.requested.group,
+			name   : details.requested.name,
+			version: details.requested.version
+		])
+	}
+
+	setResolutionStrategy.delegate = delegate
+	setResolutionStrategy(closure)
+}
+
+/**
+ * Adds the dependency management to a buildscript. To add to a project, use
+ * method `addProjectDependencyManagement`.
+ */
+ext.addBuildscriptDependencyManagement = {
+	def closure = { DependencyResolveDetails details ->
+		details.useTarget getDependencyVersionForBuildscript([
+			group  : details.requested.group,
+			name   : details.requested.name,
+			version: details.requested.version
+		])
+	}
+
+	setResolutionStrategy.delegate = delegate
+	setResolutionStrategy(closure)
+}
+
+
+/**
+ * Gets the dependency version for a project dependency.
+ *
+ * @param  dependency to get the version for
+ * @return the dependency with the version set
+ */
+ext.getDependencyVersionForProject = { Map dependency ->
+	return getVersion(projectDependencyVersions, dependency)
+}
+
+/**
+ * Gets the dependency version for a buildscript dependency.
+ *
+ * @param  dependency to get the version for
+ * @return the dependency with the version set
+ */
+ext.getDependencyVersionForBuildscript = { Map dependency ->
+	return getVersion(buildscriptDependencyVersions, dependency)
+}
+
+/**
+ * Gets the dependency version for a dependency from the given map.
+ *
+ * @param versionsMap  map to look up the version
+ * @param dependency   to get the version for
+ * @return the dependency with the version set
+ */
+def getVersion(Map versionsMap, def dependency) {
+
+	if (dependency.group == null) {
+		throw new GradleScriptException("No group specified for dependency: ${dependency}", null)
+	}
+
+	def group = versionsMap[dependency.group]
+	if (group == null) {
+		throw new GradleScriptException("No group found with name '${dependency.group}' for dependency: ${dependency}", null)
+	}
+
+	// get the stored versions
+	def groupVersion = group[defaultGroupVersionKey]
+	def artifactVersion = group[dependency.name]
+
+	// set default version resolution strategy if requested
+	if (['default', '', null].contains(dependency.version)) {
+		dependency.version = defaultVersionResolutionStrategy
+	}
+
+	// handle the version according to required resolution strategy
+	switch(dependency.version) {
+		case 'groupFirst':
+			if (groupVersion != null) {
+				dependency.version = groupVersion
+				break
+			}
+		case 'artifact':
+			if (artifactVersion == null) {
+				throw new GradleScriptException("No artifact version found for dependency: ${dependency}", null)
+			}
+			dependency.version = artifactVersion
+			break
+
+		case 'artifactFirst':
+			if (artifactVersion != null) {
+				dependency.version = artifactVersion
+				break
+			}
+		case 'group':
+			if (groupVersion == null) {
+				throw new GradleScriptException("No group version found for dependency: ${dependency}", null)
+			}
+			dependency.version = groupVersion
+			break
+	}
+
+	return dependency
+}

@@ -1,0 +1,33 @@
+/**
+ * Script to add the default repositories.
+ *
+ * Usage:
+ *
+ * apply from: gradleScript.repositories
+ */
+
+repositories {
+
+	// standard repositories
+	mavenCentral()
+	mavenLocal()
+
+	// gradle plugin portal
+	maven {
+		url 'https://plugins.gradle.org/m2/'
+	}
+
+	// jenkins releases repository
+	maven{
+		url 'http://repo.jenkins-ci.org/releases/'
+	}
+
+	// crc901 nexus repository
+	maven {
+		url "${sfbNexusBaseUrl}/repository/${sfbNexusDownRepo}/"
+		credentials {
+			username "${sfbNexusUsername}"
+			password "${sfbNexusPassword}"
+		}
+	}
+}

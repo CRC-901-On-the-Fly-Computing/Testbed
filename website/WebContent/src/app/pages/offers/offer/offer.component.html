@@ -1,0 +1,87 @@
+<div *ngIf="offer && checked">
+  <div class="title">
+    <label><a routerLink="/offers">Offers</a>
+      <mat-icon>chevron_right</mat-icon> <b>{{offer.compositionID}}</b>
+    </label>
+  </div>
+  <div class="box">
+    <p>Composition</p>
+    <mat-card>
+      <div class="composition-header">
+        <div class="item">
+          <div class="composition-title">{{offer.compositionID}}</div>
+          <app-rating-box size="large" [rating]="offerRating || {}">
+            <app-star size="large" [count]="offerRating !== undefined ? offerRating.overall : 0"></app-star>
+          </app-rating-box>
+        </div>
+      </div>
+      <div class="basic-services">
+        Score: {{offer.offerScore}}%
+      </div>
+      <div class="basic-services" *ngIf="offer.compositionAndOTFProvider.simpleComposition && this.services">
+        <table>
+          <tr>
+            <th class="tbl-header">Basic Services</th>
+            <th class="tbl-header"></th>
+          </tr>
+          <tr *ngFor="let item of this.services">
+            <td class="tbl-item">{{item}}</td>
+            <td class="tbl-item">
+              <app-rating-box [rating]="serviceRatings[item]">
+                <app-star [count]="serviceRatings[item] !== undefined ? serviceRatings[item].overall : 0"></app-star>
+              </app-rating-box>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-card>
+  </div>
+  <div class="box">
+    <p>
+      Policy
+      <button (click)="openDialog(offer.policyInformation)" mat-icon-button class="signature" *ngIf="offer.policyInformation">
+        <mat-icon>lock</mat-icon>
+      </button>
+    </p>
+    <mat-card class="simple-policy">
+      <mat-chip-list>
+        <span>Allowed Countries:</span>
+        <mat-chip *ngFor="let c of offer.simplePolicy.allowedCountries">
+          <app-flag-icon [country]='c'></app-flag-icon>
+          {{c}}
+        </mat-chip>
+      </mat-chip-list>
+      <p>Min Age: <strong>{{offer.simplePolicy.minAge}}</strong></p>
+      <p>Max Age: <strong>{{offer.simplePolicy.maxAge}}</strong></p>
+      <mat-chip-list>
+        <span>Allowed Licenses:</span>
+        <mat-chip *ngFor="let c of offer.simplePolicy.allowedLicenses">
+          {{c}}
+        </mat-chip>
+      </mat-chip-list>
+    </mat-card>
+  </div>
+  <div class="bottom-box">
+    <div>
+      <button [disabled]="result.message !== undefined" (click)="buyTheOffer()" mat-raised-button color="primary" class="buy-btn">
+        <span *ngIf="!requestInProgress">
+          <mat-icon>shopping_cart</mat-icon>
+          BUY {{offer.nonFunctionalProperties.price}}
+        </span>
+        <mat-spinner color="warn" *ngIf="requestInProgress" [diameter]="30" mode="indeterminate"></mat-spinner>
+      </button>
+    </div>
+    <div class="message-box" *ngIf="false && result.message !== undefined">
+      Your <a routerLink="/requests">requested</a> service is online now. Here it is:
+      <br>
+      <a target="_blank" [href]="result.message">
+        <mat-icon class="link-icon">open_in_new</mat-icon>
+        {{result.message}}
+      </a>
+    </div>
+  </div>
+</div>
+<div *ngIf="error && error.status && checked">
+  <h3>Error {{error.status}} ({{error.error}})</h3>
+  <p>{{error.message}}</p>
+</div>

@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "executor-id"
+  labels:
+    name: "${EXECUTOR_ID}"
+    run: "${EXECUTOR_ID}"
+spec:
+  type: "NodePort"
+  ports:
+  - name: "tcp"
+    port: 80
+    targetPort: ${CONTAINER_PORT}
+  selector:
+    name: "${EXECUTOR_ID}"
+    run: "${EXECUTOR_ID}"

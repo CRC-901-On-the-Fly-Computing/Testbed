@@ -1,0 +1,81 @@
+openapi: 3.0.2
+info:
+  title: System Manager REST Interface
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '2.0'
+servers:
+- url: /api
+tags:
+- name: SystemManager
+  description: all-in-one tag
+paths:
+  /public_parameters:
+    get:
+      summary: Retrieves the PublicParameters of this ReputationSystem instance
+      tags:
+      - SystemManager
+      operationId: getPublicParameter
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicParameter'
+  /public_identity:
+    get:
+      summary: Retrieves the PublicIdentity connected to this SystemManager
+      tags:
+      - SystemManager
+      operationId: getPublicIdentity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemManagerPublicIdentity'
+  /join_user:
+    post:
+      summary: Starts the joining process of a user to the ReputationSystem
+      tags:
+      - SystemManager
+      operationId: joinUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NonInteractiveJoinRequest'
+        required: false
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinResponse'
+components:
+  schemas:
+    JoinResponse:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    NonInteractiveJoinRequest:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    PublicParameter:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    SystemManagerPublicIdentity:
+      type: object
+      properties:
+        placeholder:
+          type: string
+

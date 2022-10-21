@@ -1,0 +1,361 @@
+{
+	"info": {
+		"_postman_id": "94bb0639-5ec3-42ff-be31-7a264869714b",
+		"name": "service-requester-test-dmcc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b5f8fdb8-403a-4ad3-8cc5-49e418fe1ef3",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var uuid = JSON.parse(responseBody).uuid",
+							"pm.test(\"Repsonse contains a valid uuid\"), function(){",
+							"    uuid.match('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')",
+							"}",
+							"pm.globals.set(\"uuid\", uuid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/plain",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "Automated Postman Collection Test, Iteration \"{{pm.info.iteration}}\""
+				},
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/initialize",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"initialize"
+					]
+				},
+				"description": "Second Step: Setup a request"
+			},
+			"response": []
+		},
+		{
+			"name": "Start interview",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2c6297ba-4e4e-45e9-af01-8e5ff39a776c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response not empty\", function (){",
+							"    console.log(pm.response.text().length)",
+							"    pm.expect(pm.response.text().length).to.be.above(0);",
+							"});",
+							"pm.test(\"There is an offered otf provider\", function(){",
+							"    var providers = JSON.parse(responseBody)",
+							"    pm.expect(providers.length).to.be.above(0) ",
+							"    var otfpUUID = providers[0].otfProvider.otfpUUID",
+							"    pm.globals.set(\"otfpUUID\", otfpUUID)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "automl"
+				},
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/initial_interview",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"initial_interview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept Kub OTF-Provider",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "68a7f6d3-0f9f-4f51-bb7f-ce9a579f0f87",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response not empty\", function (){",
+							"    pm.expect(pm.response.text().length).to.be.above(0);",
+							"});",
+							"pm.test(\"Valid first question\", function() {",
+							"    var question = JSON.parse(responseBody)",
+							"    pm.expect(question.interviewState).to.equal(\"MORE_INFORMATION_NEEDED\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/providers/{{otfpUUID}}/accept",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"providers",
+						"{{otfpUUID}}",
+						"accept"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Answer all proseco questions at once",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "11bbd830-45fd-4c55-b576-ff94c3e4b220",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response not empty\", function (){",
+							"    pm.expect(pm.response.text().length).to.be.above(0);",
+							"});",
+							"pm.test(\"Interview done\", function() {",
+							"    var question = JSON.parse(responseBody)",
+							"    pm.expect(question.interviewState).to.equal(\"INTERVIEW_DONE\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[[\"timeout\",\"90\"],[\"trainingdata\",\"https://nexus.cs.upb.de/repository/sfb901-testbed-files/openML_zoo.arff\"],[\"prototype\",\"distributed-multiclass-classification\"]]"
+				},
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/proseco_interview",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"proseco_interview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get jobstate for request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cb6446ec-8f44-4c68-b995-89b0840e42a0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Valid Jobstate\", function(){",
+							"   pm.expect(pm.response.text()).to.be.oneOf([\"\\\"CONFIGURING\\\"\", \"\\\"BUILDING\\\"\", \"\\\"PUBLISHING\\\"\", \"\\\"DONE\\\"\"]);",
+							"});",
+							"",
+							"var sleepBetweenTries = 5000;",
+							"var totalWaitTime = 0;",
+							"var maxWaitTime = 90 * 1000 + 30 * 1000;",
+							"postman.setNextRequest(\"Get offers for request\");",
+							"pm.test(\"Jobstate is DONE\", function () {",
+							"      pm.response.to.have.body(\"\\\"DONE\\\"\");",
+							" });",
+							"if (pm.response.text() != \"\\\"DONE\\\"\" && totalWaitTime < maxWaitTime){",
+							"    totalWaitTime = totalWaitTime + sleepBetweenTries;",
+							"    setTimeout(function() {}, sleepBetweenTries);",
+							"    postman.setNextRequest(\"Get jobstate for request\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/jobstate",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"jobstate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get offers for request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6f070379-a0c7-4479-b063-0202032885d9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response not empty\", function (){",
+							"    console.log(pm.response.text().length)",
+							"    pm.expect(pm.response.text().length).to.be.above(0);",
+							"});",
+							"pm.test(\"There is an offer\", function(){",
+							"    var offers = JSON.parse(responseBody)",
+							"    pm.expect(offers.length).to.be.above(0) ",
+							"    var offerUUID = offers[0].offerUUID",
+							"    pm.globals.set(\"offerUUID\", offerUUID);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/offers",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"offers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Accept first offer",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://sfb-k8master-1.cs.upb.de:31052/api/requests/{{uuid}}/offers/{{offerUUID}}/accept",
+					"protocol": "http",
+					"host": [
+						"sfb-k8master-1",
+						"cs",
+						"upb",
+						"de"
+					],
+					"port": "31052",
+					"path": [
+						"api",
+						"requests",
+						"{{uuid}}",
+						"offers",
+						"{{offerUUID}}",
+						"accept"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

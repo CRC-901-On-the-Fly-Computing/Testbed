@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: "executor-id"
+  labels:
+    name: "${EXECUTOR_ID}"
+    run: "${EXECUTOR_ID}"
+spec:
+  storageClassName: nfs-reclaim-delete
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,51 @@
+def projectName = "admin_client_gui"
+def fullProjectName = "sfb901-testbed/${projectName}"
+def nexus = "nexus.cs.upb.de"
+def deploymentName = projectName.replace("_","-")
+//With / at the end but not the beginning
+def projectPath = "admin_client/"
+def projectDomain = projectPath[0..-2].replace("_","-")
+def dockerFilePath = "/home/jenkins/agent/.docker_conf/config.json"
+
+podTemplate(inheritFrom: 'default') {
+	node (POD_LABEL) {
+		env.NODEJS_HOME = "${tool 'Angular'}"
+		// on linux / mac
+		env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
+		stage('Preparation') {
+			//git branch: 'master', credentialsId: '2068628e-c518-4ee5-a17e-b83e8a8c8ab9', url: 'https://git.cs.upb.de/SFB901-Testbed/Testbed.git'
+			// git branch: 'feature/admin_client_gui', credentialsId: 'sfb901b1', url: 'https://git.cs.upb.de/SFB901-Testbed/Testbed.git'
+			git branch: 'develop', credentialsId: 'sfb901b1', url: 'https://git.cs.upb.de/SFB901-Testbed/Testbed.git'
+		}
+		stage('Docker initialization') {
+		    if( fileExists(dockerFilePath)){
+		        sh """
+		            mkdir -p $HOME/.docker
+		            cp ${dockerFilePath} $HOME/.docker/
+		        """
+		    } else {
+		        echo "Docker secret not mounted correctly."
+		        exit 1
+		    }
+		}
+		stage('Build Angular project') {
+			sh """
+				cd ./${projectPath}${projectName}
+				cd WebContent
+				npm install
+				ng build
+			"""
+		}
+		stage('Build and upload docker image') {
+			def newTag = "nexus.cs.upb.de/sfb901-testbed/${projectName}:v${env.BUILD_ID}";
+			sh """
+				cd ./${projectPath}${projectName}
+				docker rmi -f ${fullProjectName}
+				docker build -t ${fullProjectName} .
+				docker tag ${fullProjectName} ${newTag}
+				docker push ${newTag}
+				kubectl -n ${projectDomain} set image deployments/${deploymentName} ${deploymentName}=${newTag}
+			"""
+		}
+	}
+}

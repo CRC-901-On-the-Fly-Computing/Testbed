@@ -1,0 +1,273 @@
+/**
+ * Define the versions for buildscript and project dependencies. These versions
+ * are used by the dependency management script.
+ */
+
+
+/**
+ * This string is used as key for the module name of the dependency version maps
+ * and provides the default version of the group.
+ */
+ext.defaultGroupVersionKey = '.defaultGroupVersion'
+
+/**
+ * A map of maps for the versions of the buildscript dependencies. The outer map
+ * has as keys the group names and the values are the maps of module names.
+ * These inner maps have as keys the module names and as values the versions.
+ *
+ * ext.buildscriptDependencyVersions = [
+ *   'group' : [
+ *     'name': 'version'
+ *   ]
+ * ]
+ */
+ext.buildscriptDependencyVersions = [
+	'com.github.jengelman.gradle.plugins'     : [
+		'shadow'                              : '2.0.4'  // plugin com.github.johnrengelman.shadow
+	],
+	'com.github.jk1'                          : [
+		'gradle-license-report'               : '1.11'   // plugin com.github.jk1.dependency-license-report
+	],
+	'com.github.kamkozlowski.gradle'          : [
+		'mustache'                            : '0.0.1'  // plugin mustache
+	],
+	'com.mashape.unirest'                     : [
+		(defaultGroupVersionKey)              : '1.4.9'
+	],
+	'com.netflix.nebula'                      : [
+		'gradle-lint-plugin'                  : '16.0.2', // plugin nebula.lint
+		'nebula-project-plugin'               : '3.4.0', // plugin nebula.project
+		'nebula-publishing-plugin'            : '5.1.4', // plugin nebula.maven-base-publish
+		'nebula-release-plugin'               : '6.0.2'  // plugin nebula.release
+	],
+	'gradle.plugin.com.palantir.gradle.docker': [
+		'gradle-docker'                       : '0.22.1' // plugin com.palantir.docker
+	],
+	'gradle.plugin.org.gretty'                : [
+		'gretty'                              : '2.3.1'  // plugin org.gretty
+	],
+	'gradle.plugin.org.hidetake'              : [
+		'gradle-swagger-generator-plugin'     : '2.18.1' // plugin org.hidetake.swagger.generator
+	],
+	'org.ajoberstar'                          : [
+		'gradle-git'                          : '0.2.3'
+	],
+	'org.sonarsource.scanner.gradle'          : [
+		'sonarqube-gradle-plugin'             : '2.5'    // plugin org.sonarqube
+	],
+	'org.springframework.boot'                : [
+		'spring-boot-gradle-plugin'           : '2.0.6.RELEASE' // plugin org.springframework.boot
+	],
+	'org.yaml'                                : [
+		'snakeyaml'                           : '1.24'
+	],
+	'xmlunit'                                 : [
+		'xmlunit'                             : '1.6'
+	]
+]
+
+/**
+ * A map of maps for the versions of the project dependencies. The outer map
+ * has as keys the group names and the values are the maps of module names.
+ * These inner maps have as keys the module names and as values the versions.
+ *
+ * ext.buildscriptDependencyVersions = [
+ *   'group' : [
+ *     'name': 'version'
+ *   ]
+ * ]
+ */
+// dependency versions
+ext.projectDependencyVersions = [
+	'ch.qos.logback'                 : [
+		(defaultGroupVersionKey)     : '1.2.3'
+	],
+	'com.fasterxml.jackson.core'     : [
+		(defaultGroupVersionKey)     : '2.9.7'
+	],
+	'com.fasterxml.jackson.datatype' : [
+		(defaultGroupVersionKey)     : '2.9.7'
+	],
+	'com.google.guava'               : [
+		(defaultGroupVersionKey)     : '20.0'
+	],
+	'com.internetitem'               : [
+		'logback-elasticsearch-appender': '1.6'
+	],
+	'com.kjetland'                   : [
+		(defaultGroupVersionKey)     : '1.0.24'
+	],
+	'com.mashape.unirest'            : [
+		(defaultGroupVersionKey)     : '1.4.9'
+	],
+	'com.microsoft'                  : [
+		'z3'                         : '4.5.0'
+	],
+	'com.spotify'                    : [
+		'docker-client'              : '8.11.4'
+	],
+	'commons-beanutils'              : [
+		'commons-beanutils'          : '1.9.3'
+	],
+	'commons-codec'                  : [
+		'commons-codec'              : '1.10'
+	],
+	'commons-fileupload'             : [
+		'commons-fileupload'         : '1.3.3'
+	],
+	'commons-io'                     : [
+		'commons-io'                 : '2.6'
+	],
+	'commons-lang'                   : [
+		'commons-lang'               : '2.6'
+	],
+	'commons-logging'                : [
+		'commons-logging'            : '1.2'
+	],
+	'de.upb.crc901'                  : [
+		'b3-verification'            : '0.10.13',
+		'crc-basic-configurator'     : '1.1',
+		'crc-configuration-setting'  : '1.1',
+		'crc-configurator-framework' : '1.1',
+		'crc-configurator-util'      : '1.1',
+		'eclipse-uml2-types'         : '1.0',
+		'emf-common'                 : '1.0',
+		'emf-ecore'                  : '1.0',
+		'emf-ecore-xmi'              : '1.0',
+		'equinox-common'             : '1.0',
+		'log4j'                      : '1.0',
+		'matching-core'              : '1.0',
+		'pcm'                        : '1.0',
+		'pcm-identifier'             : '1.0',
+		'pcm-probfunction'           : '1.0',
+		'pcm-profiles'               : '1.0',
+		'pcm-stoex'                  : '1.0',
+		'pcm-units'                  : '1.0',
+		'proseco'                    : '0.1.8.13',
+		'publish-subscribe'          : '0.4',
+		'reputation-matcher'         : '1.0',
+		'sse-core'                   : '1.0'
+	],
+	'de.upb.crypto'                  : [
+		'craco'                      : '0.0.12-SNAPSHOT'
+	],
+	'de.upb.crypto.pbc'              : [
+		'upb_pbc'                    : '0.0.14-SNAPSHOT'
+	],
+	'de.upb.crypto.react'            : [
+		'acs'                        : '0.0.16-SNAPSHOT',
+		'building-blocks'            : '0.0.16-SNAPSHOT',
+		'predicate-protocols'        : '0.0.16-SNAPSHOT',
+		'protocols'                  : '0.0.16-SNAPSHOT'
+	],
+	'edu.stanford.protege'           : [
+		'org.semanticweb.owl.owlapi' : '3.4.4'
+	],
+	'io.fabric8'                     : [
+		'kubernetes-client'          : '3.1.10',
+		'kubernetes-model'           : '2.0.8'
+	],
+	'io.springfox'                   : [
+		(defaultGroupVersionKey)     : '2.9.2'
+	],
+	'io.swagger'                     : [
+		(defaultGroupVersionKey)     : '1.5.20',
+		'swagger-codegen-cli'        : '2.4.4'
+	],
+	'io.swagger.core.v3'             : [
+		(defaultGroupVersionKey)     : '2.0.8'
+	],
+	'io.swagger.codegen.v3'          : [
+		'swagger-codegen-cli'        : '3.0.8'
+	],
+	'javax.annotation'               : [
+		'javax.annotation-api'       : '1.3.2'
+	],
+	'javax.validation'               : [
+		'validation-api'             : '2.0.1.Final'
+	],
+	'javax.ws.rs'                    : [
+		'javax.ws.rs-api'            : '2.1'
+	],
+	'javax.xml.bind'                 : [
+		'jaxb-api'                   : '2.1'
+	],
+	'junit'                          : [
+		(defaultGroupVersionKey)     : '4.12'
+	],
+	'net.rakugakibox.spring.boot'    : [
+		'logback-access-spring-boot-starter': '2.7.1'
+	],
+	'org.apache.commons'             : [
+		'commons-configuration2'     : '2.2',
+		'commons-io'                 : '1.3.2',
+		'commons-lang3'              : '3.7'
+	],
+	'org.apache.tomcat'              : [
+		(defaultGroupVersionKey)     : '8.5.34'
+	],
+	'org.apache.tomcat.embed'        : [
+		(defaultGroupVersionKey)     : '8.5.34'
+	],
+	'org.eclipse.jetty'              : [
+		(defaultGroupVersionKey)     : '9.4.9.v20180320'
+	],
+	'org.eclipse.xtext'              : [
+		(defaultGroupVersionKey)     : '2.9.1'
+	],
+	'org.elasticsearch'              : [
+		(defaultGroupVersionKey)     : '6.4.3'
+	],
+	'org.elasticsearch.client'       : [
+		(defaultGroupVersionKey)     : '6.4.3'
+	],
+	'org.glassfish.jersey.core'      : [
+		(defaultGroupVersionKey)     : '2.26'
+	],
+	'org.glassfish.jersey.containers': [
+		(defaultGroupVersionKey)     : '2.26'
+	],
+	'org.glassfish.jersey.inject'    : [
+		(defaultGroupVersionKey)     : '2.26'
+	],
+	'org.glassfish.jersey.media'     : [
+		(defaultGroupVersionKey)     : '2.26'
+	],
+	'org.graphstream'                : [
+		(defaultGroupVersionKey)     : '1.3'
+	],
+	'org.hamcrest'                   : [
+		(defaultGroupVersionKey)     : '1.3'
+	],
+	'org.jboss.logging'              : [
+		'jboss-logging'              : '3.3.2.Final'
+	],
+	'org.jboss.resteasy'             : [
+		(defaultGroupVersionKey)     : '3.6.3.SP1'
+	],
+	'org.jboss.spec.javax.ws.rs'     : [
+		'jboss-jaxrs-api_2.1_spec'   : '1.0.2.Final'
+	],
+	'org.mockito'                    : [
+		(defaultGroupVersionKey)     : '2.18.3'
+	],
+	'org.mongodb'                    : [
+		(defaultGroupVersionKey)     : '3.6.4'
+	],
+	'org.slf4j'                      : [
+		(defaultGroupVersionKey)     : '1.7.25'
+	],
+	'org.springframework'            : [
+		(defaultGroupVersionKey)     : '5.0.10.RELEASE'
+	],
+	'org.springframework.amqp'       : [
+		(defaultGroupVersionKey)     : '2.0.8.RELEASE'
+	],
+	'org.springframework.boot'       : [
+		(defaultGroupVersionKey)     : '2.0.6.RELEASE'
+	],
+	'org.springframework.data'       : [
+		(defaultGroupVersionKey)     : '2.0.11.RELEASE',
+		'spring-data-elasticsearch'  : '3.1.5.RELEASE'
+	]
+]

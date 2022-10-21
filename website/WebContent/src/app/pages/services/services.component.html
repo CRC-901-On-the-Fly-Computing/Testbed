@@ -1,0 +1,67 @@
+<div class="message-box" *ngIf="checked && !dataSource.length">
+  <p>
+    There is no services.
+  </p>
+</div>
+<div *ngIf="dataSource && dataSource.length">
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="code_provider_id">
+        <mat-header-cell *matHeaderCellDef> Library </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <a routerLink="./{{item.code_provider_id}}">
+            {{item.code_provider_id}}
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="repository_url">
+        <mat-header-cell *matHeaderCellDef> Repository URL </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <a target="_blank" [href]="item.repository_url">
+            <mat-icon>open_in_new</mat-icon>
+            {{item.repository_url}}
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="subfolder">
+        <mat-header-cell *matHeaderCellDef> Subfolder </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.subfolder}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="tag">
+        <mat-header-cell *matHeaderCellDef> Tag/Branch </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.tag}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+          <!-- <a mat-raised-button color="primary" routerLink="./new">
+            <mat-icon>add_circle</mat-icon>
+            New Library
+          </a> -->
+          Actions
+        </mat-header-cell>
+        <mat-cell class="actions text-right" *matCellDef="let item">
+          <!-- <a matTooltip="Edit" mat-icon-button color="primary" routerLink="./{{item.code_provider_id}}/edit">
+            <mat-icon>edit</mat-icon>
+          </a> -->
+          <a matTooltip="Show detail" mat-icon-button color="primary" routerLink="./{{item.code_provider_id}}/detail">
+            <mat-icon>remove_red_eye</mat-icon>
+          </a>
+          <!-- <a matTooltip="Add new service" mat-icon-button color="primary" routerLink="./{{item.code_provider_id}}/new">
+            <mat-icon>add_circle</mat-icon>
+          </a> -->
+          <a matTooltip="List of services" mat-icon-button color="primary" routerLink="./{{item.code_provider_id}}">
+            <mat-icon>list</mat-icon>
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+</div>

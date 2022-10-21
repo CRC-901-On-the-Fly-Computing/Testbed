@@ -1,0 +1,70 @@
+def bootstrapperPrefix   = 'bootstrapper/'
+def commonsPrefix        = 'commons/'
+def executionPrefix      = 'execution-gateway/'
+def generatedPrefix      = 'generated/'
+def localClientPrefix    = 'local_client/'
+def marketProviderPrefix = 'market_provider/'
+def otfproviderPrefix    = 'otf_provider/'
+def adminClientPrefix    = 'admin_client/'
+
+def subProjGenJava       = 'generated:java_client'
+def subProjGenSpring     = 'generated:spring_server'
+
+
+def includeProject(String path, String name, subprojectNames = []) {
+	include name
+	def baseProjectDir = new File(path, name)
+	project(":${name}").projectDir = baseProjectDir
+
+	subprojectNames.each {
+		switch (it) {
+			case ~/^generated:.*/:
+				def projectName = it.replaceFirst(':', '_')
+				def projectPath = it.replaceAll(':', '/')
+
+				include ":${name}:${projectName}"
+				project(":${name}:${projectName}").projectDir = new File(baseProjectDir, projectPath)
+
+				break
+
+			default:
+				include ":${name}:${it}"
+				break
+		}
+	}
+}
+
+
+// Commons
+includeProject(commonsPrefix, 'commons')
+includeProject(commonsPrefix, 'commons_connect')
+includeProject(commonsPrefix, 'commons_otf_provider')
+includeProject(commonsPrefix, 'telemetry')
+
+// OTF Provider
+includeProject(otfproviderPrefix, 'composition_analysis', [subProjGenJava, subProjGenSpring])
+includeProject(otfproviderPrefix, 'proseco_configurator', [subProjGenJava, subProjGenSpring])
+includeProject(otfproviderPrefix, 'policy_provider', [subProjGenJava, subProjGenSpring])
+includeProject(otfproviderPrefix, 'gatekeeper', [subProjGenJava, subProjGenSpring])
+
+// OTF Market Provider
+includeProject(marketProviderPrefix, 'buy_processor', [subProjGenJava, subProjGenSpring])
+includeProject(marketProviderPrefix, 'credential_issuer', [subProjGenJava, subProjGenSpring])
+includeProject(marketProviderPrefix, 'otfp_registry_new', [subProjGenJava, subProjGenSpring])
+includeProject(marketProviderPrefix, 'publish_subscribe')
+includeProject(marketProviderPrefix, 'review_board', [subProjGenJava, subProjGenSpring])
+includeProject(marketProviderPrefix, 'system_manager', [subProjGenJava, subProjGenSpring])
+
+// Service requester
+includeProject(localClientPrefix, 'service_requester_new', [subProjGenJava, subProjGenSpring])
+includeProject(localClientPrefix, 'user_creator', [subProjGenJava, subProjGenSpring])
+
+// Execution
+includeProject(executionPrefix, 'kubernetes_executor_spawner', [subProjGenJava, subProjGenSpring])
+
+// Generated
+includeProject(generatedPrefix, 'postgrest')
+
+// Admin Client
+includeProject(adminClientPrefix, 'admin_client', [subProjGenJava, subProjGenSpring])
+

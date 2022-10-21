@@ -1,0 +1,12 @@
+@startuml Create Request 
+
+User -> ServiceRequester: Initialize request with name
+ServiceRequester --> User: Response on intialization request
+User -> ServiceRequester: natural language description of request
+ServiceRequester -> Chatbot: natural language description of request
+Chatbot --> ServiceRequester: domain, request parameters 
+ServiceRequester -> OTFProviderRegistry:  domain
+OTFProviderRegistry --> ServiceRequester: list of OTF providers
+ServiceRequester --> User: list of OTF providers
+
+@enduml

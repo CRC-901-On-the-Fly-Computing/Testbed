@@ -1,0 +1,105 @@
+{
+  "params": [
+    {
+      "name": "Image",
+      "datatype": "http://crc901.upb.de/MLTerms#Image"
+    },
+    {
+      "name": "JPGImage",
+      "datatype": "http://crc901.upb.de/MLTerms#JPGImage"
+    },
+    {
+      "name": "BMPImage",
+      "datatype": "http://crc901.upb.de/MLTerms#BMPImage"
+    },
+    {
+      "name": "GIFImage",
+      "datatype": "http://crc901.upb.de/MLTerms#GIFImage"
+    },
+    {
+      "name": "Attribute_Vector",
+      "datatype": "http://crc901.upb.de/MLTerms#Attribute_Vector"
+    },
+    {
+      "name": "Boolean",
+      "datatype": "http://crc901.upb.de/MLTerms#Boolean"
+    },
+    {
+      "name": "Gender",
+      "datatype": "http://crc901.upb.de/MLTerms#Gender"
+    },
+    {
+      "name": "Spam",
+      "datatype": "http://crc901.upb.de/MLTerms#Spam"
+    },
+    {
+      "name": "text",
+      "datatype": "http://crc901.upb.de/MLTerms#text"
+    }
+  ],
+  "requirementsSpecLiteral": [{
+    "name": "faceRec",
+    "params": [
+      "i",
+      "g"
+    ]
+  }],
+  "nonFunctionalRequirements":[
+    {
+      "name": "price",
+      "value": 0
+    }
+  ],
+  "reputationCondition": {
+    "context": [
+      {
+        "OVERALL": "OVERALL"
+      },
+      {
+        "USABILITY": "USABILITY"
+      },
+      {
+        "PERFORMANCE": "PERFORMANCE"
+      },
+      {
+        "SECURITY": "SECURITY"
+      },
+      {
+        "OTHER": "OTHER"
+      }
+    ],
+    "requestedFiveStarRange": [
+      {
+        "ONE": "ONE"
+      },
+      {
+        "TWO": "TWO"
+      },
+      {
+        "THREE": "THREE"
+      },
+      {
+        "FOUR": "FOUR"
+      },
+      {
+        "FIVE": "FIVE"
+      }
+    ],
+    "operator": [
+      {
+        "GREATER": "GREATER"
+      },
+      {
+        "GREATEROREQUAL": "GREATER_OR_EQUAL"
+      },
+      {
+        "APPROXGREATEROREQUAL": "APPROX_GREATER_OR_EQUAL"
+      }
+    ]
+  },
+  "matchingResultReq": {
+    "matchingType": "",
+    "minLowerBound": 0.0,
+    "minUpperBound": 0.0
+  }
+}

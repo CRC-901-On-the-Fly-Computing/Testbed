@@ -1,0 +1,12 @@
+{
+  "BASE_PATH_RB": "http://localhost:32413/api",
+  "BASE_PATH_SR": "http://localhost:31052/api",
+  "BASE_PATH_UR": "http://localhost:31236/api",
+  "BASE_PATH_CP": "http://localhost:30301",
+  "MONITOR": "http://localhost:30080/elastic/kibana",
+  "MONITOR_CPA": "http://localhost:31942/mm_cpa_checks/_search?size=10000",
+  "POC_URL": "https://sfb901.uni-paderborn.de/projects/tools-and-demonstration-systems/tools-from-the-2nd-funding-period/otf-proof-of-concept/",
+  "EXEC_GATEWAY_1": "http://localhost:30370/cmd/executors/ls/",
+  "EXEC_GATEWAY_2": "http://localhost:30371/cmd/executors/ls/"
+}
+

@@ -1,0 +1,85 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'otfp_refactored_gatekeeper'
+	basePackage            = 'de.upb.crc901.otftestbed.otfprovider.gatekeeper'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+	args      = [mongoUser, mongoPassword]
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+docker {
+	buildArgs(buildArgs + [
+		MONGO_USER    : mongoUser,
+		MONGO_PASSWORD: mongoPassword
+	])
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':commons_otf_provider')
+	implementation project(':publish_subscribe')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'com.mashape.unirest'       , name: 'unirest-java'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-mongodb'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'commons-lang'              , name: 'commons-lang'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger2'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongo-java-driver'
+	runtimeOnly    group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+}
+
+project(getGenerationSubprojectPath('java_client')) {
+	swaggerSources.project.setInputFile file("${projectDir}/../../specifications/gatekeeper_specification.yaml")
+
+	dependencies.api project(':commons_otf_provider')
+	dependencies.api project(':publish_subscribe')
+}
+
+project(getGenerationSubprojectPath('spring_server')) {
+	swaggerSources.project.setInputFile file("${projectDir}/../../specifications/gatekeeper_specification.yaml")
+
+	dependencies.api project(':commons_otf_provider')
+	dependencies.api project(':publish_subscribe')
+}

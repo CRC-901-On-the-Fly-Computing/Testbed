@@ -1,0 +1,100 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'buy_processor'
+	basePackage            = 'de.upb.crc901.otftestbed.buy_processor'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+	args      = [
+		mongoReputationUser,
+		mongoReputationPassword
+	]
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+docker {
+	buildArgs(buildArgs + [
+		MONGO_USER    : mongoReputationUser,
+		MONGO_PASSWORD: mongoReputationPassword
+	])
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':commons_connect')
+	implementation project(':telemetry')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// SFB dependencies
+	implementation group: 'de.upb.crypto.pbc'         , name: 'upb_pbc'
+	implementation group: 'de.upb.crypto.react'       , name: 'acs'
+	implementation group: 'de.upb.crypto.react'       , name: 'building-blocks'
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'io.fabric8'                , name: 'kubernetes-client'
+	implementation group: 'io.fabric8'                , name: 'kubernetes-model'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.apache.tomcat.embed'   , name: 'tomcat-embed-core'
+	implementation group: 'org.mongodb'               , name: 'bson'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-commons'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-mongodb'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'de.upb.crypto'             , name: 'craco'
+	runtimeOnly    group: 'de.upb.crypto.pbc'         , name: 'upb_pbc'
+
+	runtimeOnly    group: 'com.google.guava'          , name: 'guava'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-core'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spi'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spring-web'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	runtimeOnly    group: 'javax.xml.bind'            , name: 'jaxb-api'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongo-java-driver'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver-core'
+}
+
+project(getGenerationSubprojectPath('java_client')) {
+	dependencies.api group: 'de.upb.crypto.react', name: 'acs'
+}
+
+project(getGenerationSubprojectPath('spring_server')) {
+	dependencies.api group: 'de.upb.crypto.react', name: 'acs'
+}

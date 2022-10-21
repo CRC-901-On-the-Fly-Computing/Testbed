@@ -1,0 +1,306 @@
+
+buildscript {
+
+	// apply the gradleScript variable
+	apply from: "${rootProject.projectDir}/gradle/scripts/gradleScripts.gradle", to: owner
+
+	// apply dependency management
+	apply from: gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	// apply repositories
+	apply from: gradleScript.repositories, to: owner
+
+	dependencies {
+		classpath group: 'com.github.jengelman.gradle.plugins'     , name: 'shadow'
+		classpath group: 'com.github.kamkozlowski.gradle'          , name: 'mustache'
+		classpath group: 'com.netflix.nebula'                      , name: 'nebula-project-plugin'
+		classpath group: 'com.netflix.nebula'                      , name: 'nebula-publishing-plugin'
+		classpath group: 'com.netflix.nebula'                      , name: 'nebula-release-plugin'
+		classpath group: 'gradle.plugin.com.palantir.gradle.docker', name: 'gradle-docker'
+		classpath group: 'gradle.plugin.org.gretty'                , name: 'gretty'
+		classpath group: 'org.springframework.boot'                , name: 'spring-boot-gradle-plugin'
+	//Fix for log4j (forcing upgrade to 2.17.0 if log4j is used)
+                constraints {
+                            classpath("org.apache.logging.log4j:log4j-core") {
+                                version {
+                                    strictly("[2.17, 3[")
+                                    prefer("2.17.0")
+                                }
+                                because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+                            }
+                            classpath("org.apache.logging.log4j:log4j-api") {
+                                version {
+                                    strictly("[2.17, 3[")
+                                    prefer("2.17.0")
+                                }
+                                because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+                            }
+					
+                        }
+	}
+}
+
+
+/*
+ * Setting the default settings for all projects. These settings control, among
+ * others, the project generation and de-/activates the gradle plugins. They can
+ * be overridden in the projects.
+ * The default values have to be set early in the gradle configuration phase,
+ * BEFORE other scripts and/or projects overwrite the values.
+ */
+allprojects {
+	ext.poc = ext {
+		// The name of the project used to name the jar file.
+		projectName                   = project.name
+		// The group of the project. It is assigned to `project.group`.
+		projectGroup                  = 'de.upb.crc901'
+		// The version of the project used for the jar file. It is also assigned
+		// to `project.version`.
+		projectVersion                = '0.2.9-SNAPSHOT'
+		// The type of the project (e.g. java, java-library, groovy, ...).
+		// Additional project configuration is done according to this value.
+		projectType                   = 'java'
+
+		// The base package of the java project.
+		basePackage                   = null
+
+		// Indicates whether to apply the IDE plugins (e.g. eclipse, idea).
+		applyIdePlugins               = true
+		// Indicates whether to apply the nebula lint plugin.
+		applyGradleLint               = true
+		// Indicates whether to apply the SonarQube plugin.
+		applySonarQube                = true
+		// Indicates whether to apply the Docker plugin.
+		applyDocker                   = true
+		// Indicates whether to apply the jenkins job generation script.
+		applyJenkinsGeneration        = true
+		// Indicates whether to apply the license report plugin.
+		// The value is the configuration name to be loaded or null if disabled.
+		// See the gradle script for names.
+		applyLicenseReport            = 'subproject'
+		// Indicates whether to apply the update config script.
+		applyUpdateConfig             = true
+
+		// A list of swagger generation subprojects to add. If null or empty no
+		// subprojects are added.
+		swaggerGenerationSubprojects  = ['java_client', 'spring_server']
+	}
+}
+
+// define PoC properties for root project
+// for more information, see above
+ext.poc = ext {
+	projectType                  = null
+
+	basePackage                  = 'de.upb.crc901.otftestbed'
+
+	// Disable plugins as the root project doesn't implement anything.
+	applyIdePlugins              = false
+	applySonarQube               = false
+	applyDocker                  = false
+	applyJenkinsGeneration       = false
+	applyLicenseReport           = 'overall'
+	applyUpdateConfig            = false
+
+	swaggerGenerationSubprojects = null
+}
+
+
+/*
+ * Adding method to configure the project according to the PoC properties to all
+ * projects.
+ */
+allprojects {
+
+	// Apply the dependency management and the repositories to all subprojects.
+	if (project != rootProject) {
+		buildscript {
+			// apply dependency management
+			apply from: gradleScript.applyBuildscriptDepMgmt, to: owner
+
+			// apply repositories
+			apply from: gradleScript.repositories, to: owner
+		}
+	}
+
+	/*
+	 * Configures the current project according to the PoC properties with the
+	 * pocConfiguration configuration closure.
+	 */
+	ext.configureProject = {
+		project.configure(project, pocConfiguration)
+	}
+
+	/*
+	 * This is the configuration closure to configure the projects according to
+	 * the PoC properties.
+	 */
+	ext.pocConfiguration = {
+
+
+		/*
+		 * validations for project configuration
+		 */
+
+		// check if property projectName is set
+		if (poc.projectName == null) {
+			throw new GradleScriptException("PoC property 'projectName' is not set for project '${project.path}'.", null)
+		}
+
+
+		/*
+		 * generate additional properties and information
+		 */
+
+		// set project properties
+		project.group   = poc.projectGroup
+		project.version = poc.projectVersion
+
+
+		/*
+		 * apply general stuff
+		 */
+
+		// apply dependency versions
+		apply from: gradleScript.versions
+
+		// apply dependency management
+		apply from: gradleScript.dependencyManagement
+		configurations.all addProjectDependencyManagement
+
+		// apply repositories
+		apply from: gradleScript.repositories
+
+
+		/*
+		 * apply plugins
+		 */
+
+		// apply java stuff
+		if (['java', 'java-library'].contains(poc.projectType)) {
+			apply plugin: poc.projectType
+
+			// java version
+			sourceCompatibility = JavaVersion.VERSION_1_8
+			targetCompatibility = JavaVersion.VERSION_1_8
+
+			// dependencies for all(!) projects
+			dependencies {
+				// logger
+				implementation group: 'org.slf4j'     , name: 'log4j-over-slf4j'
+				implementation group: 'org.slf4j'     , name: 'slf4j-api'
+
+				// logger
+				runtimeOnly    group: 'ch.qos.logback', name: 'logback-classic'
+
+				// testing
+				testCompile    group: 'junit'         , name: 'junit'
+				testCompile    group: 'org.hamcrest'  , name: 'hamcrest-all'
+				testCompile    group: 'org.mockito'   , name: 'mockito-core'
+			}
+
+			// configure the java compilation
+			gradle.projectsEvaluated {
+				tasks.withType(JavaCompile) {
+					options.deprecation = true
+					options.compilerArgs << '-Xlint:unchecked'
+				}
+			}
+		}
+
+		// apply IDE plugins
+		if (poc.applyIdePlugins == true) {
+			apply plugin: 'eclipse'
+			apply plugin: 'idea'
+		}
+
+		// apply gradle lint
+		if (poc.applyGradleLint == true) {
+			apply from: gradleScript.gradleLint
+			applyGradleLintConfig()
+		}
+
+		// apply SonarQube
+		if (poc.applySonarQube == true) {
+			apply from: gradleScript.sonarQube
+			applySonarQubeConfig()
+		}
+
+		// apply Docker
+		if (poc.applyDocker == true) {
+			apply from: gradleScript.docker
+			applyDockerConfig()
+		}
+
+		// apply license report
+		if (poc.applyLicenseReport != null) {
+			apply from: gradleScript.licenseReport
+			applyLicenseReportConfig(poc.applyLicenseReport)
+		}
+
+		// apply update config
+		if (poc.applyUpdateConfig == true) {
+			apply from: gradleScript.updateConfig
+		}
+
+		// apply jenkins generation
+		if (poc.applyJenkinsGeneration == true) {
+			apply from: gradleScript.jenkinsGeneration
+		}
+
+		// apply SwaggerCodegen and predefined SwaggerSources to subprojects
+		if (poc.swaggerGenerationSubprojects != null) {
+			apply from: gradleScript.swaggerCodegen
+			applySwaggerSourcesToSubprojects(poc.swaggerGenerationSubprojects)
+		}
+
+
+		if (project.path != ':postman') {
+			// Nebula
+			apply plugin: 'nebula.maven-base-publish'
+			apply plugin: 'nebula.project'
+			apply plugin: 'nebula.release'
+		}
+
+
+		// always check for updates in SNAPSHOT versions, do not cache
+		configurations.all {
+			// check for updates every build
+			resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+		}
+	}
+}
+
+// configure root project according to PoC properties
+configureProject()
+
+
+
+
+
+
+configure(subprojects.findAll {it.name != "postman"}) {
+
+	//Other
+	apply plugin: "jacoco"
+	apply plugin: "maven"
+
+
+	//Nebula releases
+	nebulaRelease {
+		addReleaseBranchPattern("/develop/")
+	}
+
+	publishing {
+		repositories {
+			maven {
+				url "${sfbNexusBaseUrl}/repository/${sfbNexusUpRepo}-${project.version.toString().endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}"
+
+				credentials {
+					username "${sfbNexusUsername}"
+					password "${sfbNexusPassword}"
+				}
+			}
+		}
+	}
+}

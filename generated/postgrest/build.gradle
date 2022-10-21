@@ -1,0 +1,85 @@
+
+import groovy.json.JsonOutput
+
+apply from: gradleScript.swaggerCodegen
+applySwaggerCodegenPlugin()
+applySwaggerSource('java_client')
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName                  = 'postgrest'
+	projectType                  = 'java-library'
+	basePackage                  = 'de.upb.crc901.otftestbed.postgrest'
+	applyDocker                  = false
+	swaggerGenerationSubprojects = null
+}
+def postgrestUrl   = 'http://sfb-k8master-1.cs.uni-paderborn.de:30301'
+def postgrestSpecs = "${projectDir}/specifications/postgrest_service_specification.yaml"
+
+// configure this project according to PoC properties
+configureProject()
+
+
+// remove dependency on project 'commons' due to cycling dependencies
+configurations.api.dependencies.removeIf { dep ->
+	dep instanceof ProjectDependency && dep.dependencyProject.path == ':commons'
+} as java.util.function.Predicate
+
+
+swaggerSources {
+	project {
+		inputFile         = file(postgrestSpecs)
+		code {
+			configFile    = file("${projectDir}/build/swagger/config.json")
+			rawOptions    = []
+
+			components = [
+				'apis'           : true,
+				'apiDocs'        : false,
+				'apiTests'       : false,
+				'models'         : true,
+				'modelDocs'      : false,
+				'modelTests'     : false,
+				'supportingFiles': true
+			]
+		}
+	}
+}
+
+task downloadSpecification() {
+	description 'Downloads PostgREST API.'
+	group 'CRC901'
+
+	def url = new URL(postgrestUrl)
+	def outputFile = file(postgrestSpecs)
+	def specText = ''
+
+	inputs.property('url', url)
+	outputs.file(outputFile)
+
+	// Execute task only if server is reachable, so that the last downloaded
+	// specification is not emptied and can be reused.
+	onlyIf {
+		try {
+			specText = url.getText()
+			inputs.property('specText', specText)
+		} catch(e) {
+			logger.warn('Could not download specification from server.\n    ' + e)
+			return false
+		}
+
+		return true
+	}
+
+	doLast {
+		if (!outputFile.exists()) {
+			outputFile.parentFile.mkdirs()
+			outputFile.createNewFile()
+		}
+		specText = JsonOutput.prettyPrint(specText)
+		outputFile.text = specText
+	}
+}
+
+// swaggerSources.project.code.dependsOn downloadSpecification

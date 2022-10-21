@@ -1,0 +1,405 @@
+openapi: 3.0.2
+info:
+  title: Admin Service REST Interface
+  description: Rest interface to communicate with the admin service
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.1
+servers:
+- url: /api
+tags:
+- name: service
+- name: create
+- name: services
+- name: otf-provider
+- name: request
+- name: executor
+- name: log
+- name: admin
+  description: all-in-one tag
+paths:
+  /admin/services/:
+    get:
+      tags:
+      - admin
+      - services
+      summary: returns all available services
+      operationId: getServices
+      responses:
+        '200':
+          description: list of Service-JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfServices'
+    post:
+      tags:
+      - admin
+      - service
+      - create
+      summary: create new service object
+      operationId: createService
+      requestBody:
+        description: Description to the service
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceDescription'
+        required: true
+      responses:
+        '201':
+          description: returns the service-id of the new service
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service-id:
+                    type: string
+  '/admin/services/{service-id}':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceId'
+    get:
+      tags:
+      - admin
+      - service
+      summary: returns service with service-id
+      operationId: getService
+      responses:
+        '200':
+          description: Service-JSON to the given serviceId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDescription'
+    put:
+      tags:
+      - admin
+      - service
+      summary: update service with service-id
+      operationId: updateService
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceDescription'
+        required: true
+      responses:
+        '200':
+          description: Update successfully executed
+          content: {}
+    delete:
+      tags:
+      - admin
+      - service
+      summary: delete service with service-id
+      operationId: deleteService
+      responses:
+        '200':
+          description: delete successfully executed
+          content: {}
+  /admin/otf-providers/:
+    get:
+      tags:
+      - admin
+      - otf-provider
+      summary: returns list of all available OTF Providers
+      operationId: getOtfProviders
+      responses:
+        '200':
+          description: List of OTF Providers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfOtfProviders'
+    post:
+      tags:
+      - admin
+      - otf-provider
+      - create
+      summary: create new otf provider
+      operationId: createOtfProvider
+      requestBody:
+        description: 'Registry Information, Domain Information, PROSECO Information'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtfProviderDescription'
+        required: true
+      responses:
+        '200':
+          description: returns the  uuid of the new OtfProvider
+          content:
+            text/plain:
+              schema:
+                type: string
+  '/admin/otf-providers/{otfp-uuid}':
+    parameters:
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    get:
+      tags:
+      - admin
+      - otf-provider
+      summary: returns OTF Provider
+      operationId: getOtfProvider
+      responses:
+        '200':
+          description: returns OTF Provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtfProviderDescription'
+    put:
+      tags:
+      - admin
+      - otf-provider
+      summary: update otfprovider with otfp-uuid
+      operationId: updateOtfProvider
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtfProviderDescription'
+        required: true
+      responses:
+        '200':
+          description: Update successfully executed
+          content: {}
+    delete:
+      tags:
+      - admin
+      - otf-provider
+      summary: delete otf-provider with otf-provider-uuid
+      operationId: deleteOtfProvider
+      responses:
+        '200':
+          description: delete successfully executed
+          content: {}
+  '/admin/otf-providers/{otfp-uuid}/requests/{request-id}':
+    parameters:
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    - $ref: '#/components/parameters/pathRequestId'
+    get:
+      tags:
+      - admin
+      - otf-provider
+      - request
+      summary: returns request
+      operationId: getRequest
+      responses:
+        '200':
+          description: returns OTF Provider
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestDescription'
+    put:
+      tags:
+      - admin
+      - otf-provider
+      - request
+      summary: update request on the otf-provider
+      operationId: updateRequest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDescription'
+        required: true
+      responses:
+        '200':
+          description: Update successfully executed
+          content: {}
+    delete:
+      tags:
+      - admin
+      - otf-provider
+      - request
+      summary: delete request on the otf-provider
+      operationId: deleteRequest
+      responses:
+        '200':
+          description: delete successfully executed
+          content: {}
+  /admin/executors/:
+    get:
+      tags:
+      - admin
+      - executor
+      summary: returns list of all available Executor
+      operationId: getExecutors
+      responses:
+        '200':
+          description: List of Executors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfExecutors'
+    post:
+      tags:
+      - admin
+      - executor
+      - create
+      summary: create new executor
+      operationId: createExecutor
+      requestBody:
+        description: 'List of Services, Name of the Executor'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutorDescription'
+        required: true
+      responses:
+        '200':
+          description: returns the  executor-id of the new Executor
+          content:
+            text/plain:
+              schema:
+                type: string
+  '/admin/executors/{executor-id}':
+    parameters:
+    - $ref: '#/components/parameters/pathExecutorId'
+    get:
+      tags:
+      - admin
+      - executor
+      summary: returns Executor
+      operationId: getExecutor
+      responses:
+        '200':
+          description: returns executor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutorDescription'
+    put:
+      tags:
+      - admin
+      - executor
+      summary: update executor with executor-id
+      operationId: updateExecutor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutorDescription'
+        required: true
+      responses:
+        '200':
+          description: Update successfully executed
+          content: {}
+    delete:
+      tags:
+      - admin
+      - executor
+      summary: delete executor with executor-id
+      operationId: deleteExecutor
+      responses:
+        '200':
+          description: delete successfully executed
+          content: {}
+  '/admin/executors/{executor-id}/logs/':
+    parameters:
+    - $ref: '#/components/parameters/pathExecutorId'
+    get:
+      tags:
+      - admin
+      - executor
+      - log
+      summary: returns logs to Executor
+      operationId: getExecutorLogs
+      responses:
+        '200':
+          description: returns executor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutorLogs'
+    delete:
+      tags:
+      - admin
+      - executor
+      summary: delete logs from executor with executor-id
+      operationId: deleteExecutorLogs
+      responses:
+        '200':
+          description: delete successfully executed
+          content: {}
+components:
+  schemas:
+    ExecutorLog:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfServices:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ExecutorDescription:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ExecutorLogs:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ServiceDescription:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    RequestDescription:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfExecutors:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfOtfProviders:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OtfProviderDescription:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathExecutorId:
+      name: executor-id
+      in: path
+      description: executor-id of an Executor
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathOtfpUuid:
+      name: otfp-uuid
+      in: path
+      description: otfp-uuid of an OTF Provider
+      required: true
+      schema:
+        type: string
+    pathRequestId:
+      name: request-id
+      in: path
+      description: request-id of a request
+      required: true
+      schema:
+        type: string
+    pathServiceId:
+      name: service-id
+      in: path
+      description: serviceId of the Service
+      required: true
+      schema:
+        type: string
+

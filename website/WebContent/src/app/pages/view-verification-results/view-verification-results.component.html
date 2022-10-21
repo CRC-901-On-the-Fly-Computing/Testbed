@@ -1,0 +1,46 @@
+<div class="message-box" *ngIf="checked && !cpa_checks.length">
+  <p>
+    There is no verification status. <br>
+  </p>
+</div>
+<div *ngIf="cpa_checks && cpa_checks.length">
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="cpa_checks">
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Basic Service </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          {{item._source['service.name']}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="duration">
+        <mat-header-cell *matHeaderCellDef> Duration [ms] </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          {{item._source.duration}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef> Size [bytes] </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          {{item._source['cpaCheck.size']}}
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="result">
+        <mat-header-cell *matHeaderCellDef> Result </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <mat-icon *ngIf="item._source['cpaCheck.isVerified']==='true'" class="alert-icon success" matTooltip="Basic Service successfully verified!">verified_user</mat-icon>
+          <mat-icon *ngIf="item._source['cpaCheck.isVerified']==='false'" class="alert-icon error" matTooltip="Basic Service verification failed!">cancel</mat-icon>
+          <mat-icon *ngIf="item._source['cpaCheck.isVerified']==='unknown'" class="alert-icon error" matTooltip="Basic Service not certified!">priority_high</mat-icon>
+        </mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+</div>

@@ -1,0 +1,42 @@
+<mat-list-item class="message {{message.from}}">
+  <div matLine>
+    <div class="avatar">
+      <mat-icon *ngIf="message.from=='bot'">android</mat-icon>
+      <mat-icon *ngIf="message.from=='bot_warning'">android</mat-icon>
+      <mat-icon *ngIf="message.from=='user'">account_circle</mat-icon>
+    </div>
+    <div class="speech-bubble">
+      <span [innerHTML]="message.body"></span>
+      <div *ngIf="message.type=='DROPDOWN' && message.extra.length">
+        <div class="extra-item" *ngFor="let item of message.extra">
+          <button mat-raised-button (click)="onItemClick(item.label || item)" [class.fat]="item.rate">
+            <mat-icon *ngIf="(item.label || item )!==selectedItem">radio_button_unchecked</mat-icon>
+            <mat-icon *ngIf="(item.label|| item )===selectedItem">radio_button_checked</mat-icon>
+            <span class="btn-content">
+              {{item.label || item}}
+              <app-star *ngIf="item.rate" [count]="item.rate"></app-star>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="message.type=='FILE' && message.from=='user'">
+        <input type="file" #fileInput ng2FileSelect [uploader]="uploader" style="display: none;" />
+        <div ng2FileDrop (click)="fileInput.click()" [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)"
+          [uploader]="uploader" class="drop-zone" *ngIf="!completeAll && !uploader.isUploading">
+          Drop your file here
+        </div>
+        <div class="drop-zone done" *ngIf="uploader.isUploading || completeAll">
+          <span *ngFor="let item of uploader.queue" [ngClass]="{'is-success': item.isSuccess}">
+            <span class="filename">
+              {{ item?.file?.name }}
+              <mat-spinner [diameter]="20" *ngIf="item.isUploading"></mat-spinner>
+              <mat-icon class="success" *ngIf="item.isSuccess">check_circle</mat-icon>
+              <mat-icon class="fail" *ngIf="completeAll && !item.isUploading && !item.isSuccess">cancel</mat-icon>
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <span class="time"> {{message.timestamp | date: 'H:mm:ss'}} </span>
+  </div>
+</mat-list-item>

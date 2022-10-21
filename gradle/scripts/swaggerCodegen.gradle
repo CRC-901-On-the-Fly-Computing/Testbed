@@ -1,0 +1,302 @@
+/**
+ * Configuration file for the swagger codegen plugin. This is used to generate
+ * code from Swagger/OpenAPI specifications.
+ * We generate different types of code and do this in seperate subprojects. For
+ * every generation type you have to create a gradle file in the swagger_sources
+ * folder and add it to the sourcePaths map variable. The created file contains
+ * the parameters for the generation of the specific generation type, the needed
+ * dependencies and maybe some pre- and postprocessing.
+ * In this script file you have some default generation parameters which can be
+ * overwritten in the swagger_sources files or in the generation subprojects
+ * itself.
+ *
+ *
+ * Usage:
+ *
+ * For the otf project you want to generate some code you have to apply the
+ * script and then the wanted generation types:
+ *
+ * apply from: 'swaggerCodegen.gradle'
+ * applySwaggerSourcesToSubprojects(['java_client', 'spring_server'])
+ *
+ * To change or add something for the generation subproject you can access the
+ * generation subproject like so:
+ *
+ * project(getGenerationSubprojectPath('java_client')) {
+ * 	// ...
+ * }
+ */
+
+
+/**
+ * The path to this script file.
+ */
+def scriptFile = buildscript.sourceFile
+/**
+ * The directory path of this script file.
+ */
+def scriptDir  = buildscript.sourceFile.parent
+
+
+/**
+ * The paths to the scripts of the different generation types.
+ */
+def sourcePaths = [
+	'java_client'  : "${scriptDir}/swagger_sources/java_client.gradle",
+	'spring_server': "${scriptDir}/swagger_sources/spring_server.gradle"
+]
+
+
+/**
+ * The default configuration of the codegen with which every generation type is
+ * initialized.
+ */
+def defaultSwaggerSource = {
+	inputFile         = file("${projectDir}/../../specifications/example_service_specification.yaml")
+	code {
+		outputDir     = file("${projectDir}/build/swagger/generated")
+		configFile    = file("${projectDir}/build/swagger/config.json")
+		wipeOutputDir = true
+		configuration = configurations.swaggerCodegenV3
+		rawOptions    = [
+			"--import-mappings", generateImportMappings()
+		]
+	}
+}
+
+
+/**
+ * Map of import mappings used by swagger codegen.
+ */
+ext.importMappings = [
+	"ATIPublicIdentity"            : "de.upb.crypto.react.acs.issuer.impl.react.credentials.ReactCredentialIssuerPublicIdentity",
+	"Attributes"                   : "de.upb.crc901.otftestbed.commons.reputation.SimpleAttributes",
+	"AttributesInSpace"            : "de.upb.crypto.react.buildingblocks.attributes",
+	"AttributeSpace"               : "de.upb.crypto.react.buildingblocks.attributes.AttributeSpace",
+	"BuyResponse"                  : "de.upb.crc901.otftestbed.commons.reputation.BuyResponse",
+	"BuyTokens"                    : "de.upb.crc901.otftestbed.commons.reputation.BuyTokens",
+	"CIPublicIdentity"             : "de.upb.crypto.react.acs.issuer.impl.react.credentials.ReactCredentialIssuerPublicIdentity",
+	"CredentialIssueResponse"      : "de.upb.crypto.react.acs.issuer.impl.react.credentials.ReactCredentialIssueResponse",
+	"Domain"                       : "de.upb.crc901.testbed.otfproviderregistry.Domain",
+	"ExtendedFlow"                 : "de.upb.crc901.otftestbed.commons.flow.ExtendedFlow",
+	"ExtendedServiceReputation"    : "de.upb.crc901.otftestbed.commons.reputation.ExtendedServiceReputation",
+	"ExecutorDescription"          : "de.upb.crc901.otftestbed.commons.admin.ExecutorDescription",
+	"ExecutorLog"          		   : "de.upb.crc901.otftestbed.commons.admin.ExecutorLog",
+	"ExecutorLogs"         		   : "de.upb.crc901.otftestbed.commons.admin.ExecutorLogs",
+	"Interview"                    : "de.upb.crc901.proseco.core.interview.Interview",
+	"InterviewResponse"            : "de.upb.crc901.otftestbed.commons.requester.InterviewResponse",
+	"ItemAndRequest"               : "de.upb.crc901.otftestbed.commons.requester.ItemAndRequest",
+	"JobState"                     : "de.upb.crc901.otftestbed.commons.general.JobState",
+	"JobstateAndRequest"           : "de.upb.crc901.otftestbed.commons.requester.JobstateAndRequest",
+	"JoinResponse"                 : "de.upb.crypto.react.acs.systemmanager.impl.react.ReactJoinResponse",
+	"ListOfServices"               : "de.upb.crc901.otftestbed.commons.spawner.ListOfServices",
+	"ListOfExecutors"              : "de.upb.crc901.otftestbed.commons.admin.ListOfExecutors",
+	"ListOfOtfProviders"           : "de.upb.crc901.otftestbed.commons.admin.ListOfOtfProviders",
+	"Message"                      : "de.upb.crc901.testbed.otfproviderregistry.common.Message",
+	"MonitorSources"               : "de.upb.crc901.otftestbed.commons.requester.ConfigurationMarketMonitorSources",
+	"NonInteractiveIssuableRequest": "de.upb.crypto.react.acs.user.impl.react.credentials.ReactNonInteractiveCredentialRequest",
+	"NonInteractiveJoinRequest"    : "de.upb.crypto.react.acs.user.impl.react.ReactNonInteractiveJoinRequest",
+	"Offer"                        : "de.upb.crc901.otftestbed.commons.requester.Offer",
+	"OfferAndImage"                : "de.upb.crc901.otftestbed.commons.requester.OfferAndImage",
+	"OfferAndRequest"              : "de.upb.crc901.otftestbed.commons.requester.OfferAndRequest",
+	"OTFFuzzyMatchingResult"       : "de.upb.crc901.otftestbed.commons.otfprovider.matcher.result.OTFFuzzyMatchingResult",
+	"OTFMatchingCapsule"           : "de.upb.crc901.otftestbed.commons.otfprovider.matcher.OTFMatchingCapsule",
+	"OTFPConfidence"               : "de.upb.crc901.otftestbed.commons.requester.OTFProviderConfidence",
+	"OTFProvider"				   : "de.upb.crc901.otftestbed.commons.model.OTFProvider",
+	"OTFProviderConfidence"        : "de.upb.crc901.otftestbed.commons.requester.OTFProviderConfidence",
+	"OTFProviderDescription"       : "de.upb.crc901.otftestbed.commons.admin.OTFProviderDescription",
+	"OTFReputationRequest"         : "de.upb.crc901.otftestbed.commons.otfprovider.configurator.requests.specs.matching.reputation.OTFReputationRequest",
+	"PolicyInformation"            : "de.upb.crypto.react.acs.policy.PolicyInformation",
+	"PublicParameter"              : "de.upb.crypto.react.acs.setup.impl.react.ReactPublicParameters",
+	"RemoteOTFProvider"            : "de.upb.crc901.testbed.otfproviderregistry.RemoteOTFProvider",
+	"RequestDescription"           : "de.upb.crc901.otftestbed.commons.admin.RequestDescription",
+	"ResponseMessage"              : "de.upb.crc901.otftestbed.commons.rest.SimpleJSONMessage",
+	"Review"                       : "de.upb.crypto.react.acs.review.impl.react.ReactRepresentableReview",
+	"RTIPublicIdentity"            : "de.upb.crypto.react.acs.issuer.impl.react.reviewtokens.ReactReviewTokenIssuerPublicIdentity",
+	"ServiceDescription"           : "de.upb.crc901.otftestbed.commons.admin.ServiceDescription",
+	"ServiceReputation"            : "de.upb.crc901.otftestbed.commons.reputation.ServiceReputation",
+	"ServiceReputationList"        : "de.upb.crc901.otftestbed.commons.reputation.ServiceReputationList",
+	"ServiceReputationAndSignature": "de.upb.crc901.otftestbed.commons.reputation.ServiceReputationAndSignature",
+	"ServiceUUID"                  : "de.upb.crc901.otftestbed.commons.rest.SimpleJSONUuid",
+	"SimpleJsonMessage"            : "de.upb.crc901.otftestbed.commons.rest.SimpleJSONMessage",
+	"SimpleRequirementsSpec"       : "de.upb.crc901.otftestbed.commons.otfprovider.requirementspec.SimpleRequirementsSpec",
+	"SimpleUUID"                   : "de.upb.crc901.otftestbed.commons.rest.SimpleJSONUuid",
+	"StatisticDefinitionModel"     : "de.upb.crc901.otftestbed.commons.reputation.StatisticDefinitionModel",
+	"SystemManagerPublicIdentity"  : "de.upb.crypto.react.acs.systemmanager.impl.react.ReactSystemManagerPublicIdentity",
+	"URLListenerSpec"              : "de.upb.crc901.otftestbed.commons.general.URLListenerSpec",
+	"VerifierPublicIdentity"       : "de.upb.crypto.react.acs.verifier.impl.react.credentials.ReactVerifierPublicIdentity"
+]
+
+
+ext.generatorConfig = [
+	'developerName'            : 'OTF Testbed',
+	'developerOrganization'    : 'OTF Testbed',
+	'developerOrganizationUrl' : 'sfb901.upb.de',
+	'hideGenerationTimestamp'  : 'true',
+]
+
+
+/**
+ * The default configuration of the codegen subproject which will be executed
+ * for every generation subproject. The name of the SwaggerSource will be set to
+ * the value of the optional parameter swaggerSourceName.
+ * The base project from which the swagger sources are applied can be supplied
+ * by the optional parameter baseProject.
+ *
+ * @param baseProject The project from which the generation subprojects are applied.
+ * @param swaggerSourceName The name of the added SwaggerSource; default is 'project'.
+ */
+def defaultProjectConfiguration = { Project baseProject = null, swaggerSourceName = 'project' ->
+	// define PoC properties for this project
+	// for more information, see root projects `build.gradle`
+	ext.poc = ext {
+		projectType                  = 'java-library'
+
+		applySonarQube               = false
+		applyJenkinsGeneration       = false
+		applyUpdateConfig            = false
+		swaggerGenerationSubprojects = null
+
+		if (baseProject != null) {
+			basePackage        = "${baseProject.poc.basePackage}"
+		}
+	}
+
+	// HACK: to allow depending on multiple generated projects (with same name)
+	//       gradle issue #847 - https://github.com/gradle/gradle/issues/847
+	if (baseProject != null && project != baseProject) {
+		project.poc.projectGroup = "${project.poc.projectGroup}.${baseProject.name}"
+	}
+
+	// configure this project according to PoC properties
+	configureProject()
+
+	swaggerSources {
+		"${swaggerSourceName}" defaultSwaggerSource
+	}
+}
+
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath group: 'gradle.plugin.org.hidetake', name: 'gradle-swagger-generator-plugin'
+	}
+}
+
+
+/**
+ * Generates from the importMappings variable a comma seperated key-value list
+ * of import mappings used by the swagger codegen.
+ *
+ * @return comma seperated key-value import mappings list
+ */
+def generateImportMappings() {
+	project.importMappings.collect { key, value ->
+		"${key}=${value}"
+	}.join(',')
+}
+
+
+/**
+ * Generates the config.json file used by the generator to configure the code
+ * generation process. The data is taken from the generatorConfig property map.
+ */
+task generateSwaggerConfigFile() {
+	doLast {
+		def json = project.generatorConfig.collect { key, value ->
+			"  \"${key}\": \"${value}\""
+		}.join(',\n')
+		json = '{\n' + json + '\n}\n'
+
+		def file = project.swaggerSources.project.code.configFile
+		file.parentFile.mkdirs()
+		file.write(json)
+	}
+}
+
+
+/**
+ * Generates the project path for a generation subproject with the given name
+ * based on the actual project.
+ *
+ * @param sourceName to get the project path for.
+ * @return the project path.
+ */
+ext.getGenerationSubprojectPath = { sourceName ->
+	return "${project.path}:generated_${sourceName}"
+}
+
+
+/**
+ * Applies the plugin to the actual project.
+ */
+ext.applySwaggerCodegenPlugin = {
+
+	apply plugin: org.hidetake.gradle.swagger.generator.SwaggerGeneratorPlugin
+
+	configurations {
+		swaggerCodegenV2
+		swaggerCodegenV3
+	}
+
+	dependencies {
+		swaggerCodegenV2 group: 'io.swagger'           , name: 'swagger-codegen-cli'
+		swaggerCodegenV3 group: 'io.swagger.codegen.v3', name: 'swagger-codegen-cli'
+	}
+}
+
+
+/**
+ * Applies the predefined swagger source of the given name to the actual
+ * project. The base project from which the swagger source is applied can be
+ * supplied by the optional parameter baseProject.
+ *
+ * @param sourceName The name of the swagger source to apply to actual project.
+ * @param baseProject from which the apply method is executed.
+ */
+ext.applySwaggerSource = { sourceName, Project baseProject = null ->
+
+	def path = sourcePaths[sourceName]
+	if (path == null) {
+		throw new GradleScriptException("No swagger source definition found with name: ${sourceName}", null)
+	}
+
+	defaultProjectConfiguration(baseProject)
+
+	apply from: path
+}
+
+
+/**
+ * Applies the swagger generator plugin and the predefined swagger sources to
+ * the given generation subprojects.
+ * The applying of the plugin can be disabled by setting the optional parameter
+ * applyPlugin to false.
+ *
+ * @param sourceNames The names of the swagger sources to apply to actual project.
+ * @param applyPlugin Whether the plugin is applied; default is true.
+ */
+ext.applySwaggerSourcesToSubprojects = { sourceNames, boolean applyPlugin = true ->
+
+	sourceNames.each { sourceName ->
+
+		project(getGenerationSubprojectPath(sourceName)) {
+
+			apply from: scriptFile
+
+			if (applyPlugin) {
+				applySwaggerCodegenPlugin()
+			}
+
+			applySwaggerSource(sourceName, this.project)
+		}
+	}
+}

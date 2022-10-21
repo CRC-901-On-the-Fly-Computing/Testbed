@@ -1,0 +1,50 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName                  = 'telemetry'
+	projectType                  = 'java-library'
+	basePackage                  = 'de.upb.crc901.otftestbed.commons.telemetry'
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	api            project(':postgrest')
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	api            group: 'org.elasticsearch'         , name: 'elasticsearch'
+	implementation group: 'org.elasticsearch.client'  , name: 'transport'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-commons'
+	api           (group: 'org.springframework.data'  , name: 'spring-data-elasticsearch') {
+		exclude group: 'org.springframework'
+		exclude group: 'org.springframework.data'
+	}
+	//Fix for log4j (forcing upgrade to 2.17.0 if log4j is used)
+        constraints {
+            implementation("org.apache.logging.log4j:log4j-core") {
+                version {
+                    strictly("[2.17, 3[")
+                    prefer("2.17.0")
+                }
+                because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+            }
+        }
+}

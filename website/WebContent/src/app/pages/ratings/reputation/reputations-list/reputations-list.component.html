@@ -1,0 +1,10 @@
+<div class="title" *ngIf="checked && dataSource.length">
+  <label><a routerLink="/ratings">Reviews</a>
+    <mat-icon>chevron_right</mat-icon> <b>{{compositionID}}</b>
+  </label>
+</div>
+<div class="review-wrapper">
+  <div class="review-item" *ngFor="let item of dataSource">
+    <app-rating-item [signature]="item.signature" [data]="item.serviceReputation" [title]="item.serviceReputation.date | date:'yyyy LLL dd HH:mm:ss'" [content]="item.serviceReputation.reputationMessage" single="true"></app-rating-item>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+@import "../colors.sass"
+
+*
+  box-sizing: border-box
+
+:host
+  display: flex
+  min-height: 100vh
+  flex-direction: row
+
+.line
+  border-top: 5px solid $color-blue
+  position: absolute
+  width: 100%
+
+#main
+  display: flex
+  flex-direction: column
+  flex: 5
+  background: $color-dark-gray
+
+header
+  background: $color-light-gray
+  height: 20vh
+
+#content
+  color: $color-text-dark
+  display: flex
+  flex-direction: row
+  
+  section
+    flex: 4
+    min-height: 95vh
+    color: $color-text

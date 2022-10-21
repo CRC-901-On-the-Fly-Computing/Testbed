@@ -1,0 +1,296 @@
+//Output
+import org.gradle.internal.logging.text.StyledTextOutput
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+//Yaml parser
+import org.yaml.snakeyaml.Yaml
+
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+		maven{
+			url "http://repo.jenkins-ci.org/releases/"
+		}
+		maven {
+			url "${sfbNexusBaseUrl}/repository/${sfbNexusDownRepo}/"
+			credentials {
+				username "${sfbNexusUsername}"
+				password "${sfbNexusPassword}"
+			}
+		}
+	}
+
+	dependencies {
+		classpath group: "com.github.kamkozlowski.gradle", name: "mustache", version: "0.0.1"
+	}
+}
+
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectType                  = null
+	applyIdePlugins              = false
+	applySonarQube               = false
+	applyDocker                  = false
+	applyJenkinsGeneration       = false
+	applyLicenseReport           = null
+	applyUpdateConfig            = false
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+task postmanCollectionTestCoverage() {
+	doLast{
+		def postmanFile = new File("${project.projectDir}/OTFTestbed-Requests.postman_collection.json")
+		def postmanURLs = getPostmanURLList(postmanFile)
+		def serviceList = getServiceList(postmanFile)
+
+		def ymlText = []
+		serviceList.each{ url ->
+			def urlFile = new URL("http://${url}/api/swagger.yaml")
+			try {
+				ymlText += urlFile.text
+			} catch (e) {
+				urlFile = new URL("http://${url}/api-docs")
+				ymlText += urlFile.text
+			}
+		}
+		def yamlURLs = []
+		ymlText.each{ yml ->
+			yamlURLs += loadURLMapFromYaml(yml)
+		}
+
+		def results = compareCollection(postmanURLs,yamlURLs)
+		if (results.checkedPercentage < minCheckedPercentage) {
+			throw new GradleException("Checked percentage is too low (expected ${minCheckedPercentage}%)")
+		}
+		if (results.matchedPercentage < minMatchedPercentage) {
+			throw new GradleException("Matched percentage is too low (expected ${minMatchedPercentage}%)")
+		}
+	}
+}
+
+//Number of elements to show if something failes
+if (!project.hasProperty("maxToShow"))
+	ext.maxToShow = 5
+ext.maxToShow = maxToShow as Integer
+
+//Fails the task if real value is smaller than this
+ext.minCheckedPercentage = 100
+ext.minMatchedPercentage = 100
+
+//Postman Collection
+//Gets a list of services from the setup script in the postman collection
+//Only returns the url, we may also return names here so we do not have to split them away but match better later
+//This is a TODO
+def getServiceList(postmanFile) {
+	def parsedJson = new groovy.json.JsonSlurper().parse(postmanFile)
+	def requestConfig = recursiveKeyValueScan(parsedJson, "name", "Add url variables")
+	def script = (requestConfig.event[0][0].script.exec)
+	def urlList = []
+	script.each{ line ->
+		if (line.contains("pm.globals.set")) {
+			def url = getURLFromGlobalSetLine(line)
+			if (url){
+				url = url.trim()
+				urlList += url
+			}
+		}
+	}
+	return urlList
+}
+
+//Returns a url from a script line of the postman collection
+//If syntax in the setup script changes we may have to fix it here
+def getURLFromGlobalSetLine(line) {
+	line = line.replaceAll(".*(pm.globals.set)\\(","")
+	line = line.replaceAll("\\);.*","")
+	line = line.replaceAll('\\"',"")
+	def parts = line.tokenize(",")
+	def name = parts[0]
+	def url = parts[1]
+	return url
+}
+
+//compares the result from the postman collection with those of the yaml files
+def compareCollection(postmanURLs, yamlURLs) {
+	def out = services.get(StyledTextOutputFactory).create("logger")
+	def uncheckedURLs = []
+	def unmatchedURLs = []
+	def checkedURLs = []
+
+	yamlURLs.each{ yamlURL->
+		def matched = false
+		postmanURLs.each{ postmanURL->
+			if (!matched && yamlURL.method.equalsIgnoreCase(postmanURL.method) && yamlURL.url.equals(postmanURL.url)) {
+				checkedURLs += postmanURL //you also could take yaml here, doesn't matter
+				matched = true
+			}
+
+		}
+		if (!matched) {
+			uncheckedURLs += yamlURL
+		}
+	}
+
+	unmatchedURLs = postmanURLs - checkedURLs
+
+	def countChecked = checkedURLs.size
+	def countUnchecked = uncheckedURLs.size
+	def countUnmatched = unmatchedURLs.size
+	def countMatched = postmanURLs.size - countUnmatched
+	def countGes = countChecked+countUnchecked
+
+	def checkedPercentage = (countGes != 0)? (countChecked/countGes)*100 : 100
+	def matchedPercentage = (postmanURLs != 0)? (countMatched/postmanURLs.size)*100 : 100
+
+	checkedPercentage = checkedPercentage.toDouble().round(1)
+	matchedPercentage = matchedPercentage.toDouble().round(1)
+
+	out.withStyle((checkedPercentage==100) ? Style.SuccessHeader:Style.FailureHeader).println("Checked ${countChecked} out of ${countGes} pathes which are ${checkedPercentage}%.")
+	if(checkedPercentage != 100) println "UncheckedURLs: "
+	for (int i = 0; (i < maxToShow || maxToShow == 0) && i < countUnchecked; i++) {
+		def unchecked = uncheckedURLs[i]
+		out.withStyle(Style.Normal).append("\t[*] ")
+		out.withStyle(Style.Normal).println(unchecked)
+	}
+	if (countUnchecked > maxToShow && maxToShow > 0) {
+		out.withStyle(Style.Normal).println("\t... and ${countUnchecked-maxToShow} more")
+	}
+	out.withStyle((matchedPercentage==100) ? Style.SuccessHeader:Style.FailureHeader).println("Matched ${countMatched} out of ${postmanURLs.size} pathes which are ${matchedPercentage}%.")
+	if (matchedPercentage != 100) println "UnmatchedURLs: "
+	for (int i = 0; (i < maxToShow || maxToShow == 0) && i < countUnmatched; i++) {
+		def unmatched = unmatchedURLs[i]
+		out.withStyle(Style.Normal).append("\t[*] ")
+		out.withStyle(Style.Normal).println(unmatched)
+	}
+	if (countUnmatched > maxToShow && maxToShow > 0) {
+		out.withStyle(Style.Normal).println("\t... and ${countUnmatched-maxToShow} more")
+	}
+
+	println "\n===Info==="
+	println "Matched pathes are pathes contained in the postman collection and found in the yaml apis, checked pathes are yaml pathes that could be found in the postman collection."
+	if (checkedPercentage != 100)
+		println " [*] Unchecked pathes are wrongly defined in the postman collection or not checked yet."
+	if (matchedPercentage != 100)
+		println " [*] Unmached pathes may be deleted in the interface or wrongly defined in the postman collection."
+	println "To see more list items use command '-PmaxToShow=10' or to see all '-PmaxToShow=0'"
+
+	return [ "matchedPercentage":matchedPercentage,
+		"checkedPercentage":checkedPercentage]
+}
+
+//load urls from interface def files
+def loadURLMapFromYaml(ymlText) {
+	def parser = new Yaml()
+	def parsed = parser.load(ymlText)
+	def basePath = parsed.basePath
+	def urlList = []
+	parsed.paths.each{ path, map ->
+		map.each{ method, request ->
+			def returnMap = [:]
+			returnMap += ["method":method]
+			//We replace place holders to match against the then hopefuly still unique uris as they wouldn't match otherwise
+			returnMap += ["url":(basePath+path).replaceAll('\\{[^\\}]*\\}','.').replaceAll("//","/").replaceAll("/\$","")]
+			urlList += returnMap
+		}
+	}
+	return urlList
+}
+
+//JSON
+//scans recursiv through the map and returns all elements with matching key value pairs
+def recursiveKeyValueScan(map, key, value) {
+	def resultList = []
+	if (!map || (!(map instanceof Map) && !(map instanceof List))) {}
+	else if (map instanceof List) {map.each {v ->resultList += recursiveKeyValueScan(v, key, value)}}
+	else { map.each { k,v ->
+			if (k.equals(key) && v.equals(value)) {
+				resultList += map
+			} else {
+				resultList += recursiveKeyValueScan( v, key, value )}}
+	}
+	return resultList
+}
+
+//Scans recursiv through the map and returns a list of all values found with the given key
+def recursiveChildrenScan(map, key) {
+	def resultList = []
+	if (!map || (!(map instanceof Map) && !(map instanceof List))) {}
+	else if (map instanceof List) {map.each {v ->resultList += recursiveChildrenScan(v, key)}}
+	else { map.each { k,v ->
+			if (k.equals(key)) {
+				resultList += map[key]
+			} else {
+				resultList += recursiveChildrenScan( v, key )}}
+	}
+	return resultList
+
+}
+
+//Removes unused fileds from postman collection results
+//Only keeps url and method informations
+def removeUnusedFields(requestList) {
+	def out = services.get(StyledTextOutputFactory).create("logger")
+	def filteredRequestList = []
+	def couldntSplit = []
+	requestList.each{ map ->
+		def filteredMap = [:]
+		filteredMap += ["method":map.method]
+		def url = map.url.raw
+		//'^[^}]*}}' regex matching until first }} block ends (before /api/)
+		def splittedURL = url.split('^[^\\}]*\\}\\}')
+		if (splittedURL.size() != 2) {
+			couldntSplit += url
+		} else {
+			//We replace place holders to match against the then hopefuly still unique uris as they wouldn't match otherwise
+			filteredMap += ["url":splittedURL[1].replaceAll('\\{\\{[^\\}]*\\}\\}','.').replaceAll("/\$","")]
+			filteredRequestList += filteredMap
+		}
+	}
+
+	if (!couldntSplit.empty) out.withStyle(Style.FailureHeader).println("Couldn't split urls from pathes: ")
+	for (int i = 0; (i < maxToShow || maxToShow == 0) && i < couldntSplit.size; i++) {
+		def split = couldntSplit[i]
+		out.withStyle(Style.Normal).append("\t[*] ")
+		out.withStyle(Style.Normal).println(split)
+	}
+	if (couldntSplit.size > maxToShow && maxToShow > 0) {
+		out.withStyle(Style.Normal).println("\t... and ${couldntSplit.size-maxToShow} more")
+	}
+
+	return filteredRequestList
+}
+
+//Filters urls that do not contain / because we only want to test methods, not the swagger interface
+//Filters results from the postman collection
+//Used to filter out test urls like {{server}}
+def filterURLs(requestList) {
+	def filteredList = []
+	requestList.each{ v ->
+		if(v.url.raw.contains("/")) {
+			filteredList += v
+		}
+	}
+	return filteredList
+}
+
+//gets a list of urls and methods checked by the postman collection
+//Takes a String as an input
+def getPostmanURLList(postmanFile) {
+	def parsedJson = new groovy.json.JsonSlurper().parse(postmanFile)
+
+	def requestList = recursiveChildrenScan(parsedJson, "request")
+
+	def filteredRequestList = removeUnusedFields(filterURLs(requestList))
+	return filteredRequestList
+}

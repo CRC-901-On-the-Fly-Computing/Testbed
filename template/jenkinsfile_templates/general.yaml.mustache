@@ -1,0 +1,34 @@
+### General
+projectName: {{projectName}}
+# must end with / and may not start with /
+projectPath: {{projectPath}}
+
+### Jenkinsfile
+# set to true if this project should trigger other projects
+# for this list, the user is asked whether or not they should be triggered
+#triggerOtherProjects: {{triggerOtherProjects}}
+triggerList: {{#triggerOtherProjects}}
+{{triggerList}}
+{{/triggerOtherProjects}}
+# set to true if this project should trigger other projects
+# user is *not* asked whether or not they should be build.
+# build is triggered after the docker stage is done if no previous step failed
+# forceTriggerProjects: {{forceTriggerProjects}}
+forceList: {{#forceTriggerProjects}}
+{{forceList}}
+{{/forceTriggerProjects}}
+uploadDocker: {{uploadDocker}}
+uploadArtifacts: {{uploadArtifacts}}
+useSonarqube: {{useSonarqube}}
+
+### Jenkins project
+branch: "*/develop"
+# If any other folder then the projects folder should be included
+# for more includes seperate with a space
+includeRegions: {{includeRegions}}
+# Same as include but nothing is excluded by default
+excludeRegions: {{excludeRegions}}
+# Might be used if you need a different jenkinsfile for any reason (for example to test a specific branch without uploading)
+jenkinsfileName: Jenkinsfile
+# Token to trigger the build
+token: iogsdlkmk

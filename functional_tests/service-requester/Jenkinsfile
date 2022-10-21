@@ -1,0 +1,30 @@
+
+node {
+	env.NODEJS_HOME = "${tool 'Angular'}"
+	// on linux / mac
+	env.PATH="${env.NODEJS_HOME}/bin:${env.PATH}"
+	
+	stage('Preparation') {
+		checkout([
+			$class: 'GitSCM',
+			branches: scm.branches,
+			doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+			extensions: scm.extensions,
+			userRemoteConfigs: scm.userRemoteConfigs
+		])
+	}
+	stage('Initiate tests'){
+		dir("functional_tests/service-requester"){
+			def postmanFiles = findFiles(glob: '*.postman_collection.json')
+			for( file in postmanFiles ){
+				stage(file.name.take(file.name.lastIndexOf('.postman_collection.json'))){
+					catchError(buildResult: 'FAILURE', stageResult: 'FAILURE'){
+						sh """
+							newman run ${file} --bail
+						"""
+					}
+				}
+			}
+		}
+	}
+}

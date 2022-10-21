@@ -1,0 +1,14 @@
+<div class="message-box" *ngIf="checked && !dataSource.length">
+  <p>
+    There is no review. <br>
+  </p>
+</div>
+
+<div class="review-wrapper" *ngIf="dataSource.length">
+  <mat-form-field class="full-width">
+    <input #searchElement matInput placeholder="Search..." [(ngModel)]="query">
+  </mat-form-field>
+  <div class="review-item" *ngFor="let item of dataSource | search:'serviceCompositionId':query">
+    <app-rating-item [count]="counts[item.serviceCompositionId]" [data]="item" [title]="item.serviceCompositionId" content=""></app-rating-item>
+  </div>
+</div>

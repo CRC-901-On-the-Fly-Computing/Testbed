@@ -1,0 +1,194 @@
+openapi: 3.0.2
+info:
+  title: Buy Processor REST Interface
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '1.0'
+servers:
+- url: /api
+tags:
+- name: BuyProcessor
+  description: all-in-one tag
+paths:
+  /verifier/public_identity:
+    get:
+      summary: Retrieves the PublicIdentity of the Credential Verifier
+      tags:
+      - BuyProcessor
+      operationId: getPublicIdentity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifierPublicIdentity'
+  /review_token_issuer/public_identity:
+    get:
+      summary: Retrieves the PublicIdentity of the Review Token Issuer
+      tags:
+      - BuyProcessor
+      operationId: getReviewTokenIssuerPublicIdentity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTIPublicIdentity'
+  /access_token_issuer/public_identity:
+    get:
+      summary: Retrieves the PublicIdentity of the Access Token Issuer
+      tags:
+      - BuyProcessor
+      operationId: getAccessTokenIssuerPublicIdentity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ATIPublicIdentity'
+  '/providers/{otfpUUID}/requests/{requestUUID}/offers/{offerUUID}':
+    parameters:
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    - $ref: '#/components/parameters/pathRequestUuid'
+    - $ref: '#/components/parameters/pathOfferUuid'
+    get:
+      summary: Gets the offer specified by this uuid.
+      tags:
+      - BuyProcessor
+      operationId: getOffer
+      responses:
+        '200':
+          description: Returns a detailed offer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+    post:
+      summary: 'Buys the requested item, if the authentication was successful.'
+      tags:
+      - BuyProcessor
+      operationId: buyItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyTokens'
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/BuyTokens'
+        required: true
+      responses:
+        '200':
+          description: 'Returns a service-link, a review-token and an access-token.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuyResponse'
+  '/providers/{otfpUUID}/requests/{requestUUID}/offers':
+    parameters:
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      summary: Requests a list of offers for the entered request.
+      tags:
+      - BuyProcessor
+      operationId: getOffersForRequest
+      responses:
+        '200':
+          description: The UUID for the offer.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+    put:
+      summary: Lets the OTF Provider enter an offer for the request
+      tags:
+      - BuyProcessor
+      operationId: enterOffer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferAndImage'
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/OfferAndImage'
+        required: true
+      responses:
+        '200':
+          description: The UUID for the offer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleUUID'
+components:
+  schemas:
+    ATIPublicIdentity:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    BuyResponse:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    BuyTokens:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    Offer:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OfferAndImage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    RTIPublicIdentity:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    SimpleUUID:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    VerifierPublicIdentity:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathRequestUuid:
+      name: requestUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathOfferUuid:
+      name: offerUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathOtfpUuid:
+      name: otfpUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+

@@ -1,0 +1,62 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'composition_analysis'
+	basePackage            = 'de.upb.crc901.otftestbed.verificator'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':telemetry')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// SFB dependencies
+	implementation group: 'de.upb.crc901'             , name: 'b3-verification'
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'commons-io'                , name: 'commons-io'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'com.microsoft'             , name: 'z3'
+	runtimeOnly    group: 'edu.stanford.protege'      , name: 'org.semanticweb.owl.owlapi'
+	runtimeOnly    group: 'org.eclipse.xtext'         , name: 'org.eclipse.xtext.xtext'
+}

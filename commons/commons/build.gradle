@@ -1,0 +1,83 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectType                  = 'java-library'
+	basePackage                  = 'de.upb.crc901.otftestbed.commons'
+	applyDocker                  = false
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven-publish'
+
+
+jar {
+	exclude('logback.xml')
+}
+
+shadowJar {
+	classifier ''
+}
+
+// publish only shadow
+publishing {		
+	publications {
+		shadow(MavenPublication) { publication ->
+			project.shadow.component(publication)
+		}
+	}
+	repositories {
+		maven {
+			url "${sfbNexusBaseUrl}/repository/${sfbNexusUpRepo}-${project.version.toString().endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}"
+
+			credentials {
+				username "${sfbNexusUsername}"
+				password "${sfbNexusPassword}"
+			}
+		}
+	}
+}
+
+
+dependencies {
+	// project dependencies
+	api project(':postgrest')
+
+	// SFB dependencies
+	implementation group: 'de.upb.crc901'             , name: 'publish-subscribe'
+	implementation group: 'de.upb.crypto'             , name: 'craco'
+	api            group: 'de.upb.crypto.pbc'         , name: 'upb_pbc'
+	api            group: 'de.upb.crypto.react'       , name: 'acs'
+	implementation group: 'de.upb.crypto.react'       , name: 'protocols'
+	implementation group: 'de.upb.crypto.react'       , name: 'building-blocks'
+	implementation group: 'de.upb.crypto.react'       , name: 'predicate-protocols'
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	api            group: 'com.fasterxml.jackson.core', name: 'jackson-core'
+	api            group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'commons-lang'              , name: 'commons-lang'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'org.mongodb'               , name: 'mongo-java-driver'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-commons'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-mongodb'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'com.kjetland'              , name: 'mbknor-jackson-jsonschema_2.11'
+	runtimeOnly    group: 'commons-beanutils'         , name: 'commons-beanutils'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger2'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	runtimeOnly    group: 'org.apache.commons'        , name: 'commons-configuration2'
+	runtimeOnly    group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson'
+	runtimeOnly    group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+}

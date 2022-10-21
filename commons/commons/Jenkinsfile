@@ -1,0 +1,74 @@
+def projectName = "commons"
+def fullProjectName = "sfb901-testbed/${projectName}"
+def nexus = "nexus.cs.upb.de"
+def deploymentName = projectName.replace("_","-")
+//With / at the end but not the beginning
+def projectPath = "commons/"
+def projectDomain = projectPath[0..-2].replace("_","-")
+def newTag = "nexus.cs.upb.de/sfb901-testbed/${projectName}:v${env.BUILD_ID}";
+
+/*
+def triggerList = ["OTFTestbed_commons_commons_otf_provider","OTFTestbed_commons_service_spec_uploader","OTFTestbed_execution-gateway_kubernetes_executor_spawner","OTFTestbed_local_client_user_creator","OTFTestbed_local_client_service_requester_new","OTFTestbed_market_provider_buy_processor","OTFTestbed_market_provider_credential_issuer","OTFTestbed_market_provider_otfp_registry_new","OTFTestbed_market_provider_review_board","OTFTestbed_market_provider_system_manager","OTFTestbed_otf_provider_composition_analysis","OTFTestbed_otf_provider_otfp_policy_provider",""]
+triggerList = triggerList.dropRight(1)
+
+*/
+
+def buildProjects = true
+
+
+
+podTemplate(inheritFrom: 'default') {
+    node(POD_LABEL) {
+		stage('Preparation') {
+			checkout([
+				$class: 'GitSCM',
+				branches: scm.branches,
+				doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+				extensions: scm.extensions,
+				userRemoteConfigs: scm.userRemoteConfigs
+			])
+		}
+		stage("Cleanup"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:clean :${projectName}:cleanBuild :${projectName}:cleanAssemble :${projectName}:cleanCheck
+				"""
+			}
+		}
+		stage("Assemble"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:assemble
+				"""
+			}
+		}
+		stage("Check"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:check
+				"""
+			}
+		}
+		stage('Build and upload artifacts') {
+			withCredentials([
+				[$class: 'UsernamePasswordMultiBinding', credentialsId: 'sfb901b1',
+				usernameVariable: 'GRGIT_USER', passwordVariable: 'GRGIT_PASS']
+			]){
+				//available as an env variable, but will be masked if you try to print it out any which way
+				retry(2) {
+					sh """
+					chmod +x ./gradlew
+					./gradlew :${projectName}:build
+					./gradlew snapshot :${projectName}:publish -Dorg.ajoberstar.grgit.auth.username="${env.GRGIT_USER}" \
+					-Dorg.ajoberstar.grgit.auth.password="${env.GRGIT_PASS}"
+					"""
+				}
+			}
+			junit allowEmptyResults: true, testResults:"${projectPath}${projectName}/build/test-results/test/*.xml"
+		}
+	}
+}
+

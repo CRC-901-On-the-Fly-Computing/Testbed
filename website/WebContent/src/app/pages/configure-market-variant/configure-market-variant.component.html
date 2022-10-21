@@ -1,0 +1,112 @@
+<label for="">Market Functionality</label>
+<mat-card>
+  <mat-grid-list cols="4" rowHeight="75px">
+    <mat-grid-tile colspan="1">
+      <mat-form-field id="requirement-specification">
+        <mat-select placeholder="Requirement Specifications">
+          <mat-option *ngFor="let specification of requirementSpecifications" [value]="specification.name">
+            {{ specification.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <mat-form-field id="matcher">
+        <mat-select placeholder="Matcher">
+          <mat-option *ngFor="let match of matcher" [value]="match.name">
+            {{ match.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <mat-form-field id="service-composition">
+        <mat-select placeholder="Service Composition">
+          <mat-option *ngFor="let composition of serviceComposition" [value]="composition.name">
+            {{ composition.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Configure Configurator</button>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <mat-checkbox>Reputation System</mat-checkbox>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <mat-checkbox>Service Deployment</mat-checkbox>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <mat-checkbox>Service Execution</mat-checkbox>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <label for="authentication-rules">Authentication Rules</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <span>{{authenticationFile ? authenticationFile.name : ''}}</span>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <app-upload-button [(file)]="authenticationFile" [callback]="theBoundCallback">Upload</app-upload-button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>
+
+<label for="">Global Data</label>
+<mat-card>
+  <mat-grid-list cols="4" rowHeight="75px">
+    <mat-grid-tile colspan="1">
+      <label for="ontologies">Ontologies</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <input matInput id="ontologies" placeholder="GlobalOntologieServer1">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Load...</button>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <label for="oit">OIT</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <input matInput id="oit" placeholder="OIT1">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Load...</button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>
+
+<label>Initial Setup</label>
+<mat-card>
+  <mat-grid-list cols="4" rowHeight="75px">
+    <mat-grid-tile colspan="1">
+      <label for="otf-provider">OTF Providers</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <input matInput id="otf-provider" placeholder="MyOTFProviderSet">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Load...</button>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <label for="service-provider">Service Provider</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <input matInput id="service-provider" placeholder="MyServiceProviderSet">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Load...</button>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <label for="reputation-data">Reputation-Data</label>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2">
+      <input matInput id="reputation-data" placeholder="PreconfiguredSetOfReputationData">
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <button mat-raised-button color="warn">Load...</button>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>

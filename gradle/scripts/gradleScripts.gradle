@@ -1,0 +1,35 @@
+/**
+ * This is a collection of the gradle script files to decouple the scripts from
+ * the projects (and for clearer apply calls).
+ *
+ * Usage:
+ *
+ * First apply this script to load the collection.
+ * apply from: "${rootProject.projectDir}/gradle/scripts/gradleScripts.gradle"
+ *
+ * Then apply the scripts you need, e.g. the repositories like so:
+ * apply from: gradleScript.repositories
+ */
+
+
+/**
+ * The base path of the gradle scripts.
+ */
+def gradleScriptsDirectory = "${rootProject.projectDir}/gradle/scripts"
+
+/**
+ * The map of the gradle script files.
+ */
+ext.gradleScript = [
+	applyBuildscriptDepMgmt: "${gradleScriptsDirectory}/applyBuildscriptDepMgmt.gradle",
+	dependencyManagement   : "${gradleScriptsDirectory}/dependencyManagement.gradle",
+	docker                 : "${gradleScriptsDirectory}/docker.gradle",
+	gradleLint             : "${gradleScriptsDirectory}/gradleLint.gradle",
+	jenkinsGeneration      : "${gradleScriptsDirectory}/jenkinsGeneration.gradle",
+	licenseReport          : "${gradleScriptsDirectory}/licenseReport.gradle",
+	repositories           : "${gradleScriptsDirectory}/repositories.gradle",
+	sonarQube              : "${gradleScriptsDirectory}/sonarQube.gradle",
+	swaggerCodegen         : "${gradleScriptsDirectory}/swaggerCodegen.gradle",
+	updateConfig           : "${gradleScriptsDirectory}/updateConfig.gradle",
+	versions               : "${rootProject.projectDir}/versions.gradle"
+].asImmutable()

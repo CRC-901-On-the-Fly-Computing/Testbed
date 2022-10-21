@@ -1,0 +1,51 @@
+<form novalidate [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <mat-form-field floatLabel="always">
+      <mat-label>Name</mat-label>
+      <input matInput required formControlName="username" />
+      <mat-error *ngIf="form.controls.username.hasError('required')">Enter your name.</mat-error>
+    </mat-form-field>
+  </div>
+  <div formGroupName="attributes">
+    <div formGroupName="attributePairs">
+      <div>
+        <mat-form-field floatLabel="always">
+          <mat-label>Country</mat-label>
+          <input matInput formControlName="country" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field floatLabel="always">
+          <mat-label>Subscriptionlevel</mat-label>
+          <mat-select formControlName="subscriptionLevel">
+            <mat-option *ngFor="let subscriptionlevel of subscriptionlevels" [value]="subscriptionlevel.value">{{
+              subscriptionlevel.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field floatLabel="always">
+          <mat-label>Userlicense</mat-label>
+          <mat-select formControlName="userLicense">
+            <mat-option *ngFor="let license of licenses" [value]="license.value">{{ license.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field floatLabel="always">
+          <mat-label>Age</mat-label>
+          <input matInput type="number" min="{{minAge}}" max="{{maxAge}}" formControlName="age" />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div>
+  </div>
+  <div style="height: 100px;">
+    <mat-progress-spinner [diameter]="40" mode="indeterminate" *ngIf="showSpinner"></mat-progress-spinner>
+  </div>
+</form>
+<button (click)="onFakeRegister()" mat-raised-button color="primary" type="submit">Register User</button>
+<p>
+  {{ result.message }}
+</p>

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.16">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <hudson.triggers.SCMTrigger>
+          <spec></spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.42">
+    <scm class="hudson.plugins.git.GitSCM" plugin="git@3.6.4">
+      <configVersion>2</configVersion>
+      <userRemoteConfigs>
+        <hudson.plugins.git.UserRemoteConfig>
+          <url>https://sfb901b1@git.cs.upb.de/SFB901-Testbed/Testbed.git</url>
+          <credentialsId>sfb901b1</credentialsId>
+        </hudson.plugins.git.UserRemoteConfig>
+      </userRemoteConfigs>
+      <branches>
+        <hudson.plugins.git.BranchSpec>
+          <name>{{branch}}</name>
+        </hudson.plugins.git.BranchSpec>
+      </branches>
+      <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+      <submoduleCfg class="list"/>
+      <extensions>
+        <hudson.plugins.git.extensions.impl.PathRestriction>
+          <includedRegions>{{projectPath}}{{projectName}}/.*{{includeRegions}}</includedRegions>
+          <excludedRegions>{{excludeRegions}}</excludedRegions>
+        </hudson.plugins.git.extensions.impl.PathRestriction>
+      </extensions>
+    </scm>
+    <scriptPath>{{projectPath}}{{projectName}}/{{jenkinsfileName}}</scriptPath>
+    <lightweight>true</lightweight>
+  </definition>
+  <triggers/>
+  <authToken>{{token}}</authToken>
+  <disabled>false</disabled>
+</flow-definition>

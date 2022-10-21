@@ -1,0 +1,162 @@
+repositories{
+        maven { url 'https://jitpack.io' }
+}
+
+buildscript {
+	dependencies {
+		classpath group: 'org.ajoberstar', name: 'gradle-git'
+		classpath group: 'org.yaml'      , name: 'snakeyaml'
+	}
+}
+
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'otf_proseco_configurator'
+	basePackage            = 'de.upb.crc901.otftestbed.proseco'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+import org.ajoberstar.gradle.git.auth.*
+import org.ajoberstar.gradle.git.tasks.*
+import org.ajoberstar.grgit.*
+
+
+task run(type: JavaExec) {
+	environment "EXECUTOR_ADDRESS", "131.234.122.191:8000"
+    main = "${basePackage}.impl.Application"
+    classpath = sourceSets.main.runtimeClasspath
+    args = ["${mongoUser}", "${mongoPassword}","${sfbNexusUsername}", "${sfbNexusPassword}", "nexus.cs.upb.de/sfb901-testbed/"]
+}
+
+task pathingJar(type: Jar) {
+    dependsOn configurations.runtime
+    archiveAppendix.set('pathing')
+ 
+    doFirst {
+        manifest {
+            attributes "Class-Path": configurations.runtime.files.collect {
+                it.toURI().toURL().toString().replaceFirst("file:/+", '/')
+            }.join(' ')
+        }
+    }
+}
+
+bootRun{
+	dependsOn pathingJar
+	environment "EXECUTOR_ADDRESS", "131.234.122.191:8000"
+	main = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+	args = [
+		"${mongoUser}",
+		"${mongoPassword}",
+		"${sfbNexusUsername}",
+		"${sfbNexusPassword}",
+		"nexus.cs.upb.de/sfb901-testbed/"
+	]
+	doFirst {
+        classpath = files("$buildDir/classes/java/main", "$buildDir/resources/main", pathingJar.archiveFile.get())
+    }
+}
+
+docker {
+	files new File("/home/jenkins/.kube/config")
+	files "discovery.properties", "Dockerfile", "icpl.properties", "otf_proseco_configurator_template_config.yaml", "port-mappings.properties"
+	copySpec.with{
+		from('.') {
+			include 'conf/**'
+			into 'conf'
+		}
+		from('.') {
+			include 'domains/**'
+			into 'domains'
+		}
+	}
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':commons_connect')
+	implementation project(':commons_otf_provider')
+	implementation project(':postgrest')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// SFB dependencies
+	implementation group: 'de.upb.crc901'             , name: 'reputation-matcher'
+	implementation group: 'de.upb.crypto.react'       , name: 'acs'
+
+	// PROSECO
+	implementation 'com.github.crc901-proof-of-concept.PROSECO:commons:development-SNAPSHOT'
+	implementation 'com.github.crc901-proof-of-concept.PROSECO:core:development-SNAPSHOT'
+	implementation group: 'org.aeonbits.owner'        , name: 'owner-java8', version:'1.0.6'
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'com.mashape.unirest'       , name: 'unirest-java'
+	implementation group: 'com.spotify'               , name: 'docker-client', classifier: 'shaded'
+	implementation group: 'commons-io'                , name: 'commons-io'
+	implementation group: 'io.fabric8'				  , name: 'kubernetes-client' , version: '4.3.0'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.apache.commons'        , name: 'commons-lang3'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+//	compileOnly    group: 'org.springframework.boot'  , name: 'spring-boot-devtools'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-commons'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-mongodb'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'com.google.guava'          , name: 'guava'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-core'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spi'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spring-web'
+	runtimeOnly    group: 'javax.xml.bind'            , name: 'jaxb-api'
+	runtimeOnly    group: 'org.apache.commons'        , name: 'commons-io'
+	runtimeOnly    group: 'org.apache.tomcat.embed'   , name: 'tomcat-embed-core'
+	runtimeOnly    group: 'org.mongodb'               , name: 'bson'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver-core'
+}
+
+project(getGenerationSubprojectPath('java_client')) {
+	swaggerSources.project.setInputFile file("${projectDir}/../../specifications/proseco_service_specification.yaml")
+}
+
+project(getGenerationSubprojectPath('spring_server')) {
+	swaggerSources.project.setInputFile file("${projectDir}/../../specifications/proseco_service_specification.yaml")
+}
+
+run.dependsOn build
+bootRun.dependsOn build
+docker.dependsOn build

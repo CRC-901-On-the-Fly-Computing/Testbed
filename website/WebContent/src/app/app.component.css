@@ -1,0 +1,39 @@
+#frame {
+  height: 100%;
+  float: left;
+  min-width: 100%;
+}
+
+.logo img {
+  float: left;
+  margin-left: 20px;
+}
+
+#main {
+  min-height: calc( 100vh - 150px);
+  display: flex;
+}
+
+#content {
+  padding: 30px;
+  flex: 1;
+}
+
+#sidebar {
+  background-color: #064c65;
+  color: #fff;
+  width: 300px;
+}
+
+#roles {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+  #sidebar {
+    width: 55px;
+    overflow: hidden;
+  }
+}

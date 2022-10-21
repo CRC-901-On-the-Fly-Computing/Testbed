@@ -1,0 +1,55 @@
+@import "../../../colors.sass"
+  
+:host
+  background: $color-light-gray
+  flex: 1
+  display: flex
+  text-align: center
+  flex-direction: column
+
+.logo-wrapper  
+  display: flex
+  align-content: center
+  justify-content: center
+  padding: 3em 0
+
+#logo
+  background: url('/assets/poc.svg') no-repeat 
+  background-size: contain
+  width: 150px
+  height: 110px
+  opacity: 0.7
+  transition: 0.25s all
+
+#logo:hover
+  opacity: 1
+
+.nav
+  flex: 5
+
+  ul
+    list-style: none
+    padding: 0
+    margin: 0
+    padding: 0 2em
+
+    a
+      text-align: left
+      display: block
+      padding: 1em
+      margin: 0.25em 0
+      border-radius: 10px
+    
+    a:hover
+      background-color: $color-lighter-gray
+
+    .mat-icon
+      float: left
+      position: relative
+      top: 4px
+      margin-right: 10px
+
+    
+.active-link
+  color: #fff
+  background-color: rgba(150, 150, 150, 0.1)

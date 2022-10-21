@@ -1,0 +1,7 @@
+<svg *ngIf="visibility" #svg [attr.width]="_options.width" [attr.height]="_options.height">
+  <g #box [zoomableOf]="svg"
+    [attr.transform]="'translate(' + translate + ', ' + translate + ') scale(' + scale / 100 + ')'">
+    <g [linkVisual]="link" *ngFor="let link of links"></g>
+    <g [nodeVisual]="node" *ngFor="let node of nodes" [draggableNode]="node" [draggableInGraph]="graph"></g>
+  </g>
+</svg>

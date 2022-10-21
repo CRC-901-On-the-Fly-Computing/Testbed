@@ -1,0 +1,29 @@
+node {
+  stage('Preparation') {
+    checkout([
+      $class: 'GitSCM',
+      branches: scm.branches,
+      doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+      extensions: scm.extensions,
+      userRemoteConfigs: scm.userRemoteConfigs
+    ])
+  }
+  stage('Rest Interface checkup'){
+	try {
+		nodejs("Postman"){
+			sh """
+			cd ./commons/postman
+			mkdir -p 'output'
+			newman run OTFTestbed-Requests.postman_collection.json --reporters html,cli,json --reporter-json-export 'output/report.json' --reporter-html-export 'output/report.html'
+			"""
+		}
+	} finally {
+		archiveArtifacts artifacts: 'commons/postman/output/report.*', fingerprint: true
+	}
+  }
+  stage('Test coverage'){
+	sh """
+		gradlew postmanCollectionTestCoverage -PmaxToShow=10
+	"""
+  }
+}

@@ -1,0 +1,175 @@
+openapi: 3.0.2
+info:
+  title: Kubernetes Executor Spawner REST Interface
+  description: >-
+    This service can spawn an executor with the specified services on the
+    kubernetes cluster.
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.1
+servers:
+- url: /api
+tags:
+- name: ExecutorSpawner
+  description: all-in-one tag
+paths:
+  /executor:
+    get:
+      tags:
+      - ExecutorSpawner
+      description: returns list of available executors
+      operationId: getExecutors
+      responses:
+        '200':
+          description: List of Executors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfExecutors'
+    post:
+      tags:
+      - ExecutorSpawner
+      description: Spawns an executor at the kubernetes.
+      operationId: spawnExecutor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListOfServices'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+  '/executor/{executorId}':
+    parameters:
+    - $ref: '#/components/parameters/pathExecutorId'
+    get:
+      tags:
+      - ExecutorSpawner
+      description: returns the executor if available
+      operationId: getExecutor
+      responses:
+        '200':
+          description: Executor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutorDescription'
+        '400':
+          description: Executor not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+    put:
+      tags:
+      - ExecutorSpawner
+      summary: update executor with executor-id
+      operationId: updateExecutor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutorDescription'
+        required: true
+      responses:
+        '200':
+          description: Update successfully executed
+    delete:
+      tags:
+      - ExecutorSpawner
+      description: destroy an Executor and delete it from Kubernetes
+      operationId: destroyExecutor
+      responses:
+        '200':
+          description: successfully destroy the Executor
+  '/executor_log/{executorId}':
+    parameters:
+    - $ref: '#/components/parameters/pathExecutorId'
+    get:
+      tags:
+      - ExecutorSpawner
+      description: returns the logs of the executor
+      operationId: getLogs
+      responses:
+        '200':
+          description: Executor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutorLogs'
+        '400':
+          description: Executor not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+    delete:
+      tags:
+      - ExecutorSpawner
+      description: delete the logs of the given executor
+      operationId: deleteLogs
+      responses:
+        '200':
+          description: Log of the Executor successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+        '400':
+          description: Executor not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+components:
+  schemas:
+    ExecutorDescription:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ExecutorLog:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ExecutorLogs:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfExecutors:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfServices:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    SimpleJsonMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathExecutorId:
+      name: executorId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathExecutorName:
+      name: executorName
+      in: path
+      required: true
+      schema:
+        type: string
+

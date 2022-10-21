@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+a {
+  color: #064c65;
+  text-decoration: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.message-box p {
+  margin: 0;
+  padding: 0;
+  line-height: 30px;
+}
+
+.message-box a {
+  font-weight: bold;
+}
+
+.custom-stackbar a {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.full-width {
+  width: 100%;
+}

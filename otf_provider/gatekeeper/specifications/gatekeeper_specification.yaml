@@ -1,0 +1,364 @@
+openapi: 3.0.2
+info:
+  title: Gatekeeper REST Interface
+  description: Rest interface to communicate with the gatekeeper.
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.1
+servers:
+- url: /api
+tags:
+- name: Gatekeeper
+  description: all-in-one tag
+paths:
+  /gatekeeper/requests:
+    put:
+      tags:
+      - Gatekeeper
+      - gatekeeper
+      - job creation
+      summary: Creates a new job and returns its uuid
+      operationId: putRequest
+      responses:
+        '200':
+          description: UUID of the created job
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+  '/gatekeeper/{uuid}/interview':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    post:
+      tags:
+      - Gatekeeper
+      - gatekeeper
+      - configurator
+      operationId: postInterview
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Map'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+        '400':
+          description: Not yet initialized.
+  '/gatekeeper/{uuid}/callbacks':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    put:
+      tags:
+      - Gatekeeper
+      - gatekeeper
+      - callback
+      operationId: putCallback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/URLListenerSpec'
+        required: true
+      responses:
+        '200':
+          description: Callback attached.
+        '404':
+          description: No job with given uuid found.
+  '/gatekeeper/requests/{uuid}/state':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    get:
+      tags:
+      - Gatekeeper
+      - otfprovider_gatekeeper
+      summary: Returns the state of a given job
+      description: Returns the state of a job given by the uuid.
+      operationId: getRequestState
+      responses:
+        '200':
+          description: Return the built uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobState'
+        '404':
+          description: Unknown uuid
+  '/gatekeeper/requests/{uuid}/compositionModel':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    put:
+      tags:
+      - Gatekeeper
+      - otfprovider_gatekeeper
+      summary: >-
+        Piped the requirementSpec to the Configurator and responsed the Output
+        from the Requester <a href="http://crc901-tools.cs.upb.de:4242">See
+        Configurator</a>
+      operationId: putConfigCompositionModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleRequirementsSpec'
+        required: true
+      responses:
+        '200':
+          description: Successful request.
+        '400':
+          description: 'Request processor returned 400, 500 or an unknown status code.'
+        '404':
+          description: Unknown uuid
+        '406':
+          description: >-
+            Request doesn't accept requirements at the moment. Most commonly it
+            already got some.
+  '/gatekeeper/requests/{uuid}/flows':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    get:
+      tags:
+      - Gatekeeper
+      - otfprovider_gatekeeper
+      summary: Returns the CompositionModel
+      operationId: getCompositionModel
+      responses:
+        '200':
+          description: return a valid CompositionModel
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SimpleRequirementsSpec'
+        '400':
+          description: 'Request processor returned 400, 500 or an unknown status code.'
+        '404':
+          description: Unknown uuid
+        '406':
+          description: Not configured yet
+        '500':
+          description: >-
+            Some error occured while sending the request to the request
+            processor
+  '/gatekeeper/requests/{uuid}/verifications':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    get:
+      tags:
+      - Gatekeeper
+      - otfprovider_gatekeeper
+      summary: Returns the verification states of the flows
+      operationId: getVerifications
+      responses:
+        '200':
+          description: Returns list with verification states
+          content:
+            application/json:
+              schema:
+                type: string
+      deprecated: true
+  '/gatekeeper/requests/{uuid}/acceptedOffers/{compositionID}':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    - $ref: '#/components/parameters/pathCompositionId'
+    put:
+      tags:
+      - Gatekeeper
+      - otfprovider_gatekeeper
+      operationId: putAcceptedOffer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
+      responses:
+        '200':
+          description: returned the compositionIDs
+          content:
+            application/json:
+              schema:
+                type: string
+  /gatekeeper/receiveMessage:
+    put:
+      summary: put a new message in the Queue
+      operationId: receiveMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        '200':
+          description: Successful request.
+components:
+  schemas:
+    InterviewResponse:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/InterviewState'
+        question:
+          type: string
+    InterviewState:
+      type: string
+      enum:
+      - Incomplete
+      - Complete
+    JobState:
+      type: string
+      enum:
+      - CREATED
+      - CONFIGURING
+      - WAITING_FOR_VERIFICATION
+      - VERIFIED
+      - ACCEPTED
+      - DECLINED
+      - INVALID
+    Map:
+      type: object
+      properties:
+        default:
+          type: string
+      additionalProperties:
+        type: string
+      description: 'a (key, value) map. `default`is an example key'
+    Message:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    Number:
+      type: object
+    OTFMatchingResultRequirement:
+      type: object
+      discriminator:
+        propertyName: matchingType
+    OTFReputationCondition:
+      required:
+      - context
+      - requestedFiveStarRange
+      type: object
+      properties:
+        context:
+          type: string
+          enum:
+          - OVERALL
+          - USABILITY
+          - PERFORMANCE
+          - SECURITY
+          - OTHER
+        requestedFiveStarRange:
+          type: string
+          enum:
+          - ONE
+          - TWO
+          - THREE
+          - FOUR
+          - FIVE
+        operator:
+          type: string
+          enum:
+          - GREATER
+          - GREATER_OR_EQUAL
+          - APPROX_GREATER_OR_EQUAL
+    OTFReputationRequest:
+      type: object
+      required:
+      - matchingResultReq
+      - reputationConditions
+      properties:
+        reputationConditions:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/OTFReputationCondition'
+        matchingResultReq:
+          $ref: '#/components/schemas/OTFMatchingResultRequirement'
+    RequirementsSpecLiteral:
+      type: object
+      properties:
+        name:
+          type: string
+        params:
+          type: array
+          items:
+            type: string
+    RequirementsSpecParameter:
+      type: object
+      properties:
+        name:
+          type: string
+        datatype:
+          type: string
+    SimpleRequirementsSpec:
+      type: object
+      required:
+      - effect
+      - inputParams
+      - nonFunctionalRequirements
+      - operationName
+      - outputParams
+      - preCondition
+      properties:
+        operationName:
+          type: string
+        inputParams:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/RequirementsSpecParameter'
+        outputParams:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/RequirementsSpecParameter'
+        preCondition:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/RequirementsSpecLiteral'
+        effect:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/RequirementsSpecLiteral'
+        nonFunctionalRequirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Number'
+        requester:
+          type: string
+        reputationRequest:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/OTFReputationRequest'
+    URLListenerSpec:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathUuid:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathCompositionId:
+      name: compositionID
+      in: path
+      required: true
+      schema:
+        type: string
+

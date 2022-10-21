@@ -1,0 +1,76 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url 'https://nexus.cs.upb.de/repository/sfb901-libs/'
+			credentials {
+				username "${sfbNexusUsername}"
+				password "${sfbNexusPassword}"
+			}
+		}
+	}
+
+	dependencies {
+		classpath group: 'com.github.kamkozlowski.gradle', name: 'mustache', version: '0.0.1'
+	}
+}
+
+def configurationUri = uri('config/example_configuration.yaml')
+def generatedConfigsPath = 'build/generatedConfigs'
+
+apply plugin: 'mustache-template'
+
+mustache {
+
+	/**
+	 * Generate file from template with following file paths.
+	 * template: 'sourcepath/filename.mustache'
+	 * target  : 'targetpath/filename'
+	 */
+	def generate = { sourcepath, filename, targetpath = generatedConfigsPath, config = configurationUri ->
+		template(uri("${sourcepath}/${filename}.mustache"), uri("${targetpath}/${filename}"), config)
+	}
+
+	// intermediate gradle file (just for moving stuff)
+	generate('project_generation_templates', 'build.gradle', 'build')
+	generate('project_generation_templates', 'settings.gradle', 'build')
+
+
+	// gradle template
+	generate('gradle_templates', 'build.gradle')
+
+	// TODO: Dockerfile generation
+	generate('dockerfile_templates', 'Dockerfile')
+
+	// Jenkinsfile TEMPLATE
+	generate('jenkinsfile_templates', 'Jenkinsfile')
+	generate('jenkinsfile_templates', 'jobconfig.xml')
+
+	// SPRING TEMPLATE GENERATION
+	generate('spring_templates', 'application.properties')
+	generate('spring_templates', 'Application.java')
+	generate('spring_templates', 'Config.java')
+}
+
+
+compileTemplate.doFirst {
+	mkdir generatedConfigsPath
+}
+
+task(clean, type: Delete) {
+	delete 'build'
+}
+
+task(moveConfig, type: Copy) {
+	from('config')
+	into('build/generatedConfigs')
+	include('example_configuration.yaml')
+}
+
+task generateProject(type: GradleBuild) {
+	buildFile = new File('build/build.gradle')
+	tasks = Arrays.asList('projectBuild')
+}
+
+generateProject.dependsOn compileTemplate
+compileTemplate.dependsOn moveConfig

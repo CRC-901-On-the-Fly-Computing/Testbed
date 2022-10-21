@@ -1,0 +1,44 @@
+<mat-card class="item" [class.not-single]="!single">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon class="account" *ngIf="single">account_circle</mat-icon>
+      <button (click)="openDialog()" mat-icon-button class="signature" *ngIf="single && signature">
+        <mat-icon>lock</mat-icon>
+      </button>
+      <span [ngClass]="{'pull-right': single}">{{title}}</span>
+    </mat-card-title>
+    <mat-card-subtitle>
+      <div class="overall" *ngIf="!single">
+        <h1>{{data.overall | number: '1.0-1' }}</h1> out of 5
+      </div>
+      <app-star [style]="{ margin: '0 auto' }" size="large" [count]="data.overall || 0"></app-star>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngIf="single">
+      {{content}}&nbsp;
+    </p>
+    <div class="mat-card-content-item">
+      Usability
+      <app-star size="small" [count]="data.usability || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Performance
+      <app-star size="small" [count]="data.performance || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Security
+      <app-star size="small" [count]="data.security || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Other
+      <app-star size="small" [count]="data.other || 0"></app-star>
+    </div>
+  </mat-card-content>
+  <mat-card-actions *ngIf="!single">
+    <a mat-button routerLink="./{{data.serviceCompositionId}}">
+      {{count}} customer review{{ count > 1 ? 's' : '' }}
+      <mat-icon>more_horiz</mat-icon>
+    </a>
+  </mat-card-actions>
+</mat-card>

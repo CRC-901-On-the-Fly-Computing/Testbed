@@ -1,0 +1,205 @@
+openapi: 3.0.2
+info:
+  title: Proseco REST Interface
+  description: Rest interface to communicate with proseco.
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.2
+servers:
+- url: /api
+tags:
+- name: proseco
+- name: interview
+- name: debug
+- name: configurator
+- name: Proseco
+  description: all-in-one tag
+paths:
+  '/proseco/{uuid}/interview/':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    post:
+      tags:
+      - Proseco
+      - proseco
+      - interview
+      description: Checks if the interview is done yet.
+      operationId: postInterview
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Map'
+        required: true
+      responses:
+        '200':
+          description: Interview state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+        '404':
+          description: Interview not found.
+  '/proseco/{uuid}/logs':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    get:
+      tags:
+      - Proseco
+      - proseco
+      description: Gets the logs of the proseco_container.
+      operationId: getLogs
+      responses:
+        '200':
+          description: Container log.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+        '404':
+          description: Container not found.
+  '/proseco/{uuid}/restart':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    post:
+      tags:
+      - Proseco
+      - proseco
+      description: Restarts the proseco_container.
+      operationId: restartContainer
+      responses:
+        '200':
+          description: Container restarted.
+        '404':
+          description: Container not found.
+  /proseco/list:
+    get:
+      tags:
+      - Proseco
+      - proseco
+      description: Lists the uuid of all spawned proseco_containers.
+      operationId: listContainers
+      responses:
+        '200':
+          description: List of containers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
+        '404':
+          description: Container not found.
+  '/proseco/{uuid}/run':
+    parameters:
+    - $ref: '#/components/parameters/pathUuid'
+    put:
+      tags:
+      - Proseco
+      - proseco
+      description: Starts the configuration process
+      operationId: runConfiguration
+      responses:
+        '200':
+          description: Configuration process is running
+        '400':
+          description: Something is wrong.
+  /debug/domains:
+    get:
+      tags:
+      - Proseco
+      - debug
+      description: Returns list of supported domains.
+      operationId: getDomains
+      responses:
+        '200':
+          description: List of supported domains.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  '/jobstates/{request}':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - Proseco
+      - configurator
+      operationId: getJobstate
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobState'
+  '/monitor_sources/{request}':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - Proseco
+      - configurator
+      operationId: getSources
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitorSources'
+components:
+  schemas:
+    InterviewResponse:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/InterviewState'
+        question:
+          type: string
+    InterviewState:
+      type: string
+      enum:
+        - Incomplete
+        - Complete
+    JobState:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    Map:
+      type: object
+      properties:
+        default:
+          type: string
+      additionalProperties:
+        type: string
+      description: 'a (key, value) map. `default` is an example key'
+    MonitorSources:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    SimpleJsonMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathRequestUuid:
+      name: request
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathUuid:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid

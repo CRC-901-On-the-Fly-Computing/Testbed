@@ -1,0 +1,43 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName                  = 'commons_connect'
+	projectType                  = 'java-library'
+	basePackage                  = 'de.upb.crc901.otftestbed.commons'
+	applyDocker                  = false
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	api            project(':buy_processor:generated_java_client')
+	api            project(':composition_analysis:generated_java_client')
+	api            project(':credential_issuer:generated_java_client')
+	api            project(':gatekeeper:generated_java_client')
+	api            project(':kubernetes_executor_spawner:generated_java_client')
+	api            project(':otfp_registry_new:generated_java_client')
+	api            project(':policy_provider:generated_java_client')
+	api            project(':proseco_configurator:generated_java_client')
+	api            project(':review_board:generated_java_client')
+	api            project(':service_requester_new:generated_java_client')
+	api            project(':system_manager:generated_java_client')
+	api            project(':user_creator:generated_java_client')
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+}

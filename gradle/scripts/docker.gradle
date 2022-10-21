@@ -1,0 +1,79 @@
+/**
+ * The docker plugin provides tasks for building and pushing docker images.
+ *
+ *
+ * Usage:
+ *
+ * On (sub-)projects you want Docker to be added, apply this script and the
+ * plugin with its configuration:
+ *
+ * apply from: 'docker.gradle'
+ * applyDockerConfig()
+ */
+
+
+/**
+ * The map of different closures to configure the plugin.
+ */
+def configs = [
+	'default': {
+		docker {
+			name  "${userNexusBaseUrlWithoutProtocol}/${userNexusDockerRepo}/${-> jar.archiveBaseName.get()}"
+			tag "latest", "${userNexusBaseUrlWithoutProtocol}/${userNexusDockerRepo}/${-> jar.archiveBaseName.get()}:latest"
+			files "${-> jar.archiveFile.get()}"
+			buildArgs([
+				JAR_FILE      : "${-> jar.archiveFileName.get()}"
+			])
+		}
+	}
+]
+
+task dockerLogin(type:Exec) {
+	commandLine 'docker', 'login', '--username', "${userNexusUsername}", '--password', "${userNexusPassword}", "${userNexusBaseUrlWithoutProtocol}/sfb901-testbed/"
+}
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath group: 'gradle.plugin.com.palantir.gradle.docker', name: 'gradle-docker'
+	}
+}
+
+
+/**
+ * Applies the plugin to the actual project.
+ */
+ext.applyDockerPlugin = {
+	apply plugin: com.palantir.gradle.docker.PalantirDockerPlugin
+}
+
+
+/**
+ * Apply and configure the plugin. It is configured with the configuration with
+ * the given name.
+ * The applying of the plugin can be disabled by setting the optional parameter
+ * applyPlugin to false.
+ *
+ * @param configName The name of the plugin configuration; default is 'default'.
+ * @param applyPlugin Whether the plugin is applied; default is true.
+ */
+ext.applyDockerConfig = { configName = 'default', boolean applyPlugin = true ->
+
+	def configuration = configs[configName]
+	if (configuration == null) {
+		throw new GradleScriptException("No plugin configuration found with name: ${configName}", null)
+	}
+
+	if (applyPlugin) {
+		applyDockerPlugin()
+	}
+
+	configuration()
+}

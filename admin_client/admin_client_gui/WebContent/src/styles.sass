@@ -1,0 +1,56 @@
+@import "~@angular/material/prebuilt-themes/pink-bluegrey.css"
+@import "colors.sass"
+
+body
+  margin: 0
+  padding: 0
+  font-family: 'Montserrat', sans-serif
+  background: $color-dark-gray
+  color: $color-text
+
+a
+  text-decoration: none
+  color: $color-link
+  cursor: pointer
+  font-weight: normal !important
+
+p
+  padding: 0
+  margin: 0
+
+a:hover
+  color: #FFF  
+
+a.disabled  
+  color: #999
+  cursor: not-allowed
+
+a.disabled:hover
+  background: rgba(0, 0, 0, 0) !important  
+
+.title
+  background: $color-gray
+  padding: 1em
+  
+  h1, h2, h3, h4, h5
+    color: $color-text
+    text-transform: uppercase
+
+.content
+  padding: 1em      
+
+  h1, h2, h3, h4, h5
+    font-weight: 400
+  
+  mat-icon
+    top: 4px
+    position: relative
+
+  mat-icon.open_in_new
+    font-size: 1em
+    top: 2px
+    height: auto
+    width: auto
+
+.cdk-global-overlay-wrapper  
+  justify-content: flex-end !important

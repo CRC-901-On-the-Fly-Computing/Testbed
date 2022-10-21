@@ -1,0 +1,22 @@
+<mat-list class="messages">
+  <div class="full-width" *ngFor="let msg of messages; let last = last">
+    <app-chatbot-message [message]="msg" [URL]="fileUploadURL"></app-chatbot-message>
+    {{ last ? scrollToBottom() : '' }}
+  </div>
+</mat-list>
+<div class="chatcontrol">
+  <mat-form-field [ngClass]="{'semi-opacity': requestInProgress}">
+    <input
+      #messageElement
+      matInput
+      required
+      id="message"
+      placeholder="Message"
+      type="text"
+      [(ngModel)]="message.body" 
+      (keyup.enter)="sendMessage()"
+    >
+    <mat-icon matSuffix (click)="sendMessage()">send</mat-icon>
+    <mat-progress-bar *ngIf="requestInProgress" mode="buffer"></mat-progress-bar>
+  </mat-form-field>
+</div>

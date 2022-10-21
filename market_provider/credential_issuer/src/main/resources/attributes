@@ -1,0 +1,4 @@
+{"thisIsRepresentableRepresentation":true,"representableTypeName":"de.upb.crypto.react.buildingblocks.attributes.BigIntegerAttributeDefinition","representation":{"attributeName":"Age","maxValue":"<BigInteger>63","minValue":"<BigInteger>12"}}
+{"thisIsRepresentableRepresentation":true,"representableTypeName":"de.upb.crypto.react.buildingblocks.attributes.StringAttributeDefinition","representation":{"attributeName":"country","verificationRegex":"(Germany|France|USA|Canada)"}}
+{"thisIsRepresentableRepresentation":true,"representableTypeName":"de.upb.crypto.react.buildingblocks.attributes.StringAttributeDefinition","representation":{"attributeName":"subscriptionLevel","verificationRegex":"(Free|Basic|Prime|Premium)"}}
+{"thisIsRepresentableRepresentation":true,"representableTypeName":"de.upb.crypto.react.buildingblocks.attributes.StringAttributeDefinition","representation":{"attributeName":"userLicense","verificationRegex":"(Private|Business)"}}

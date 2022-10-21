@@ -1,0 +1,67 @@
+<div class="message-box" *ngIf="checked && !requests.length">
+  <p>
+    You didn’t buy anything yet.
+    <br>
+    Please
+    <a routerLink="/requester">Send Request</a>
+    first or buy an
+    <a routerLink="/offers">offer</a>.
+  </p>
+</div>
+
+<div *ngIf="requests && requests.length">
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="requests">
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let item">
+          <button (click)="openDialog(item.accessCredential)" mat-icon-button class="signature"
+            *ngIf="item.accessCredential">
+            <mat-icon>lock</mat-icon>
+          </button>
+          <a *ngIf="item.serviceState=='RUNNING'" [href]="'//' + item.serviceLink">
+            {{item.requestName}}
+          </a>
+          <p *ngIf="item.serviceState=='BOOTING'">
+            {{item.requestName}}
+          </p>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="composition">
+        <mat-header-cell *matHeaderCellDef> Composition </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.acceptedOffer.compositionID}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="price">
+        <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.acceptedOffer.nonFunctionalProperties.price}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.serviceState.charAt(0).toUpperCase() +
+          item.serviceState.substr(1).toLowerCase()}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+        <mat-cell class="actions text-right" *matCellDef="let item">
+          <a mat-raised-button color="primary" routerLink="/rate/{{item.requestUUID}}">
+            <mat-icon>star_rate</mat-icon>
+            Rate
+          </a>
+          <a [disabled]="item.serviceState!='RUNNING'" mat-button color="primary" target="_blank"
+            [href]="'//' + item.serviceLink">
+            <mat-icon>open_in_new</mat-icon>
+            Access
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+</div>

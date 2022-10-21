@@ -1,0 +1,142 @@
+<div class="message-box" *ngIf="checked && !dataSource.length">
+  <p>There is no basic service.</p>
+</div>
+<div *ngIf="!service_id && dataSource && dataSource.length">
+  <div class="title">
+    <label><a routerLink="../">Library</a>
+      <mat-icon>chevron_right</mat-icon> <b>{{code_provider_id}}</b>
+    </label>
+  </div>
+  <div class="example-container mat-elevation-z8">
+    <mat-table #table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="service_id">
+        <mat-header-cell *matHeaderCellDef> Basic Service </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.service_id}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="code_provider_id">
+        <mat-header-cell *matHeaderCellDef> Code Provider </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.code_provider_id}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="service_specification">
+        <mat-header-cell *matHeaderCellDef> service_specification </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.service_specification}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="service_policy">
+        <mat-header-cell *matHeaderCellDef> Service Policy </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.service_policy}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="hardware">
+        <mat-header-cell *matHeaderCellDef> Hardware </mat-header-cell>
+        <mat-cell *matCellDef="let item"> {{item.hardware}} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef>
+          <!-- <a mat-raised-button color="primary" routerLink="./new">
+            <mat-icon>add_circle</mat-icon>
+            Add New Service
+          </a> -->
+          Actions
+        </mat-header-cell>
+        <mat-cell class="actions text-right" *matCellDef="let item">
+          <a mat-raised-button matTooltip="FPGA Overlay" *ngIf="item.service_id.indexOf('_SCPU')>-1" color="primary"
+            routerLink="./{{item.service_id}}/overlay-report">
+            <mat-icon>layers</mat-icon>
+            FPGA Overlay
+          </a>
+          <!-- <a mat-icon-button color="primary" routerLink="./{{item.service_id}}/edit">
+            <mat-icon>edit</mat-icon>
+          </a> -->
+          <a mat-icon-button color="primary" routerLink="./{{item.service_id}}/detail">
+            <mat-icon>remove_red_eye</mat-icon>
+          </a>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+</div>
+<div *ngIf="service_id" class="log">
+  <div class="title">
+    <label><a routerLink="/services">Library</a>
+      <mat-icon>chevron_right</mat-icon> <b>{{service_id}}</b>
+    </label>
+  </div>
+  <mat-card *ngIf="service_id==='C2Services.C2Service_grey_SCPU'">
+    <div class="code">
+      opt -load /home/maximr/imgop-migrate/build/lib/liboptmigrate.so -optmigrate grey.opt.ll -patterndb
+      /home/maximr/imgop-migrate/optmigrate/pattern/pattern.db -S -o grey.match.ll<br />
+      runOnFunction "run_service_grey_scpu" <br />
+      <span class="cfg-creation">Creating abstract control flow graph <br />
+        Done, creating abstract control flow graph</span> <br />
+      <br />
+      <span class="load-pattern">Loading pattern "run_service_sobel_scpu" from database <br />
+        Loading pattern "run_service_grey_scpu" from database</span> <br />
+      <br />
+      <span class="matching">Checking "run_service_grey_scpu" for matching in database... <br />
+        <br />
+        Matching against pattern run_service_sobel_scpu<br />
+        Matching control flow graph ... <br />
+        AbstractCFGs not matching<br />
+        <br />
+        Matching against pattern run_service_grey_scpu<br />
+        Matching control flow graph ... <br />
+        Calculating graph isomorphism...<br />
+        Done. Took 0 ms<br />
+        Found isomorphism!<br />
+        Found Matching CFG!<br />
+        Matching expressions...<br />
+        Done. Took 0 ms.</span><br />
+      <span class="matched">Found Match!<br />
+        Injecting off-loading code into run_service_grey_scpu</span>
+
+    </div>
+  </mat-card>
+  <mat-card *ngIf="service_id==='C2Services.C2Service_sobel_SCPU'">
+    <div class="code">
+      opt -load /home/maximr/imgop-migrate/build/lib/liboptmigrate.so -optmigrate sobel.opt.ll -patterndb
+      /home/maximr/imgop-migrate/optmigrate/pattern/pattern.db -S -o sobel.match.ll <br />
+      runOnFunction "run_service_sobel_scpu"<br />
+      <span class="cfg-creation">Creating abstract control flow graph<br />
+        Done, creating abstract control flow graph</span><br />
+      <br />
+      <span class="load-pattern">Loading pattern "run_service_sobel_scpu" from database<br />
+        Loading pattern "run_service_grey_scpu" from database</span><br />
+      <br />
+      <span class="matching">Checking "run_service_sobel_scpu" for matching in database...<br />
+        <br />
+        Matching against pattern run_service_sobel_scpu<br />
+        Matching control flow graph ... <br />
+        Calculating graph isomorphism...<br />
+        Done. Took 4 ms<br />
+        Found isomorphism!<br />
+        Found Matching CFG!<br />
+        Matching expressions...<br />
+        Done. Took 0 ms.</span><br />
+      <span class="matched">Found Match!</span><br />
+      <br />
+      <span class="matching">Matching against pattern run_service_grey_scpu<br />
+        Matching control flow graph ... <br />
+        Calculating graph isomorphism...<br />
+        Done. Took 1 ms<br />
+        Found isomorphism!<br />
+        Found Matching CFG!<br />
+        Matching expressions...<br />
+        Done. Took 0 ms.</span><br />
+      <span class="matched">Injecting off-loading code into run_service_sobel_scpu</span>
+
+    </div>
+  </mat-card>
+
+  <mat-card *ngIf="service_id!=='C2Services.C2Service_sobel_SCPU' && service_id!=='C2Services.C2Service_grey_SCPU'">
+    Error: No FPGA Overlay available for {{service_id}}!
+  </mat-card>
+
+</div>

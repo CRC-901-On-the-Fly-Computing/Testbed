@@ -1,0 +1,23 @@
+<ul>
+  <ng-container *ngFor="let item of items">
+    <li *ngIf="item.role === globals.role">
+      <ng-container *ngIf="item.enable">
+        <a *ngIf="item.internal" mat-button [routerLink]="'/' + item.link" routerLinkActive="active-link">
+          <mat-icon>{{item.icon}}</mat-icon> {{item.label}}
+        </a>
+        <a *ngIf="!item.internal" mat-button target="_blank" [href]="item.link">
+          <mat-icon>{{item.icon}}</mat-icon> {{item.label}}
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="!item.enable">
+        <a *ngIf="item.internal" mat-button disabled>
+          <mat-icon>{{item.icon}}</mat-icon> {{item.label}}
+        </a>
+        <a *ngIf="!item.internal" mat-button disabled>
+          <mat-icon>{{item.icon}}</mat-icon> {{item.label}}
+        </a>
+      </ng-container>
+    </li>
+  </ng-container>
+</ul>

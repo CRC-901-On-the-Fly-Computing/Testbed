@@ -1,0 +1,21 @@
+<div *ngIf="show">
+  <div class="intro-wrapper"></div>
+  <div class="el" [ngStyle]="data.style"></div>
+  <div #intro class="intro" [ngStyle]="introStyle">
+    <div class="icon">
+      <mat-icon class="icon">info</mat-icon>
+    </div>
+    <p [innerHTML]="data.text"></p>
+    <div class="intro-controls">
+      <button (click)="close()" mat-icon-button class="left">
+        <mat-icon>close</mat-icon>
+      </button>
+      <button [disabled]="!data.hasNext" (click)="goNext()" mat-icon-button class="right">
+          <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+      <button [disabled]="!data.hasPrev" (click)="goPrev()" mat-icon-button class="right">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

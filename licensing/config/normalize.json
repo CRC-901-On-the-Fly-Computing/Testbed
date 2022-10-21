@@ -1,0 +1,67 @@
+{
+	"bundles": [
+		{ "bundleName": "apache20", "licenseName": "Apache License, Version 2.0", "licenseUrl": "https://www.apache.org/licenses/LICENSE-2.0" },
+		{ "bundleName": "bsd-2"   , "licenseName": "The 2-Clause BSD License", "licenseUrl": "https://opensource.org/licenses/BSD-2-Clause" },
+		{ "bundleName": "bsd-3"   , "licenseName": "The 3-Clause BSD License", "licenseUrl": "https://opensource.org/licenses/BSD-3-Clause" },
+		{ "bundleName": "cc0"     , "licenseName": "CC0 1.0 Universal", "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/" },
+		{ "bundleName": "cddl10"  , "licenseName": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0", "licenseUrl": "https://oss.oracle.com/licenses/CDDL" },
+		{ "bundleName": "cddl11gpl2ce", "licenseName": "CDDL v1.1 + GPL v2 w CE", "licenseUrl": "https://oss.oracle.com/licenses/CDDL+GPL-1.1" },
+		{ "bundleName": "cpl10"   , "licenseName": "Common Public License - v 1.0", "licenseUrl": "https://www.eclipse.org/legal/cpl-v10.html" },
+		{ "bundleName": "epl10"   , "licenseName": "Eclipse Public License - v 1.0", "licenseUrl": "https://www.eclipse.org/legal/epl-v10.html" },
+		{ "bundleName": "epl20"   , "licenseName": "Eclipse Public License - v 2.0", "licenseUrl": "https://www.eclipse.org/legal/epl-2.0/" },
+		{ "bundleName": "gpl1"    , "licenseName": "GNU GENERAL PUBLIC LICENSE, Version 1", "licenseUrl": "https://www.gnu.org/licenses/gpl-1.0" },
+		{ "bundleName": "gpl2"    , "licenseName": "GNU GENERAL PUBLIC LICENSE, Version 2", "licenseUrl": "https://www.gnu.org/licenses/gpl-2.0" },
+		{ "bundleName": "gpl3"    , "licenseName": "GNU GENERAL PUBLIC LICENSE, Version 3", "licenseUrl": "https://www.gnu.org/licenses/gpl-3.0" },
+		{ "bundleName": "gpl2ce"  , "licenseName": "GNU GENERAL PUBLIC LICENSE, Version 2 + Classpath Exception", "licenseUrl": "https://openjdk.java.net/legal/gplv2+ce.html" },
+		{ "bundleName": "lgpl21"  , "licenseName": "GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1", "licenseUrl": "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" },
+		{ "bundleName": "lgpl3"   , "licenseName": "GNU LESSER GENERAL PUBLIC LICENSE, Version 3", "licenseUrl": "https://www.gnu.org/licenses/lgpl-3.0" },
+		{ "bundleName": "json"    , "licenseName": "JSON License", "licenseUrl": "http://json.org/license.html" },
+		{ "bundleName": "mit"     , "licenseName": "MIT License", "licenseUrl": "https://opensource.org/licenses/MIT" },
+		{ "bundleName": "mpl11"   , "licenseName": "Mozilla Public License Version 1.1", "licenseUrl": "https://www.mozilla.org/en-US/MPL/1.1/" },
+		{ "bundleName": "public"  , "licenseName": "PUBLIC DOMAIN", "licenseUrl": "" },
+		{ "bundleName": "wtfpl"   , "licenseName": "DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE", "licenseUrl": "http://www.wtfpl.net/" }
+	],
+	"transformationRules": [
+		{ "bundleName": "apache20", "licenseUrlPattern" : "(https?://)?(www\\.)?apache\\.org/licenses/LICENSE-2\\.0(\\.html|\\.txt|/)?" },
+
+		{ "bundleName": "bsd-2"   , "licenseUrlPattern" : "(https?://)?(www\\.)?opensource\\.org/licenses/bsd-license\\.php" },
+
+		{ "bundleName": "bsd-3"   , "licenseUrlPattern" : "(https?://)?raw\\.github\\.com/lviggiano/owner/master/LICENSE", "transformUrl" : false },
+		{ "bundleName": "bsd-3"   , "licenseUrlPattern" : "(https?://)?(www\\.)?antlr\\.org/license\\.html", "transformUrl" : false },
+		{ "bundleName": "bsd-3"   , "licenseUrlPattern" : "(https?://)?asm\\.objectweb\\.org/license\\.html", "transformUrl" : false },
+		{ "bundleName": "bsd-3"   , "licenseNamePattern": "BSD 3-Clause", "transformUrl" : false },
+
+		{ "bundleName": "cc0"     , "licenseUrlPattern" : "(https?://)?(www\\.)?creativecommons\\.org/publicdomain/zero/1\\.0/?" },
+
+		{ "bundleName": "cddl10"  , "licenseUrlPattern" : "(https?://)?(www\\.)?glassfish(\\.dev)?\\.java\\.net(/nonav)?/public/CDDLv1\\.0\\.html" },
+		{ "bundleName": "cddl10"  , "licenseUrlPattern" : "(https?://)?(www\\.)?opensource\\.org/licenses/CDDL-1\\.0/?" },
+
+		{ "bundleName": "cddl11gpl2ce", "licenseUrlPattern" : "(https?://)?(www\\.)?glassfish(\\.dev)?\\.java\\.net(/nonav)?/public/CDDL\\+GPL(_1_1)?\\.html" },
+		{ "bundleName": "cddl11gpl2ce", "licenseUrlPattern" : "(https?://)?oss\\.oracle\\.com/licenses/CDDL\\+GPL-1\\.1/?" },
+
+		{ "bundleName": "cpl10"   , "licenseUrlPattern" : "(https?://)?(www\\.)?opensource\\.org/licenses/cpl1\\.0(\\.html|\\.txt|/)?" },
+
+		{ "bundleName": "epl10"   , "licenseUrlPattern" : "(https?://)?(www\\.)?eclipse\\.org/(legal|org/documents)/epl-v10\\.html" },
+
+		{ "bundleName": "epl20"   , "licenseUrlPattern" : "(https?://)?(www\\.)?eclipse\\.org/legal/epl-2\\.0/?" },
+		{ "bundleName": "epl20"   , "licenseUrlPattern" : "(https?://)?(www\\.)?eclipse\\.org/legal/epl-v20\\.html" },
+
+		{ "bundleName": "gpl3"    , "licenseUrlPattern" : "(https?://)?(www\\.)?gnu\\.org/licenses/gpl\\.(html|txt)" },
+
+		{ "bundleName": "json"    , "licenseUrlPattern" : "(https?://)?(www\\.)?json\\.org/license\\.html" },
+
+		{ "bundleName": "lgpl21"  , "licenseUrlPattern" : "(https?://)?(www\\.)?gnu\\.org/licenses/old-licenses/lgpl-2\\.1\\.(html|txt)" },
+
+		{ "bundleName": "lgpl3"   , "licenseUrlPattern" : "(https?://)?(www\\.)?gnu\\.org/copyleft/lesser\\.html" },
+		{ "bundleName": "lgpl3"   , "licenseUrlPattern" : "(https?://)?(www\\.)?gnu\\.org/licenses/lgpl\\.(html|txt)" },
+
+		{ "bundleName": "mit"     , "licenseUrlPattern" : "(https?://)?(www\\.)?opensource\\.org/licenses/(MIT|mit-license\\.php)" },
+		{ "bundleName": "mit"     , "licenseUrlPattern" : "(https?://)?(www\\.)?bouncycastle\\.org/licence\\.html", "transformUrl" : false },
+		{ "bundleName": "mit"     , "licenseNamePattern": "MIT", "transformUrl" : false },
+
+		{ "bundleName": "mpl11"   , "licenseUrlPattern" : "(https?://)?(www\\.)?mozilla\\.org/MPL/MPL-1\\.1\\.(html|txt)" },
+
+		{ "bundleName": "wtfpl"   , "licenseUrlPattern" : "(https?://)?(www\\.)?wtfpl\\.net/?" }
+	]
+}
+

@@ -1,0 +1,63 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName                  = 'service_spec_uploader'
+	basePackage                  = 'de.upb.crc901.otftestbed.uploader'
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.Swagger2SpringBoot"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.Swagger2SpringBoot"
+	classpath = sourceSets.main.runtimeClasspath
+	args      = [mongoUser, mongoPassword]
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+docker {
+	buildArgs(buildArgs + [
+			MONGO_USER    : mongoUser,
+			MONGO_PASSWORD: mongoPassword
+	])
+}
+
+
+dependencies {
+	// project dependencies
+//	implementation project(':commons')
+
+	// SFB dependencies
+	implementation group: 'de.upb.crc901'             , name: 'commons', version: '0.2.6-SNAPSHOT'
+
+	// external dependencies
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-starter-data-mongodb'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+
+	implementation group: 'commons-lang'              , name: 'commons-lang'
+	implementation group: 'org.mongodb'               , name: 'bson'
+	implementation group: 'org.mongodb'               , name: 'mongodb-driver'
+	implementation group: 'org.mongodb'               , name: 'mongodb-driver-core'
+
+	implementation group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+}

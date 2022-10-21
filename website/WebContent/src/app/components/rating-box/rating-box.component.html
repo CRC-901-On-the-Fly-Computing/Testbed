@@ -1,0 +1,23 @@
+<div class="overall-wrapper"></div>
+<ng-content></ng-content>
+<mat-card *ngIf="rating" [ngClass]="['ratings mat-card', page, size]">
+  <app-star size="large" [count]="rating.overall || 0"></app-star>
+  <div class="mat-card-content-items">
+    <div class="mat-card-content-item">
+      Usability
+      <app-star [count]="rating.usability || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Performance
+      <app-star [count]="rating.performance || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Security
+      <app-star [count]="rating.security || 0"></app-star>
+    </div>
+    <div class="mat-card-content-item">
+      Other
+      <app-star [count]="rating.other || 0"></app-star>
+    </div>
+  </div>
+</mat-card>

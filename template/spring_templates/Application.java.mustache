@@ -1,0 +1,25 @@
+package {{baseImplementationPackage}};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+import {{baseGenerationPackage}}.Swagger2SpringBoot;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@SpringBootApplication
+@EnableSwagger2
+@ComponentScan(basePackages = {
+		"{{baseGenerationPackage}}",
+		"{{baseImplementationPackage}}" })
+public class Application extends Swagger2SpringBoot {
+
+	public static void main(String[] args) {
+		{{#mongoDependency}}
+		System.setProperty("spring.data.mongodb.username", args[0]);
+		System.setProperty("spring.data.mongodb.password", args[1]);
+
+		{{/mongoDependency}}
+		new SpringApplication(Application.class).run(args);
+	}
+}

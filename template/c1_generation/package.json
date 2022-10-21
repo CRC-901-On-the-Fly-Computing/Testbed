@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build": "node runner.js"
+  },
+  "dependencies": {
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "mustache": "^2.3.0"
+  }
+}

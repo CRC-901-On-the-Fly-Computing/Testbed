@@ -1,0 +1,72 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectType                  = 'java-library'
+	basePackage                  = 'de.upb.crc901.otftestbed.commons.otfprovider'
+	applyDocker                  = false
+	swaggerGenerationSubprojects = null
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'application'
+
+
+mainClassName = 'de.upb.crc901.otftestbed.commons.utils.JSon'
+
+task jsonSchema(type: JavaExec) {
+	main      = 'de.upb.crc901.otftestbed.commons.utils.JSon'
+	classpath = sourceSets.main.runtimeClasspath
+	args      = ['generateSchema']
+}
+
+jar {
+	exclude('logback.xml')
+}
+
+
+dependencies {
+	// project dependencies
+	api project(':commons')
+
+	// SFB dependencies
+	api            group: 'de.upb.crc901'             , name: 'crc-basic-configurator'
+	api            group: 'de.upb.crc901'             , name: 'crc-configuration-setting'
+
+	implementation group: 'de.upb.crc901'             , name: 'pcm'
+	implementation group: 'de.upb.crc901'             , name: 'pcm-identifier'
+	api            group: 'de.upb.crc901'             , name: 'reputation-matcher'
+	implementation group: 'de.upb.crc901'             , name: 'sse-core'
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core'
+	api            group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'com.kjetland'              , name: 'mbknor-jackson-jsonschema_2.11'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-commons'
+	implementation group: 'org.springframework.data'  , name: 'spring-data-mongodb'
+
+	// transitive dependencies
+	implementation group: 'de.upb.crc901'             , name: 'crc-configurator-framework'
+	implementation group: 'de.upb.crc901'             , name: 'emf-common'
+	implementation group: 'de.upb.crc901'             , name: 'emf-ecore'
+	implementation group: 'de.upb.crc901'             , name: 'pcm-profiles'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'crc-configurator-util'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'eclipse-uml2-types'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'emf-ecore-xmi'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'equinox-common'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'log4j'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'matching-core'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'pcm-probfunction'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'pcm-stoex'
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'pcm-units'
+	runtimeOnly    group: 'io.swagger'                , name: 'swagger-jersey2-jaxrs'
+	runtimeOnly    group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson'
+}

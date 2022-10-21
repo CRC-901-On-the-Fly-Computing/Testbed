@@ -1,0 +1,63 @@
+openapi: 3.0.2
+info:
+  title: OTF Policy Provider REST Interface
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '1.0'
+servers:
+- url: /api
+tags:
+- name: PolicyProvider
+paths:
+  '/service_compositions/{serviceCompositionId}/policy':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceCompositionId'
+    get:
+      summary: Gets the policy for the given service composition
+      tags:
+      - PolicyProvider
+      operationId: getServiceCompositionPolicy
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyInformation'
+  '/services/{serviceName}/policy':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceName'
+    get:
+      summary: Gets the policy for the given service
+      tags:
+      - PolicyProvider
+      operationId: getServicePolicy
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyInformation'
+components:
+  schemas:
+    PolicyInformation:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathServiceCompositionId:
+      name: serviceCompositionId
+      in: path
+      required: true
+      schema:
+        type: string
+    pathServiceName:
+      name: serviceName
+      in: path
+      required: true
+      schema:
+        type: string
+

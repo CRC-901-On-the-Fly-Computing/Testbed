@@ -1,0 +1,18 @@
+/**
+ * Script to apply the dependency management and its dependencies to buildscript.
+ *
+ * Usage:
+ *
+ * buildscript {
+ *  apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+ * }
+ */
+
+// apply dependency versions
+apply from: rootProject.gradleScript.versions
+
+// apply dependency management
+apply from: rootProject.gradleScript.dependencyManagement
+
+// add buildscript dependency management to all configurations
+configurations.all addBuildscriptDependencyManagement

@@ -1,0 +1,101 @@
+/**
+ * The license report plugin generates reports of licenses of the used
+ * dependencies.
+ * We use the plugin to get an overview of the different licenses of the
+ * dependency artifacts used by us. This is needed to license the PoC properly.
+ *
+ *
+ * Usage:
+ *
+ * On (sub-)projects you want to generate a report for, apply this script and
+ * the plugin with the given configuration:
+ *
+ * apply from: 'licenseReport.gradle'
+ * applyLicenseReportConfig('overall')
+ */
+
+
+/**
+ * The base directory to generate the reports in.
+ */
+def reportDirectory   = "${rootProject.projectDir}/licensing/report"
+
+/**
+ * The json file with the normalization rules for the license entries.
+ */
+def normalizationFile = "${rootProject.projectDir}/licensing/config/normalize.json"
+
+
+/**
+ * The map of different closures to configure the plugin.
+ */
+def configs = [
+	'overall': {
+		licenseReport {
+			outputDir = "${reportDirectory}/overall"
+			filters   = [new LicenseBundleNormalizer(normalizationFile, false)]
+			renderers = [new CsvReportRenderer()]
+		}
+	},
+	'subproject': {
+		def relativeProjectPath = "${project.projectDir}".replace("${rootProject.projectDir}", '')
+
+		licenseReport {
+			outputDir = "${reportDirectory}/subprojects/${relativeProjectPath}"
+			filters   = [new LicenseBundleNormalizer(normalizationFile, false)]
+			renderers = [new CsvReportRenderer()]
+		}
+	}
+]
+
+
+import com.github.jk1.license.filter.*
+import com.github.jk1.license.importer.*
+import com.github.jk1.license.render.*
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath group: 'com.github.jk1', name: 'gradle-license-report'
+	}
+}
+
+
+
+/**
+ * Applies the plugin to the actual project.
+ */
+ext.applyLicenseReportPlugin = {
+	apply plugin: com.github.jk1.license.LicenseReportPlugin
+}
+
+
+/**
+ * Apply and configure the plugin. It is configured with the configuration with
+ * the given name.
+ * The applying of the plugin can be disabled by setting the optional parameter
+ * applyPlugin to false.
+ *
+ * @param configName The name of the plugin configuration.
+ * @param applyPlugin Whether the plugin is applied; default is true.
+ */
+ext.applyLicenseReportConfig = { configName, boolean applyPlugin = true ->
+
+	def configuration = configs[configName]
+	if (configuration == null) {
+		throw new GradleScriptException("No plugin configuration found with name: ${configName}", null)
+	}
+
+	if (applyPlugin) {
+		applyLicenseReportPlugin()
+	}
+
+	configuration()
+}

@@ -1,0 +1,63 @@
+openapi: 3.0.2
+info:
+  title: Credential Issuer REST Interface
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '2.0'
+servers:
+- url: /api
+tags:
+- name: CredentialIssuer
+  description: all-in-one tag
+paths:
+  /public_identity:
+    get:
+      summary: Retrieves the PublicIdentity of this Credential Issuer
+      tags:
+      - CredentialIssuer
+      operationId: getPublicIdentity
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CIPublicIdentity'
+  /request_credential:
+    post:
+      summary: Requests a credential for the given attributes
+      tags:
+      - CredentialIssuer
+      operationId: requestCredential
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NonInteractiveIssuableRequest'
+        required: false
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CredentialIssueResponse'
+components:
+  schemas:
+    CIPublicIdentity:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    CredentialIssueResponse:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    NonInteractiveIssuableRequest:
+      type: object
+      properties:
+        placeholder:
+          type: string
+

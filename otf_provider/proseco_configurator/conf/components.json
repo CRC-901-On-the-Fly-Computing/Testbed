@@ -1,0 +1,299 @@
+{
+	"repository": "SFBExample",
+	"components": [
+			{
+				"name": "ImageClassificationPipeline",
+				"requiredInterface": [
+					{
+						"id": "image_pp_0",
+						"name": "ImageFilter"
+					},
+					{
+						"id": "image_pp_1",
+						"name": "EdgeDetector"
+					},
+					{
+						"id": "featureset_extractor",
+						"name": "FeatureExtractor"
+					},
+					{
+						"id": "pp_0",
+						"name": "AbstractPreprocessor"
+					},
+					{
+						"id": "classifier",
+						"name": "AbstractClassifier"
+					}
+				],
+				"providedInterface": [],
+				"parameter": [],
+				"dependencies": []
+			},
+		{
+			"name": "Catalano.Imaging.Filters.GrayScale",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+				{
+					"name": "method",
+					"type": "cat",
+					"default": "Average",
+					"values": [
+						"Lightness",
+						"Average",
+						"GeometricMean",
+						"Luminosity",
+						"MinimumDecomposition",
+						"MaximumDecomposition"
+					]
+				}
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "Catalano.Imaging.Filters.SobelEdgeDetector",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "Catalano.Imaging.Filters.CannyEdgeDetector",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"FeatureExtractor"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.attributeSelection.SymmetricalUncertAttributeEval",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"evaluator"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.attributeSelection.Ranker",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"searcher"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.attributeSelection.AttributeSelection",
+			"providedInterface": [
+				"AbstractPreprocessor"
+			],
+			"requiredInterface": [
+				{
+					"id": "evaluator",
+					"name": "evaluator"
+				},
+				{
+					"id": "searcher",
+					"name": "searcher"
+				}
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.classifiers.bayes.NaiveBayes",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"AbstractClassifier"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_grey_CPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_grey_FPGA",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_grey_GPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_grey_SCPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_grey_OVERLAY",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_sobel_CPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter",
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_sobel_FPGA",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter",
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_sobel_GPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter",
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_sobel_SCPU",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter",
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "C2Services.C2Service_sobel_OVERLAY",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"ImageFilter",
+				"EdgeDetector"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.classifiers.functions.MultilayerPerceptron",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"AbstractClassifier"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		},
+		{
+			"name": "weka.classifiers.functions.SMO",
+			"requiredInterface": [
+			],
+			"providedInterface": [
+				"AbstractClassifier"
+			],
+			"parameter": [
+			],
+			"dependencies": [
+			]
+		}
+	]
+}

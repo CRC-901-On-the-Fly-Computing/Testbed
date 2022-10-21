@@ -1,0 +1,100 @@
+/**
+ * Configuration file for the swagger generated java clients.
+ */
+
+swaggerSources {
+	project {
+		code {
+			components = [
+				'apis'           : true,
+				'apiDocs'        : false,
+				'apiTests'       : false,
+				'models'         : false,
+				'modelDocs'      : false,
+				'modelTests'     : false,
+				'supportingFiles': true
+			]
+			language   = 'java'
+			library    = 'resttemplate'
+		}
+	}
+}
+
+
+ext.generatorConfig += [
+	'java8'                    : 'true',
+	'dateLibrary'              : 'java8',
+	'invokerPackage'           : "${-> poc.basePackage}.generated.java_client",
+	'apiPackage'               : "${-> poc.basePackage}.generated.java_client.api",
+	'modelPackage'             : "${-> poc.basePackage}.generated.java_client.model",
+	'baseImplementationPackage': "${-> poc.basePackage}.impl.java_client"
+]
+
+
+// delete unneeded generated files
+def deleteUnneededFiles() {
+	def outputDir = swaggerSources.project.code.outputDir
+
+	delete("${outputDir}/.gitignore")
+	delete("${outputDir}/.swagger-codegen")
+	delete("${outputDir}/.swagger-codegen-ignore")
+	delete("${outputDir}/.travis.yml")
+	delete("${outputDir}/build.gradle")
+	delete("${outputDir}/build.sbt")
+	delete("${outputDir}/git_push.sh")
+	delete("${outputDir}/gradle")
+	delete("${outputDir}/gradle.properties")
+	delete("${outputDir}/gradlew")
+	delete("${outputDir}/gradlew.bat")
+	delete("${outputDir}/pom.xml")
+	delete("${outputDir}/README.md")
+	delete("${outputDir}/settings.gradle")
+	delete("${outputDir}/src/main/AndroidManifest.xml")
+}
+
+// add some actions to the code generation
+swaggerSources.project.code.doLast {
+	deleteUnneededFiles()
+}
+
+
+apply plugin: 'java-library'
+
+dependencies {
+	// project dependencies
+	api project(':commons')
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'commons-logging'           , name: 'commons-logging'
+	implementation group: 'io.swagger.core.v3'        , name: 'swagger-annotations'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	api            group: 'org.springframework'       , name: 'spring-core'
+	api            group: 'org.springframework'       , name: 'spring-web'
+}
+
+jar {
+	// HACK: to get different jar file names for equally named generation projects
+	archiveBaseName.set(project.path.substring(1).replaceAll(':', '-').replaceAll('_', '-'))
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+// disable compile warnings for the generated code
+gradle.projectsEvaluated {
+	tasks.withType(JavaCompile) {
+		options.compilerArgs << '-Xlint:none'
+		options.compilerArgs << '-Xlint:-unchecked'
+		options.compilerArgs << '-nowarn'
+		options.deprecation = false
+		options.warnings = false
+	}
+}
+
+// task ordering
+swaggerSources.project.code.dependsOn generateSwaggerConfigFile
+compileJava.dependsOn swaggerSources.project.code
+
+sourceSets.main.java.srcDir "${swaggerSources.project.code.outputDir}/src/main/java"
+sourceSets.main.resources.srcDir "${swaggerSources.project.code.outputDir}/src/main/resources"

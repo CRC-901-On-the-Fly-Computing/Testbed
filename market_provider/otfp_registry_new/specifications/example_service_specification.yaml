@@ -1,0 +1,333 @@
+openapi: 3.0.2
+info:
+  title: OTFP Registry REST Interface
+  description: Rest interface to communicate with the A1 registry
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.1
+servers:
+- url: /api
+tags:
+- name: provider-registry
+- name: default
+- name: ProviderRegistry
+  description: all-in-one tag
+paths:
+  /domains/list:
+    get:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: returns all available Domains
+      operationId: listDomains
+      responses:
+        '200':
+          description: all available domains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  '/domains/{domain}/otf_providers':
+    parameters:
+    - $ref: '#/components/parameters/pathDomain'
+    post:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: Registers an otf-provider for a domain
+      operationId: insertOtfProviderForDomain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTFProvider'
+        required: true
+      responses:
+        '200':
+          description: The addition of the provider was successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+  '/domains/{domain}/confidences':
+    parameters:
+    - $ref: '#/components/parameters/pathDomain'
+    post:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: Registers an otf-provider for a domain
+      operationId: getConfidencesForProviders
+      requestBody:
+        description: The request parameters from the chatbot
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Map'
+        required: true
+      responses:
+        '200':
+          description: The confidences from each provider for this request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OTFProviderConfidence'
+  '/domains/{domain}/otf_providers/list':
+    parameters:
+    - $ref: '#/components/parameters/pathDomain'
+    get:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: Lists all OTF-Providers that are registered under the given domain
+      operationId: listOtfProvidersForDomain
+      responses:
+        '200':
+          description: list of OTF-providers that support the given domain
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OTFProvider'
+  '/domains/{domain}/otf_providers/{otfpUUID}':
+    parameters:
+    - $ref: '#/components/parameters/pathDomain'
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    get:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: Returns the specific otf-provider under the given domain
+      operationId: getOtfProviderForDomainAndUUID
+      responses:
+        '200':
+          description: list of OTF-providers that support the given domain
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTFProvider'
+    delete:
+      tags:
+      - ProviderRegistry
+      - provider-registry
+      description: Deletes the specific otf-provider under the given domain
+      operationId: deleteOtfProviderForDomainAndUUID
+      responses:
+        '200':
+          description: the deletion of the otf-provider under the domain was successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleJsonMessage'
+  /otfpregistry/getDomains:
+    get:
+      description: returned all available Domains
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: getDomains
+      responses:
+        '200':
+          description: successfully returned all available Domains
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfDomains'
+  /otfpregistry/receiveMessage:
+    put:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: receiveMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        '200':
+          description: Successfully received the Message
+        '400':
+          description: error occured while sending the Request
+  /otfpregistry/register:
+    put:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerObj'
+        required: true
+      responses:
+        '200':
+          description: Successfully registered
+        '400':
+          description: error occured while registration
+  /otfpregistry/deregister:
+    put:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: deregister
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/deregisterObj'
+        required: true
+      responses:
+        '200':
+          description: Successfully deregistered
+        '400':
+          description: error occured while deregistration
+  /otfpregistry/addDomain:
+    put:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: addDomain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Domain'
+        required: true
+      responses:
+        '200':
+          description: Successful registered the Domain
+        '400':
+          description: error occured while registering the Domain
+  /otfpregistry/removeDomain:
+    put:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: removeDomain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: Successful deregistered the Domain
+        '400':
+          description: error occured while deregistering the Domain
+  /otfpregistry/OtfpConfidence:
+    get:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: getOtfpConfidence
+      responses:
+        '200':
+          description: test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfConfidence'
+        '400':
+          description: error occured while receive Confidence
+    post:
+      tags:
+      - ProviderRegistry
+      - default
+      operationId: otfpConfidence
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Map'
+        required: false
+      responses:
+        '200':
+          description: 'post '
+        '400':
+          description: Not yet initialized.
+components:
+  schemas:
+    Domain:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ListOfConfidence:
+      type: array
+      items:
+        $ref: '#/components/schemas/OTFProviderConfidence'
+    ListOfDomains:
+      type: object
+      properties:
+        domainList:
+          type: array
+          items:
+            type: string
+    Map:
+      type: object
+      properties:
+        default:
+          type: string
+      additionalProperties:
+        type: string
+      description: 'a (key, value) map. `default` is an example key'
+    Message:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OTFProvider:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OTFProviderConfidence:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    SimpleJsonMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    deregisterObj:
+      type: object
+      properties:
+        otfpId:
+          type: string
+        domain:
+          type: string
+    registerObj:
+      type: object
+      properties:
+        otfpUrl:
+          type: string
+        otfpId:
+          type: string
+        domain:
+          type: string
+  parameters:
+    pathDomain:
+      name: domain
+      in: path
+      required: true
+      schema:
+        type: string
+    pathOtfpUuid:
+      name: otfpUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+

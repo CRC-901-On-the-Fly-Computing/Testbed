@@ -1,0 +1,134 @@
+.time
+  font-size: 10px
+  margin: 5px 5px 0 0;
+  color: #aaa;
+
+.speech-bubble
+  padding: 13px
+  border-radius: 5px
+  position: relative
+  word-break: break-word
+
+.avatar 
+  margin-top: 10px
+
+.message
+  margin-bottom: 20px
+  max-width: 60%
+
+.message.bot, .message.bot_warning
+  float: left
+  
+  .avatar
+    float: left
+
+  .time
+    float: right
+
+  .speech-bubble
+    background: #efefef  
+    margin-left: 40px
+
+  .speech-bubble:after
+    content: ''
+    position: absolute
+    left: 0
+    top: 22px
+    width: 0
+    height: 0
+    border: 12px solid transparent
+    border-right-color: #efefef
+    border-left: 0
+    margin-top: -12px
+    margin-left: -12px
+
+.message.bot_warning
+  .speech-bubble
+    background: #fff4ce
+  
+  .speech-bubble:after    
+    border-right-color: #fff4ce
+
+.message.user
+  float: right
+  
+  .avatar
+    float: right
+
+  .time
+    float: left
+
+  .speech-bubble
+    background: #466A93
+    margin-right: 40px
+    color: #fff 
+
+  .speech-bubble pre
+    color: #fff 
+
+  .speech-bubble:after
+    content: ''
+    position: absolute
+    right: 0
+    top: 22px
+    width: 0
+    height: 0
+    border: 12px solid transparent
+    border-left-color: #466A93
+    border-right: 0
+    margin-top: -12px
+    margin-right: -12px
+
+
+.extra-item
+  margin: 10px 0;
+
+  .mat-raised-button
+    min-width: 220px;
+    text-align: left;
+
+  .fat
+    padding-bottom: 10px
+
+    .mat-icon
+      float: left
+      margin-top: 11%
+
+    .btn-content 
+      float: left
+      margin-left: 15px
+
+.drop-zone
+  cursor: pointer
+  display: block
+  color: initial
+  text-align: center
+  border: dotted 3px lightgray
+  padding: 20px
+  margin: 10px
+  border-radius: 5px
+  background-color: rgb(245, 245, 245)
+
+.nv-file-over
+  border: dotted 3px red;
+
+.drop-zone.done
+  border: solid 3px lightgray
+  color: gray
+
+.is-success .filename
+  color: initial  
+
+.mat-spinner
+  float: right
+  margin: 3px 0 0 8px
+
+.drop-zone .mat-icon 
+  float: right
+  margin: -2px 0 0 8px
+
+.drop-zone .mat-icon.success  
+  color: #064c65;
+
+.drop-zone .mat-icon.fail
+  color: red

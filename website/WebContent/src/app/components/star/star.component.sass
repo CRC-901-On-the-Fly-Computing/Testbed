@@ -1,0 +1,47 @@
+.stars, .stars-small
+  width: 110px
+  height: 22px
+  position: relative
+  
+  .star 
+    background-size: 22px
+
+.stars-large
+  width: 175px
+  height: 35px
+  position: relative
+  
+  .star
+    background-size: 35px
+
+.star
+    width: 100%
+    height: 100%
+    position: absolute
+    top: 0
+    left: 0  
+    z-index: 1000
+    transition: 0.2s all
+    
+.star.deactive
+  background: url('./icons/star-gray.svg')
+  z-index: 998
+  filter: drop-shadow(0 0 3px rgba(221, 221, 221, 0.8))
+
+.star.active
+  background: url('./icons/star.svg')
+  z-index: 999
+  filter: drop-shadow(0 0 3px rgba(246, 192, 66, 0.8))
+
+.star.click
+  background: url('./icons/star.svg')
+  opacity: 0
+  cursor: pointer
+  width: 20%
+  height: 100%
+
+.click-wrapper 
+  .star.click.hover
+    background: url('./icons/star.svg')
+    opacity: 0.7
+    background-size: 35px

@@ -1,0 +1,415 @@
+openapi: 3.0.2
+info:
+  title: Service Requester REST Interface
+  description: Rest interface to communicate with the service requester.
+  contact:
+    name: SFB901 upb testbed team
+  version: 0.0.2
+servers:
+- url: /api
+tags:
+- name: User-Api
+  description: The user-exposed API (i.e. the API-gateway)
+- name: Requester-Api
+- name: ServiceRequester
+  description: all-in-one tag
+paths:
+  /register:
+    post:
+      tags:
+      - ServiceRequester
+      - Requester-Api
+      description: >-
+        Registers a user by requesting credentials at the credential issuer for
+        the given user attributes.
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attributes'
+        required: false
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  /requests/initialize:
+    post:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Initializes a new service requests with the given name.
+      operationId: initializeServiceRequest
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceUUID'
+  '/requests/{requestUUID}/initial_interview':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    post:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Provides the initial text containing the domain.
+      operationId: initialInterview
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: false
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OTFPConfidence'
+  '/requests/{requestUUID}/extracted_information':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets all the extracted information from the requester.
+      operationId: getExtractedInformation
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+  '/requests/{requestUUID}/providers/{otfpUUID}/accept':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    post:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Accepts an otf-provider for this request.
+      operationId: acceptOTFProvider
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+  '/requests/{requestUUID}/offers/{offerUUID}':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    - $ref: '#/components/parameters/pathOfferUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets the specific offer
+      operationId: getSpecificOffer
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Offer'
+  '/requests/{requestUUID}/proseco_interview':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    post:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Answers a proseco interview question.
+      operationId: answerProsecoInterview
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: false
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+  '/requests/{requestUUID}/offers':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets the offers from the OTF-Provider.
+      operationId: getOfferByCompositionID
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Offer'
+  '/requests/{requestUUID}/jobstate':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: >-
+        Gets the job-state for the given OTF-Provider (i.e. how much the
+        otf-provider has processed).
+      operationId: getJobStateForOTFProvider
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobState'
+  '/requests/{requestUUID}/offers/{offerUUID}/accept':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    - $ref: '#/components/parameters/pathOfferUuid'
+    put:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: >-
+        Accepts the offer specified by the composition identifier. If the user
+        is authorized to buy this composition, he will get a service-link and a
+        rating token, which he then can use to rate the service composition.
+      operationId: buyOffer
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/requests/{requestUUID}/rate':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    put:
+      tags:
+      - ServiceRequester
+      - User-Api
+      operationId: putRating
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceReputation'
+          text/plain:
+            schema:
+              $ref: '#/components/schemas/ServiceReputation'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/requests/{requestUUID}/item':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets the specific item for a request
+      operationId: getItemForRequest
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemAndRequest'
+  '/requests/{requestUUID}/monitor_sources':
+    parameters:
+    - $ref: '#/components/parameters/pathRequestUuid'
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets the market monitor sources for a request
+      operationId: getMonitorSourcesForRequest
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitorSources'
+  /alloffers:
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets a list of all pending offers of the requester
+      operationId: getAllOffers
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OfferAndRequest'
+  /allitems:
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets a list of all bought items of the requester
+      operationId: getAllItems
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemAndRequest'
+  /allJobstates:
+    get:
+      tags:
+      - ServiceRequester
+      - User-Api
+      description: Gets a list of all jobstates
+      operationId: getAllJobStates
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobstateAndRequest'
+components:
+  schemas:
+    Attributes:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    InterviewResponse:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ItemAndRequest:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    JobState:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    JobstateAndRequest:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    MonitorSources:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    Offer:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OfferAndRequest:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    OTFPConfidence:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ResponseMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ServiceReputation:
+      type: object
+      properties:
+        overall:
+          type: number
+          format: double
+        usability:
+          type: number
+          format: double
+        performance:
+          type: number
+          format: double
+        security:
+          type: number
+          format: double
+        other:
+          type: number
+          format: double
+        date:
+          type: string
+          format: date-time
+    ServiceUUID:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathRequestUuid:
+      name: requestUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathOfferUuid:
+      name: offerUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathOtfpUuid:
+      name: otfpUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+

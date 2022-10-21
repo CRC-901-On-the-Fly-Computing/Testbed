@@ -1,0 +1,21 @@
+<app-intro></app-intro>
+<div id="frame">
+  <div id="header">
+    <div id="roles">
+      <app-roles-dropdown></app-roles-dropdown>
+    </div>
+    <app-header></app-header>
+  </div>
+  <div id="main">
+    <div id="sidebar">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div id="content">
+      <app-loading></app-loading>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div id="footer">
+    <app-footer></app-footer>
+  </div>
+</div>

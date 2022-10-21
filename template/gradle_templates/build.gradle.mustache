@@ -1,0 +1,81 @@
+
+// define PoC properties for this project
+ext.poc = ext {
+	projectName            = '{{projectName}}'
+	basePackage            = '{{baseImplementationPackage}}.fixMeByChangingToBasePackage_MostlySimplyRemoveThe.impl'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+{{^springBoot}}
+apply plugin: 'application'
+{{/springBoot}}
+{{#springBoot}}
+apply plugin: 'org.springframework.boot'
+{{/springBoot}}
+
+
+{{^springBoot}}
+mainClassName = "${basePackage}.impl.Application"
+{{/springBoot}}
+{{#springBoot}}
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+{{#mongoDependency}}
+	args      = [mongoUser, mongoPassword]
+{{/mongoDependency}}
+}
+{{/springBoot}}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+{{#springBoot}}
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+{{/springBoot}}
+{{#mongoDependency}}
+docker {
+	buildArgs(buildArgs + [
+		MONGO_USER    : mongoUser,
+		MONGO_PASSWORD: mongoPassword
+	])
+}
+{{/mongoDependency}}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// external dependencies
+	implementation group: 'commons-lang'              , name: 'commons-lang'
+	implementation group: 'io.fabric8'                , name: 'kubernetes-client'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+{{#mongoDependency}}
+	implementation group: 'org.mongodb'               , name: 'bson'
+{{/mongoDependency}}
+
+
+	// runtime dependencies
+{{#mongoDependency}}
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver'
+	runtimeOnly    group: 'org.mongodb'               , name: 'mongodb-driver-core'
+{{/mongoDependency}}
+	runtimeOnly    group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+}

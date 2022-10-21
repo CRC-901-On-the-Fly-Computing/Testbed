@@ -1,0 +1,358 @@
+/**
+ * Creates or updates the jenkins jobs for projects and triggers the jobs on
+ * changes.
+ */
+
+// Output
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+// Unirest
+import com.mashape.unirest.http.Unirest
+
+// XML compare
+import org.custommonkey.xmlunit.XMLUnit
+
+// XML Parser
+import groovy.util.XmlParser
+
+// Yaml parser
+import org.yaml.snakeyaml.Yaml
+
+import org.gradle.internal.exceptions.DefaultMultiCauseException
+
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		mavenCentral()
+		maven {
+			url "${sfbNexusBaseUrl}/repository/${sfbNexusDownRepo}/"
+			credentials {
+				username "${sfbNexusUsername}"
+				password "${sfbNexusPassword}"
+			}
+		}
+	}
+
+	dependencies {
+		classpath group: 'com.github.kamkozlowski.gradle', name: 'mustache'
+		classpath group: 'com.mashape.unirest'           , name: 'unirest-java'
+		classpath group: 'org.yaml'                      , name: 'snakeyaml'
+		classpath group: 'xmlunit'                       , name: 'xmlunit'
+	}
+}
+
+
+// Template plugin
+apply plugin: com.github.kamkozlowski.gradle.mustache.MustachePlugin
+
+
+ext.logFileJenkinsTask = new File(rootProject.projectDir, 'build/logs/jenkinsTask.txt')
+
+
+/**
+ * Creates or updates jenkins job and triggers it on changes.
+ */
+task jenkins {
+	description 'Generates/updates Jenkins files and jobs.'
+	group 'CRC901'
+	dependsOn compileTemplate
+
+	doLast {
+		logFileJenkinsTask.getParentFile().mkdirs()
+
+		if (!logFileJenkinsTask.exists()) {
+			logFileJenkinsTask.createNewFile()
+		}
+
+		logFileJenkinsTask.append("=== Starting task ${getDate()} ===\n")
+
+		updateProject(project)
+	}
+}
+
+
+// Whether or not configs should be updated before compiling the template
+if (!project.hasProperty("shouldUpdateConfigs")) {
+	ext.shouldUpdateConfigs = false
+}
+ext.shouldUpdateConfigs = shouldUpdateConfigs as Boolean
+
+
+/**
+ * Defines the compileTemplate task of MustachePlugin.
+ */
+compileTemplate() {
+	dependsOn {
+		if (shouldUpdateConfigs) {
+			updateConfigs
+		}
+	}
+
+	doFirst {
+		def out = services.get(StyledTextOutputFactory).create('logger')
+
+		def fromConfigTemplate = new File(rootProject.projectDir, 'template/jenkinsfile_templates/jobconfig.xml.mustache')
+		def fromJenkinsfileTemplate = new File(rootProject.projectDir, 'template/jenkinsfile_templates/Jenkinsfile.mustache')
+
+		if (!fromConfigTemplate.exists()) {
+			out.withStyle(Style.Failure).println('\n\nMissing jenkins job config template')
+
+			throw new FileNotFoundException(fromConfigTemplate.path)
+		}
+
+		if (!fromJenkinsfileTemplate.exists()) {
+			out.withStyle(Style.Failure).println('\n\nMissing jenkins file template')
+
+			throw new FileNotFoundException(fromJenkinsfileTemplate.path)
+		}
+
+
+		def fromConfig = new File(project.projectDir, "${project.name}_template_config.yaml")
+
+		if (fromConfig.exists()) {
+			mustache {
+				// add job creation XML
+				template(fromConfigTemplate.toURI(), uri('jobconfig.xml'), fromConfig.toURI())
+				// add jenkins file
+				template(fromJenkinsfileTemplate.toURI(), uri('Jenkinsfile'), fromConfig.toURI())
+			}
+			out.withStyle(Style.Success).append('done compiling ')
+			out.withStyle(Style.Normal).println(project.name)
+
+		} else {
+			out.withStyle(Style.Failure).append('no config file ')
+			out.withStyle(Style.Normal).println(project.name)
+		}
+	}
+}
+
+/**
+ * Creates or updates jenkins job for given project and triggers it on changes.
+ *
+ * @param project  to update the jenkins job config for
+ */
+def updateProject(project) {
+	def out = services.get(StyledTextOutputFactory).create('logger')
+
+	def exceptions = []
+	try {
+		testProperty('jenkinsURL')
+	} catch (e) {
+		exceptions << e
+	}
+	try {
+		testProperty('jenkinsUser')
+	} catch (e) {
+		exceptions << e
+	}
+	try {
+		testProperty('jenkinsPassword')
+	} catch (e) {
+		exceptions << e
+	}
+	if (exceptions.size() > 0) {
+		out.withStyle(Style.Info).println('Maybe you shouldn\'t run this method (e.g. a Jenkins server) or you didn\'t set the properties right.')
+		throw new DefaultMultiCauseException('Undefined properties', exceptions)
+	}
+
+	def crumb = generateCrumb()
+	if (!crumb) {
+		return
+	}
+
+	def relativeProjectPath = rootProject.relativePath(project.projectDir)
+	def projectName = "OTFTestbed_${relativeProjectPath.replaceAll('[/\\\\]', '_')}"
+
+	def configFile = new File(project.projectDir, 'jobconfig.xml')
+
+	if (!configFile.exists()) {
+		out.withStyle(Style.Normal).append(projectName)
+		out.withStyle(Style.Failure).println(' no config')
+		return
+	}
+
+	def config = configFile.getText()
+
+	out.withStyle(Style.Normal).append(projectName)
+
+	def shouldBuild = false
+
+	if (projectAlreadyExists(projectName)) {
+
+		def changed = detectConfigChange(projectName, config)
+		if (changed) {
+
+			def updateResponse = updateExistingJenkinsJob(projectName, config, crumb)
+			if (updateResponse.getStatus() != 200) {
+				out.withStyle(Style.Failure).println(" error updating. Status ${updateResponse.getStatus()}")
+				logFileJenkinsTask.append("- Error while updating project ${projectName}.\n")
+				logFileJenkinsTask.append("URL: ${jenkinsURL}/createItem?name=${projectName}\n")
+				logFileJenkinsTask.append("\t - Status Code ${updateResponse.getStatus()}\n")
+				logFileJenkinsTask.append("\t - Response body \n${updateResponse.getBody()}\n")
+
+			} else {
+				out.withStyle(Style.Info).println(' updated.')
+			}
+			shouldBuild = true
+
+		} else {
+			out.withStyle(Style.Success).println(' up-to-date.')
+		}
+
+	} else {
+		def createResponse = createNewJenkinsJob(projectName, config, crumb)
+		if (createResponse.getStatus() != 200) {
+			out.withStyle(Style.Failure).println(" error creating. Status ${createResponse.getStatus()}")
+			logFileJenkinsTask.append("- Error while creating project ${projectName}.\n")
+			logFileJenkinsTask.append("URL: ${jenkinsURL}/createItem?name=${projectName}\n")
+			logFileJenkinsTask.append("\t - Status Code ${createResponse.getStatus()}\n")
+			logFileJenkinsTask.append("\t - Response body \n${createResponse.getBody()}\n")
+
+		} else {
+			out.withStyle(Style.Info).println(' created.')
+		}
+		shouldBuild = true
+	}
+
+	if (shouldBuild) {
+		triggerExistingJob(projectName, new File("${relativeProjectPath}/${project.name}_template_config.yaml").getText())
+	}
+}
+
+
+/**
+ * Gets the jenkins job configuration for the given project name from the
+ * jenkins and compares it to the given configuration. Returns true if the
+ * configurations are different, otherwise false.
+ *
+ * @param projectName   name of the compared jenkins job
+ * @param configToSend  compared jenkins job configuration
+ * @return {@code true} if the configurations are different; otherwise {@code false}
+ */
+def detectConfigChange(projectName, configToSend) {
+	def unirest = Unirest.get("${jenkinsURL}/job/${projectName}/config.xml").basicAuth(jenkinsUser, jenkinsPassword).asString()
+
+	XMLUnit.setIgnoreWhitespace(true)
+	XMLUnit.setIgnoreComments(true)
+	XMLUnit.setIgnoreDiffBetweenTextAndCDATA(true)
+	XMLUnit.setNormalizeWhitespace(true)
+
+	// Return true if not identical
+	return !XMLUnit.compareXML(unirest.getBody(), configToSend).identical()
+}
+
+/**
+ * Triggers the jenkins job for given project name.
+ *
+ * @param projectName  name of the triggered jenkins job
+ * @param ymlAsText    yaml text with token
+ * @return response of get request
+ */
+def triggerExistingJob(projectName, ymlAsText) {
+	def parser = new Yaml()
+	def parsed = parser.load(ymlAsText)
+	def token = parsed.token
+
+	Unirest.get("${jenkinsURL}/job/${projectName}/build?token=${token}&cause=Job+created+or+updated+from+gradle").basicAuth(jenkinsUser, jenkinsPassword).asString()
+}
+
+/**
+ * Updates an existing jenkins job configuration for given project name.
+ *
+ * @param projectName  name of the updated jenkins job
+ * @param config       new jenkins job configuration
+ * @param crumb        jenkins security crumb
+ * @return response of post request
+ */
+def updateExistingJenkinsJob(projectName, config, crumb) {
+	def unirestResponse = Unirest.post("${jenkinsURL}/job/${projectName}/config.xml").basicAuth(jenkinsUser, jenkinsPassword).header('Jenkins-Crumb', crumb).header('Content-Type', 'text/xml').body(config).asString()
+	unirestResponse
+}
+
+/**
+ * Create new jenkins job for given project name.
+ *
+ * @param projectName  name of the created jenkins job
+ * @param config       new jenkins job configuration
+ * @param crumb        jenkins security crumb
+ * @return response of post request
+ */
+def createNewJenkinsJob(projectName, config, crumb) {
+	def unirestResponse = Unirest.post("${jenkinsURL}/createItem?name=${projectName}").basicAuth(jenkinsUser, jenkinsPassword).header('Jenkins-Crumb', crumb).header('Content-Type', 'text/xml').body(config).asString()
+	unirestResponse
+}
+
+/**
+ * Checks whether a jenkins job with given project name exists or not.
+ *
+ * @param projectName  name of the checked jenkins job
+ * @return {@code true} if jenkins job exists; otherwise {@code false}
+ */
+def projectAlreadyExists(projectName) {
+	def unirest = Unirest.get("${jenkinsURL}/job/${projectName}/config.xml").basicAuth(jenkinsUser, jenkinsPassword).asString()
+
+	if(unirest.getStatus() != 200) {
+		return false
+	}
+	return true
+}
+
+ext.alreadyLoggedCrumbError = false
+/**
+ * Generates jenkins crumb for CSRF protection.
+ *
+ * @return crumb on success; otherwise {@code null}
+ */
+def generateCrumb() {
+	def out = services.get(StyledTextOutputFactory).create('logger')
+
+	def unirestResponse = Unirest.get("${jenkinsURL}/crumbIssuer/api/xml").basicAuth(jenkinsUser, jenkinsPassword).asString()
+
+	if (unirestResponse.getStatus() != 200) {
+		if (!alreadyLoggedCrumbError) {
+			out.withStyle(Style.Failure).println("Coundln't create crumb. Got status code ${unirestResponse.getStatus()}. Stopping execution.")
+			logFileJenkinsTask.append('- Error while getting crumb\n')
+			logFileJenkinsTask.append("URL: ${jenkinsURL}/crumbIssuer/api/xml\n")
+			logFileJenkinsTask.append("\t - Status Code ${unirestResponse.getStatus()}\n")
+			logFileJenkinsTask.append("\t - Response body \n${unirestResponse.getBody()}\n")
+			alreadyLoggedCrumbError = true
+		}
+
+		null
+	} else {
+		def rootNode = new XmlParser().parseText(unirestResponse.getBody())
+		def crumb = rootNode.crumb.text()
+
+		crumb
+	}
+}
+
+
+// Helper
+
+/**
+ * Checks if property with given name exists. Throws exception if it doesn't
+ * exist.
+ *
+ * @param propertyName  to check
+ */
+def testProperty(propertyName) {
+	def out = services.get(StyledTextOutputFactory).create('logger')
+
+	if (!hasProperty(propertyName)) {
+		out.withStyle(Style.Failure).println("Not defined property '${propertyName}'.")
+		throw new GradleException("Undefined property '${propertyName}'")
+	}
+}
+
+/**
+ * Gets current date and time.
+ *
+ * @return current date and time
+ */
+def getDate() {
+	new Date().format('yyyy-MM-dd HH:mm:ss')
+}

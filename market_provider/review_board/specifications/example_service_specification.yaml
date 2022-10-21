@@ -1,0 +1,372 @@
+openapi: 3.0.2
+info:
+  title: Review Board REST Interface
+  description: A simple REST interface to communicate with the reputation-system.
+  contact:
+    name: Mirko Juergens
+    email: mirkoj@mail.upb.de
+  version: '2.1'
+servers:
+- url: /api
+tags:
+- name: Reputation System
+- name: Service Composition Ratings
+- name: Service Ratings
+- name: Reputation Statistics
+- name: Otf Provider Ratings
+- name: ReviewBoard
+  description: all-in-one tag
+paths:
+  '/otf_provider_ratings/{otfpUUID}':
+    parameters:
+    - $ref: '#/components/parameters/pathOtfpUuid'
+    get:
+      tags:
+      - ReviewBoard
+      - Otf Provider Ratings
+      summary: Requests an average rating over all otf providers for this service
+      operationId: getOtfProviderRating
+      responses:
+        '200':
+          description: The disaggregated service rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedServiceReputation'
+  /service_composition_ratings:
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Requests a list of aggregated reviews for each service composition
+      operationId: getAggregatedServiceCompositionReviewList
+      responses:
+        '200':
+          description: The list of aggregated ratings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedServiceReputation'
+  /service_composition_ratings/count:
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Counts all reviews
+      operationId: countAllServiceCompositionReviews
+      responses:
+        '200':
+          description: The number of reputations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/service_composition_ratings/{serviceCompositionID}':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceCompositionId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Requests the aggregated review for a service composition.
+      operationId: getAggregatedServiceCompositionReputation
+      responses:
+        '200':
+          description: The disaggregated service rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedServiceReputation'
+    put:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Requests the storage of a service composition review.
+      operationId: rateServiceComposition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Review'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/service_composition_ratings/{serviceCompositionID}/count':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceCompositionId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Counts all reviews of this service composition
+      operationId: countServiceCompositionReviews
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The number of reputations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/service_composition_ratings/{serviceCompositionID}/list':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceCompositionId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Requests all reviews of this service composition
+      operationId: getServiceCompositionReviewList
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The list of reputations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceReputationAndSignature'
+  '/service_composition_ratings/{serviceCompositionID}/rawlist':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceCompositionId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Composition Ratings
+      summary: Requests all reviews of this service composition
+      operationId: getServiceCompositionRawReviewList
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The list of signed reputations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+  /statistics:
+    post:
+      tags:
+      - ReviewBoard
+      - Reputation Statistics
+      summary: Generate Statistic for the Reputations
+      operationId: getStatistic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatisticDefinitionModel'
+        required: false
+      responses:
+        '200':
+          description: reputationlist with statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceReputationList'
+  '/service_ratings/{serviceID}/':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Ratings
+      summary: Gets an aggregated rating for the specified service
+      description: >-
+        Collects all review where this service was part of and aggregates the
+        rating
+      operationId: getAggregatedServiceReputation
+      responses:
+        '200':
+          description: The disaggregated service rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedServiceReputation'
+  '/service_ratings/{serviceID}/count':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Ratings
+      summary: Counts all reviews of the specified service
+      operationId: countServiceReviews
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The number of reputations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseMessage'
+  '/service_ratings/{serviceID}/list':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Ratings
+      summary: Gets a list of ratings where the specified service is part of.
+      operationId: getServiceReputationList
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The list of reputations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceReputationAndSignature'
+  '/service_ratings/{serviceID}/rawlist':
+    parameters:
+    - $ref: '#/components/parameters/pathServiceId'
+    get:
+      tags:
+      - ReviewBoard
+      - Service Ratings
+      summary: Gets a raw list of ratings where the specified service is part of.
+      operationId: getServiceReviewList
+      parameters:
+      - $ref: '#/components/parameters/queryMaxOverall'
+      - $ref: '#/components/parameters/queryMaxOther'
+      - $ref: '#/components/parameters/queryMaxPerformance'
+      - $ref: '#/components/parameters/queryMaxSecurity'
+      - $ref: '#/components/parameters/queryMaxUsability'
+      responses:
+        '200':
+          description: The list of signed reputations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+components:
+  schemas:
+    ExtendedServiceReputation:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ResponseMessage:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    Review:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ServiceReputationAndSignature:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    ServiceReputationList:
+      type: object
+      properties:
+        placeholder:
+          type: string
+    StatisticDefinitionModel:
+      type: object
+      properties:
+        placeholder:
+          type: string
+  parameters:
+    pathOtfpUuid:
+      name: otfpUUID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    pathServiceCompositionId:
+      name: serviceCompositionID
+      in: path
+      required: true
+      schema:
+        type: string
+    pathServiceId:
+      name: serviceID
+      in: path
+      required: true
+      schema:
+        type: string
+    queryMaxOther:
+      name: maxOther
+      in: query
+      schema:
+        maximum: 5
+        minimum: 0
+        type: integer
+        default: 5
+    queryMaxOverall:
+      name: maxOverall
+      in: query
+      schema:
+        maximum: 5
+        minimum: 0
+        type: integer
+        default: 5
+    queryMaxPerformance:
+      name: maxPerformance
+      in: query
+      schema:
+        maximum: 5
+        minimum: 0
+        type: integer
+        default: 5
+    queryMaxSecurity:
+      name: maxSecurity
+      in: query
+      schema:
+        maximum: 5
+        minimum: 0
+        type: integer
+        default: 5
+    queryMaxUsability:
+      name: maxUsability
+      in: query
+      schema:
+        maximum: 5
+        minimum: 0
+        type: integer
+        default: 5
+

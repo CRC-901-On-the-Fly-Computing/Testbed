@@ -1,0 +1,25 @@
+package de.upb.crc901.otftestbed.commons.connect;
+
+/**
+ * Enum of all PoC services.
+ *
+ * @author Roman
+ */
+public enum PocService {
+
+	ADMIN_CLIENT,
+
+	LOCAL_SERVICE_REQUESTER,
+	LOCAL_USER_CREATOR,
+
+	MP_BUY_PROCESSOR,
+	MP_CREDENTIAL_ISSUER,
+	MP_OTFP_REGISTRY,
+	MP_REVIEW_BOARD,
+	MP_SYSTEM_MANAGER,
+
+	OP_COMPOSITION_ANALYSIS,
+	OP_GATEKEEPER,
+	OP_POLICY_PROVIDER,
+	OP_PROSECO_CONFIGURATOR;
+}

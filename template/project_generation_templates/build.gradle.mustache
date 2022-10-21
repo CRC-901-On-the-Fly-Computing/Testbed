@@ -1,0 +1,80 @@
+buildscript {
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.0.6.RELEASE'
+		classpath 'gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0'
+	}
+}
+
+
+def baseFolder =  '{{baseImplementationPackage}}'.replaceAll('\\.', '/')
+def implementationDir = '{{projectName}}/src/main/java/'
+def impl = implementationDir + baseFolder
+def config = impl + '/config'
+
+
+task (copyGradle, type: Copy) {
+	from('generatedConfigs')
+	into('{{projectName}}')
+	include('build.gradle', 'Dockerfile', 'Jenkinsfile', 'jobconfig.xml', 'example_configuration.yaml')
+	rename('example_configuration.yaml', '{{projectName}}_template_config.yaml')
+}
+
+task(copySpringApp) {
+	mkdir(config)
+
+	doLast {
+		copy {
+			from('generatedConfigs')
+			into(impl)
+			include('Application.java')
+		}
+		copy {
+			from('generatedConfigs')
+			into(config)
+			include('Config.java')
+		}
+	}
+}
+
+task (copySpec, type: Copy) {
+	from('../config')
+	into('{{projectName}}/specifications')
+	include('{{specificationName}}.yaml')
+}
+
+task (copyConfig, type: Copy) {
+	from('generatedConfigs')
+	into('{{projectName}}/specifications')
+	include('config.json')
+}
+
+task (copyResources, type: Copy) {
+	from('generatedConfigs')
+	into('{{projectName}}/src/main/resources')
+	include('application.properties')
+}
+
+// we may want to change this to GradleBuild
+task (projectBuild) {
+	mkdir(impl)
+	// buildFile = new File('{{projectName}}/build.gradle');
+	// tasks = Arrays.asList('build');
+
+	doLast{
+		delete('generatedConfigs', 'build.gradle', 'settings.gradle')
+		new File('build/{{projectName}}/.gitignore').write('build/')
+	}
+}
+
+projectBuild.dependsOn copyGradle
+projectBuild.dependsOn copySpec
+projectBuild.dependsOn copyConfig
+projectBuild.dependsOn copySpringApp
+projectBuild.dependsOn copyResources
+

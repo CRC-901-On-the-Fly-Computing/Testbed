@@ -1,0 +1,166 @@
+/**
+ * Updates the configuration yaml of projects according to the configuration
+ * template. If some keys in a project are missing they will be added.
+ */
+
+// Output
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+// User input
+import groovy.swing.SwingBuilder
+
+// Yaml parser
+import org.yaml.snakeyaml.Yaml
+
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath group: 'org.yaml', name: 'snakeyaml'
+	}
+}
+
+
+/**
+ * Updates configuration yaml of projects if there are keys in the configuration
+ * template that are not in the projects config.
+ */
+task updateConfigs {
+	description 'Updates project configuration yaml files.'
+	group 'CRC901'
+
+	def createMissing = false
+
+	doLast {
+		def out = services.get(StyledTextOutputFactory).create('logger')
+
+		def baseFile = new File("${rootProject.projectDir}/template/config/example_configuration.yaml")
+
+		def relativeProjectPath = rootProject.relativePath(project.projectDir)
+		def projectFile = new File("${relativeProjectPath}/${project.name}_template_config.yaml")
+
+		if (!projectFile.exists() && createMissing) {
+			projectFile.text = ''
+		}
+
+		if (projectFile.exists()) {
+			def newConfig = getMissingConfigProperties(baseFile.text, projectFile.text, project.name)
+
+			if (newConfig) {
+				projectFile.text = newConfig
+				out.withStyle(Style.Info).append('updated        ')
+				out.withStyle(Style.Normal).println(project.name)
+			} else {
+				out.withStyle(Style.Success).append('up-to-date     ')
+				out.withStyle(Style.Normal).println(project.name)
+			}
+		} else {
+			out.withStyle(Style.Failure).append('no config file ')
+			out.withStyle(Style.Normal).println(project.name)
+		}
+	}
+}
+
+
+/**
+ * Search for keys in the baseConfig which are not present in the projectConfig.
+ * If new keys are found popup and ask for desired value. Returns the new config
+ * if something changes, otherwise it returns {@code null}.
+ *
+ * @param baseConfig     default configuration yaml
+ * @param projectConfig  current configuration yaml
+ * @param projectName    name of the project
+ * @return the new config when it changes; otherwise {@code null}
+ */
+def getMissingConfigProperties(baseConfig, projectConfig, projectName) {
+
+	def out = services.get(StyledTextOutputFactory).create('logger')
+
+	def baseParser = new Yaml()
+	def baseParsed = baseParser.load(baseConfig)
+
+	def projectParser = new Yaml()
+	def projectParsed = projectParser.load(projectConfig)
+
+	def printedProject = false
+
+	baseParsed.each { baseKey, baseValue ->
+
+		def found = false
+
+		projectParsed.each { projectKey, projectValue ->
+			if (projectKey.equals(baseKey)) {
+				found = true
+			}
+		}
+
+		if (!found) {
+			if (!printedProject) {
+				printedProject = true
+				projectConfig += "\n\n##### Added via script | ${getDate()} #####"
+			}
+
+			def valueSet = false
+			def inputValue = ''
+
+			new SwingBuilder().edt {
+				dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
+				title: "Missing key ${baseKey} for project ${projectName}", // Dialog title
+				alwaysOnTop: true, // pretty much what the name says
+				resizable: false, // Don't allow the user to resize the dialog
+				locationRelativeTo: null, // Place dialog in center of the screen
+				pack: true, // We need to pack the dialog (so it will take the size of it's children
+				show: true // Let's show it
+				) {
+					vbox {
+						// Put everything below each other
+						label(text: "Enter value for missing key \"${baseKey}\" with default value \"${baseValue}\" in project \"${projectName}\":")
+						input = textField()
+						button(defaultButton: true, text: 'OK', actionPerformed: {
+							valueSet = true
+							inputValue = input.text
+							dispose(); // Close dialog
+						})
+						button(text: 'Cancel', actionPerformed: {
+							dispose();
+						})
+					}
+				}
+			}
+
+			if (!inputValue || inputValue.equals('')) {
+				if (baseValue && baseValue instanceof String && baseValue.contains('/')) {
+					baseValue = '"' + baseValue + '"'
+				}
+				projectConfig += "\n${baseKey}: ${baseValue}"
+			} else {
+				if (inputValue && inputValue.contains('/')) {
+					inputValue = '"' + inputValue + '"'
+				}
+				projectConfig += "\n${baseKey}: ${inputValue}"
+			}
+		}
+	}
+
+	if (printedProject) {
+		// indicates that we found a not yet set key
+		return projectConfig + '\n'
+	}
+
+	return null
+}
+
+/**
+ * Get current date and time.
+ *
+ * @return the current date and time
+ */
+def getDate() {
+	new Date().format('yyyy-MM-dd HH:mm:ss')
+}

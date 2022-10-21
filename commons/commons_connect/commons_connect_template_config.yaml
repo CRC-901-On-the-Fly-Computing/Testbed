@@ -1,0 +1,52 @@
+### General
+projectName: commons_connect
+# must end with / and may not start with /
+projectPath: commons/
+
+### Jenkinsfile
+# set to true if this project should trigger other projects
+# for this list, the user is asked whether or not they should be triggered
+triggerOtherProjects: false
+triggerList: []
+# set to true if this proejct should trigger other projects
+# user is *not* asked whether or not they should be build.
+# build is triggered after the docker stage is done if no previous step failed
+forceTriggerProjects: false
+forceList: []
+uploadDocker: false
+uploadArtifacts: false
+useSonarqube: true
+
+### Jenkins project
+branch: "*/develop"
+# If any other folder then the projects folder should be included
+# for more includes separate with a space
+includeRegions:
+# Same as include but nothing is excluded by default
+excludeRegions:
+# Might be used if you need a different jenkinsfile for any reason (for example to test a specific branch without uploading)
+jenkinsfileName: Jenkinsfile
+# Token to trigger the build
+token: iogsdlkmk
+
+###DOCKER CONFIGURATION
+springBoot: false
+jetty: false
+
+###SPRING BOOT CONFIGURATION (if used)
+# the name of the service_specification used (i.e. your service_specification is named {specificationName}.yaml)
+specificationName: example_service_specification
+# currently not used, as our versioning is done by docker tags. However maybe relevant in the future
+jarVersion: 0.1.0
+baseGenerationPackage: de.upb.crc901.otftestbed.commons.generated.spring_server
+baseImplementationPackage:  de.upb.crc901.otftestbed.commons.impl
+#internal port (don't change this, if you don't know what you are doing)
+port: 8080
+#specifies whether a mongo connection should be established
+mongoDependency: false
+# mongo config stuff
+mongoIP: 131.234.28.160
+mongoPort: 27017
+mongoDB: reputation-data
+# only change this!
+mongoCollection: original-ratings-new

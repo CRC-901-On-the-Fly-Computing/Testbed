@@ -1,0 +1,25 @@
+{{#springBoot}}
+FROM adoptopenjdk/openjdk11:x86_64-alpine-jdk-11.0.4_11
+
+VOLUME /tmp
+
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+
+{{^mongoDependency}}
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar"]
+{{/mongoDependency}}
+{{#mongoDependency}}
+ARG MONGO_USER
+ENV M_U=$MONGO_USER
+ARG MONGO_PASSWORD
+ENV M_PW=$MONGO_PASSWORD
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app.jar", "$M_U", "$M_PW"]
+{{/mongoDependency}}
+{{/springBoot}}
+{{#jetty}}
+FROM jetty:9
+ENV {{projectNameWithMinus}}-config /{{projectNameWithMinus}}/config.properties
+COPY ./build/libs/*.war /var/lib/jetty/webapps/ROOT.war
+{{/jetty}}

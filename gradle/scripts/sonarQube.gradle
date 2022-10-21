@@ -1,0 +1,93 @@
+/**
+ * The SonarQube plugin performs quality checks on the source code. It detects
+ * minor uncleanness, but also bugs and possible vulnerabilities.
+ *
+ *
+ * Usage:
+ *
+ * On (sub-)projects you want SonarQube to be added, apply this script and the
+ * plugin with its configuration:
+ *
+ * apply from: 'sonarQube.gradle'
+ * applySonarQubeConfig()
+ */
+
+
+/**
+ * The map of different closures to configure the plugin.
+ */
+def configs = [
+	'default': {
+		sonarqube {
+			properties {
+				properties['sonar.exclusions'] =  [
+					'**/flow/schema/**',
+					'**/service_specification/schema/**'
+				]
+				properties['sonar.projectKey']          = project.name
+				properties['sonar.projectName']         = project.name
+				properties['sonar.projectDescription']  = project.description
+				properties['sonar.projectVersion']      = project.version
+				properties['sonar.projectBaseDir']      = project.projectDir
+				properties['sonar.working.directory']   = "${project.buildDir}/sonar"
+				properties['sonar.sourceEncoding']      = project.compileJava.options.encoding
+				properties['sonar.java.source']         = project.sourceCompatibility
+				properties['sonar.java.target']         = project.targetCompatibility
+//				properties['sonar.sources']             = sourceSets.main.allSource.srcDirs
+//				properties['sonar.tests']               = sourceSets.test.allSource.srcDirs
+				properties['sonar.java.binaries']       = sourceSets.main.output.classesDir
+//				properties['sonar.java.libraries']      = sourceSets.main.compileClasspath
+				properties['sonar.java.test.binaries']  = sourceSets.test.output.classesDir
+//				properties['sonar.java.test.libraries'] = sourceSets.test.compileClasspath
+//				properties['sonar.junit.reportsPath']   = testResultsDir
+			}
+		}
+	}
+]
+
+
+buildscript {
+	apply from: rootProject.gradleScript.applyBuildscriptDepMgmt, to: owner
+
+	repositories {
+		maven {
+			url 'https://plugins.gradle.org/m2/'
+		}
+	}
+
+	dependencies {
+		classpath group: 'org.sonarsource.scanner.gradle', name: 'sonarqube-gradle-plugin'
+	}
+}
+
+
+/**
+ * Applies the plugin to the actual project.
+ */
+ext.applySonarQubePlugin = {
+	apply plugin: org.sonarqube.gradle.SonarQubePlugin
+}
+
+
+/**
+ * Apply and configure the plugin. It is configured with the configuration with
+ * the given name.
+ * The applying of the plugin can be disabled by setting the optional parameter
+ * applyPlugin to false.
+ *
+ * @param configName The name of the plugin configuration; default is 'default'.
+ * @param applyPlugin Whether the plugin is applied; default is true.
+ */
+ext.applySonarQubeConfig = { configName = 'default', boolean applyPlugin = true ->
+
+	def configuration = configs[configName]
+	if (configuration == null) {
+		throw new GradleScriptException("No plugin configuration found with name: ${configName}", null)
+	}
+
+	if (applyPlugin) {
+		applySonarQubePlugin()
+	}
+
+	configuration()
+}

@@ -1,0 +1,7 @@
+<mat-form-field>
+  <mat-select placeholder="Role" (change)="onChange()" [(ngModel)]="selectedItem">
+    <mat-option *ngFor="let item of items" [value]="item.value">
+      {{ item.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

@@ -1,0 +1,61 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'admin_client'
+	basePackage            = 'de.upb.crc901.otftestbed.admin_client'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+	implementation project(':kubernetes_executor_spawner:generated_java_client')
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+//	implementation group: 'io.fabric8'                , name: 'kubernetes-client', version: '4.3.0'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+}
+
+
+project(getGenerationSubprojectPath('java_client')) {
+	swaggerSources.project.code.components['models'] = true
+}
+
+project(getGenerationSubprojectPath('spring_server')) {
+	swaggerSources.project.code.components['models'] = true
+}

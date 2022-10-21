@@ -1,0 +1,7 @@
+<div class="mat-simple-snackbar custom-stackbar {{data.type || ''}}">
+  <mat-icon class="alert-icon">{{data.type === 'success' ? 'check_circle' : 'cancel' }}</mat-icon>
+  <span [innerHTML]="data.message || ''"></span>
+  <button mat-icon-button class="close-btn" (click)="data.closeCallBack()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

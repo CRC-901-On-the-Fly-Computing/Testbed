@@ -1,0 +1,86 @@
+
+// define PoC properties for this project
+// for more information, see root projects `build.gradle`
+ext.poc = ext {
+	projectName            = 'otfp_registry_new'
+	basePackage            = 'de.upb.crc901.otftestbed.registry'
+}
+
+// configure this project according to PoC properties
+configureProject()
+
+
+apply plugin: 'org.springframework.boot'
+
+
+springBoot {
+	mainClassName = "${basePackage}.impl.Application"
+}
+
+task run(type: JavaExec) {
+	main      = "${basePackage}.impl.Application"
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+	archiveBaseName.set((String) poc.projectName)
+	archiveVersion.set( (String) poc.projectVersion)
+}
+
+bootJar {
+	archiveBaseName = jar.archiveBaseName
+	archiveVersion  = jar.archiveVersion
+}
+
+
+dependencies {
+	// project dependencies
+	implementation project(':commons')
+	implementation project(':publish_subscribe')
+	implementation project(':telemetry')
+	implementation project(getGenerationSubprojectPath('spring_server'))
+
+	// external dependencies
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+	implementation group: 'com.google.guava'          , name: 'guava'
+	implementation group: 'com.mashape.unirest'       , name: 'unirest-java'
+	implementation group: 'io.springfox'              , name: 'springfox-swagger2'
+	implementation group: 'io.swagger'                , name: 'swagger-annotations'
+	implementation group: 'javax.validation'          , name: 'validation-api'
+	implementation group: 'org.springframework'       , name: 'spring-beans'
+	implementation group: 'org.springframework'       , name: 'spring-context'
+	implementation group: 'org.springframework'       , name: 'spring-core'
+	implementation group: 'org.springframework'       , name: 'spring-web'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot'
+	implementation group: 'org.springframework.boot'  , name: 'spring-boot-autoconfigure'
+
+
+	// runtime dependencies
+	runtimeOnly    group: 'de.upb.crc901'             , name: 'publish-subscribe'
+
+	runtimeOnly    group: 'commons-lang'              , name: 'commons-lang'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-swagger-ui'
+	runtimeOnly    group: 'org.springframework.boot'  , name: 'spring-boot-starter-web'
+
+	runtimeOnly    group: 'io.fabric8'                , name: 'kubernetes-client'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-core'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spi'
+	runtimeOnly    group: 'io.springfox'              , name: 'springfox-spring-web'
+	runtimeOnly    group: 'javax.annotation'          , name: 'javax.annotation-api'
+	runtimeOnly    group: 'javax.xml.bind'            , name: 'jaxb-api'
+	runtimeOnly    group: 'org.apache.tomcat'         , name: 'tomcat-annotations-api'
+	runtimeOnly    group: 'org.apache.tomcat.embed'   , name: 'tomcat-embed-core'
+}
+
+project(getGenerationSubprojectPath('java_client')) {
+	 swaggerSources.project.code.components['models'] = true
+
+	dependencies.api project(':publish_subscribe')
+}
+
+project(getGenerationSubprojectPath('spring_server')) {
+	 swaggerSources.project.code.components['models'] = true
+
+	dependencies.api project(':publish_subscribe')
+}

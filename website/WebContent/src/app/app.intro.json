@@ -1,0 +1,30 @@
+[
+    {
+      "element": ".chatcontrol",
+      "text": "Here you can chat with Cordula! And ask your desire functional or non-functional requirements. <br><br> e.g: You can name your service <b><i>“My Service”</i></b> and press Enter."
+    },
+    {
+      "element": ".chatcontrol",
+      "text": "Now you need to write what do you need. <br><br> e.g: <b><i>“I want to classify mountains and beaches on pictures. Performance is very important to me.”</i></b>"
+    },
+    {
+      "element": ".speech-bubble",
+      "text": "We’re trying to offer you some provider, you should be able to see. If yes, It’s time to choose one of them by a smooth click. If no, please try again."
+    },
+    {
+      "element": ".speech-bubble",
+      "text": "Choose the item that suits your problem."
+    },
+    {
+      "element": ".speech-bubble",
+      "text": "Now you need to enter your timout number in milliseconds. The minimum number is 300 milliseconds. <br><br> e.g: <b><i>“300”</i></b>"
+    },
+    {
+      "element": ".speech-bubble",
+      "text": "Please upload your file by drag and drop or click on the box, files can be <b>ZIP</b> or <b>ARFF</b> files."
+    },
+    {
+      "element": ".speech-bubble",
+      "text": "Now you have to wait for the final answer of Cordula!"
+    }
+]

@@ -1,0 +1,60 @@
+<div class="message-box" *ngIf="checked && !dataSource.length">
+  <p>
+    There is currently no request in processing.
+  </p>
+</div>
+<div *ngIf="dataSource && dataSource.length">
+  <mat-card>
+    <label>Request in process:</label>
+    <mat-form-field class="select-request">
+      <mat-select (change)="onChange()" [(ngModel)]="selectedItem">
+        <mat-option *ngFor="let item of dataSource" [value]="item">{{item.requestName}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div style="float: right; margin: 20px" *ngIf="request && requestCreatedAt && counter">
+      Timeout: <b>{{counter}}</b>
+    </div>
+  </mat-card>
+  <br>
+  <div class="offer-item" *ngFor="let offer of offers">
+    <mat-card *ngIf="selectedItem" class="deploy-items">
+      <div class="deploy" *ngFor="let item of selectedItem.steps; index as i">
+        <div class="item">
+          <div class="circle {{item.status}} {{item.type}} {{item.extra || ''}}">
+            <mat-spinner [diameter]="40" mode="indeterminate" *ngIf="item.status=='doing'"></mat-spinner>
+            <mat-icon *ngIf="item.status=='done'" class="alert-icon">done</mat-icon>
+            <mat-icon *ngIf="item.status=='fail'" class="alert-icon">clear</mat-icon>
+          </div>
+        </div>
+        <div *ngIf="i>0" class="bar {{item.status}}"></div>
+        <span>{{item.title}}</span>
+      </div>
+    </mat-card>
+  </div>
+  <mat-card class="graph-wrapper">
+    <p *ngIf="!graphVisibility">Graph is hidden.</p>
+    <mat-card *ngIf="graphVisibility" class="legend">
+      <div class="root"><span>Root</span></div>
+      <div class="best_solution"><span>Best Solution</span></div>
+      <div class="evaluated"><span>Evaluated</span></div>
+      <div class="solution_candidate"><span>Solution Candidate</span></div>
+      <div class="verification_failed"><span>Verification Failed</span></div>
+      <div class="or_open"><span>Node</span></div>
+    </mat-card>
+    <div class="controls">
+      <div class="zoom" *ngIf="graphVisibility">
+        <button mat-icon-button (click)="zoomOut()">
+          <mat-icon>zoom_out</mat-icon>
+        </button>
+        <button mat-icon-button (click)="zoomIn()">
+          <mat-icon>zoom_in</mat-icon>
+        </button>
+      </div>
+      <button mat-icon-button (click)="toggleGraph()">
+        <mat-icon *ngIf="graphVisibility">visibility</mat-icon>
+        <mat-icon *ngIf="!graphVisibility">visibility_off</mat-icon>
+      </button>
+    </div>
+    <app-graph [visibility]="graphVisibility" [scale]="scale" #graph [nodes]="nodes" [links]="links"></app-graph>
+  </mat-card>
+</div>

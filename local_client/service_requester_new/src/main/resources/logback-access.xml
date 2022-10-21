@@ -1,0 +1,61 @@
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout
+        class="ch.qos.logback.access.PatternLayout">
+        <Pattern>%h %l %u %user %date "%r" %s %b %b</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAccessAppender">
+        <url>http://sfb-k8master-1.cs.uni-paderborn.de:30080/elastic/search/_bulk</url>
+        <index>access_logs</index>
+        <type>t</type>
+        <properties>
+            <property>
+                <name>remoteIP</name>
+                <value>%remoteIP</value>
+            </property>
+            <property>
+                <name>localIP</name>
+                <value>%localIP</value>
+            </property>            
+            <property>
+                <name>clientHost</name>
+                <value>%clientHost</value>
+            </property>
+            <property>
+                <name>fullRequest</name>
+                <value>%fullRequest</value>
+            </property>
+            <property>
+                <name>user</name>
+                <value>%user</value>
+            </property>
+            <property>
+                <name>date</name>
+                <value>%date</value>
+            </property>			
+            <property>
+                <name>requestURL</name>
+                <value>%requestURL</value>
+            </property>
+            <property>
+                <name>statusCode</name>
+                <value>%statusCode</value>
+            </property>
+            <property>
+                <name>bytesSent</name>
+                <value>%bytesSent</value>
+            </property>
+        </properties>
+        <headers>
+            <header>
+                <name>Content-Type</name>
+                <value>text/plain</value>
+            </header>
+        </headers>
+    </appender> 
+
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="ELASTIC" />
+</configuration>

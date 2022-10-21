@@ -1,0 +1,80 @@
+def projectName = "service_spec_uploader"
+def fullProjectName = "sfb901-testbed/${projectName}"
+def nexus = "nexus.cs.upb.de"
+def deploymentName = projectName.replace("_","-")
+//With / at the end but not the beginning
+def projectPath = "commons/"
+def projectDomain = projectPath[0..-2].replace("_","-")
+
+
+
+parallel (
+	build: {
+		node {
+			stage('Preparation') {
+				checkout([
+					$class: 'GitSCM',
+					branches: scm.branches,
+					doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+					extensions: scm.extensions,
+					userRemoteConfigs: scm.userRemoteConfigs
+				])
+			}
+			stage("Cleanup"){
+				withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=false"']) {
+					sh """
+					chmod +x ./gradlew
+					./gradlew :${projectName}:clean :${projectName}:cleanBuild :${projectName}:cleanAssemble :${projectName}:cleanCheck
+					"""
+				}
+			}
+			stage("Assemble"){
+				withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=false"']) {
+					sh """
+					chmod +x ./gradlew
+					./gradlew :${projectName}:assemble
+					"""
+				}
+			}
+			stage("Check"){
+				withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=false"']) {
+					sh """
+					chmod +x ./gradlew
+					./gradlew :${projectName}:check
+					"""
+				}
+			}
+			stage('SonarQube analysis') {
+				withSonarQubeEnv('Testbed Sonarqube') {
+					// requires SonarQube Scanner for Gradle 2.1+
+					// It's important to add --info because of SONARJNKNS-281
+					retry(2) {
+						sh """
+						chmod +x ./gradlew
+						./gradlew --info :${projectName}:sonarqube
+						"""
+					}
+				}
+			}
+			stage("Quality Gate"){
+				timeout(time: 2, unit: 'MINUTES') {
+					// Just in case something goes wrong, pipeline will be killed after a timeout
+					def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+					if (qg.status != 'OK') {
+						error "Pipeline aborted due to quality gate failure: ${qg.status}"
+					}
+				}
+			}
+			stage('Build docker image'){
+				def newTag = "nexus.cs.upb.de/sfb901-testbed/${projectName}:v${env.BUILD_ID}";
+				sh """chmod +x ./gradlew
+			 ./gradlew :${projectName}:build  :${projectName}:docker
+			 docker tag ${deploymentName} ${newTag}
+				docker push ${newTag}
+				kubectl -n ${projectDomain} set image deployments/${deploymentName} ${deploymentName}=${newTag}
+				"""
+			}
+		}
+	},
+)
+

@@ -1,0 +1,973 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/lettmann/ontologies/2017/CRC/MLTerms#"
+     xml:base="http://www.semanticweb.org/lettmann/ontologies/2017/CRC/MLTerms"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://crc901.upb.de/MLTerms">
+        <owl:versionIRI rdf:resource="http://crc901.upb.de/MLTerms/0.0.1"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#classifiedBy -->
+
+     <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#classifiedBy">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://crc901.upb.de/MLTerms#boolean"/>
+        <rdfs:domain rdf:resource="http://crc901.upb.de/MLTerms#Attribute_Vector"/>
+    </owl:ObjectProperty> 
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#contains -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#contains"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#dealsWith -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#dealsWith">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#encodes -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#encodes">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://crc901.upb.de/MLTerms#boolean"/>
+        <rdfs:range rdf:resource="http://crc901.upb.de/MLTerms#Gender"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#faceRec -->
+
+	<owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#faceRec">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+        <rdfs:range rdf:resource="http://crc901.upb.de/MLTerms#Gender"/>
+    </owl:ObjectProperty> 
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#has -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#has">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://crc901.upb.de/MLTerms#needs -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#needs"/>
+    
+    <!-- http://crc901.upb.de/MLTerms#represents -->
+
+   <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#represents">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+        <rdfs:range rdf:resource="http://crc901.upb.de/MLTerms#Attribute_Vector"/>
+    </owl:ObjectProperty>
+	
+    <!-- http://crc901.upb.de/MLTerms#uses -->
+
+    <owl:ObjectProperty rdf:about="http://crc901.upb.de/MLTerms#uses"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Anomaly_Detection -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Anomaly_Detection">
+        <owl:equivalentClass rdf:resource="http://crc901.upb.de/MLTerms#Outlier_Detection"/>
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Anomaly detection (also outlier detection) is the identification of items, events or observations which do not conform to an expected pattern or other items in a dataset. Typically the anomalous items will translate to some kind of problem such as bank fraud, a structural defect, medical problems or errors in a text. Anomalies are also referred to as outliers, novelties, noise, deviations and exceptions.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Attribute_Vector -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Attribute_Vector">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Item"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#BMPImage -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#BMPImage">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#BabelID -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#BabelID">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Semanticinformation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Binary_Classification -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Binary_Classification">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Classification"/>
+        <rdfs:comment>Wikipedia:
+Binary or binomial classification is the task of classifying the elements of a given set into two groups on the basis of a classification rule. Instancing a decision whether an item has or not some qualitative property, some specified characteristic.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#boolean -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#boolean">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ClassPrediction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ClassPrediction">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Prediction"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Class_Label"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Class_Label -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Class_Label">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Nominal_Value"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Classification -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Classification">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#SupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Classification is the problem of identifying to which of a set of categories (sub-populations) a new observation belongs, on the basis of a training set of data containing observations (or instances) whose category membership is known. An example would be assigning a given email into &quot;spam&quot; or &quot;non-spam&quot; classes or assigning a diagnosis to a given patient as described by observed characteristics of the patient (gender, blood pressure, presence or absence of certain symptoms, etc.).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Clusterer -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Clusterer">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+        <rdfs:comment>A clusterer is returned by the OTF provider. This clusterer predictor can be applied by the user himself to cluster his private data. The OTF provider selects an approriate clustering algorithm on basis of data descriptions provided by the user.</rdfs:comment>
+        <rdfs:comment>Providing clusterer will not be covered by the OTF provider.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Clustering -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Clustering">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#needs"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#ItemSet"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A clustering of the provided data is returned by the OTF provider. An appropriate clusterer is selected and applied by the OTF provider.</rdfs:comment>
+        <rdfs:comment>Providing clusterings will not be covered by the OTF provider.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ClusteringProblem -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ClusteringProblem">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+        <rdfs:comment>Clustering will not be covered by the OTF provider.</rdfs:comment>
+        <rdfs:comment>Wikipedia:
+Cluster analysis or clustering is the task of grouping a set of objects in such a way that objects in the same group (called a cluster) are more similar (in some sense or another) to each other than to those in other groups (clusters).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#CommandLineinterface -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#CommandLineinterface">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interfaceAccess"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#DataDescription -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#DataDescription"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#DataEvaluators -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#DataEvaluators"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Dimension_Reduction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Dimension_Reduction">
+        <owl:equivalentClass rdf:resource="http://crc901.upb.de/MLTerms#Dimensionality_Reduction"/>
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Dimensionality_Reduction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Dimensionality_Reduction">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Dimensionality reduction or dimension reduction is the process of reducing the number of random variables under consideration.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Distance_Measure -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Distance_Measure">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataEvaluators"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Attribute_Vector"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Feature_Extraction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Feature_Extraction">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Dimensionality_Reduction"/>
+        <rdfs:comment>Wikipedia:
+Feature selection, also known as variable selection, attribute selection or variable subset selection, is the process of selecting a subset of relevant features (variables, predictors) for use in model construction. Feature selection techniques are used for four reasons:
+
+        simplification of models to make them easier to interpret by researchers/users,
+        shorter training times,
+        to avoid the curse of dimensionality,
+        enhanced generalization by reducing overfitting (formally, reduction of variance)
+
+The central premise when using a feature selection technique is that the data contains many features that are either redundant or irrelevant, and can thus be removed without incurring much loss of information. Redundant or irrelevant features are two distinct notions, since one relevant feature may be redundant in the presence of another relevant feature with which it is strongly correlated.
+
+Example: Subset Selection</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Feature_Selection -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Feature_Selection">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Dimensionality_Reduction"/>
+        <rdfs:comment>Wikipedia:
+Feature extraction starts from an initial set of measured data and builds derived values (features) intended to be informative and non-redundant, facilitating the subsequent learning and generalization steps, and in some cases leading to better human interpretations.
+
+Example: Principal Component Analysis</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#GIFImage -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#GIFImage">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Gender -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Gender">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Graphicalinterface -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Graphicalinterface">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interfaceAccess"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Image -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Image">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#InputDescriptor"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#InputDescriptor -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#InputDescriptor">
+        <rdfs:comment>Input descriptors may provide information on what data is to be used (e.g. raw data versus feature vectors, data domains) and in which format it is provided (e.g. rgb bitmaps, natural language texts, arff file).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#interfaceAccess -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#interfaceAccess"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#interfaceComplexity -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#interfaceComplexity"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#interval_Scale_Value -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#interval_Scale_Value">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Ratio_Scale_Value"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Item -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Item">
+        <owl:equivalentClass rdf:resource="http://crc901.upb.de/MLTerms#Observation"/>
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+        <rdfs:comment>short for &quot;data item&quot;</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ItemSeries -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ItemSeries">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ItemSet -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ItemSet">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#contains"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Observation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#JPGImage -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#JPGImage">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Label -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Label">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Label_Set -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Label_Set">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Class_Label"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#contains"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Class_Label"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Labeled_Attribute_Vector -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Labeled_Attribute_Vector">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Labeled_Item"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Attribute_Vector"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Labeled_Item -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Labeled_Item">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Item"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Labeled_ItemSet -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Labeled_ItemSet">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ItemSet"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#contains"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Labeled_Item"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Learner -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Learner">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+        <rdfs:comment>A system for predictor learning is returned by the OTF provider. This system be used by the user himself to select and to train appropriate predictors on basis of his private training data.  Afterwards the predictor can be used for predictions on new data. The OTF provider integrates approriate predictor types on basis of data descriptions provided by the user.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Loss_Function -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Loss_Function">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataEvaluators"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Labeled_Attribute_Vector"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ML-Problem -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ML-Problem">
+        <rdfs:comment>Wikipedia:
+Machine learning is the subfield of computer science that, according to Arthur Samuel in 1959, gives &quot;computers the ability to learn without being explicitly programmed.&quot; Evolved from the study of pattern recognition and computational learning theory in artificial intelligence, machine learning explores the study and construction of algorithms that can learn from and make predictions on data – such algorithms overcome following strictly static program instructions by making data-driven predictions or decisions, through building a model from sample inputs.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ML-Usage -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ML-Usage"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Multiclass_Classification -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Multiclass_Classification">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Classification"/>
+        <rdfs:comment>Wikipedia:
+Multiclass or multinomial classification is the problem of classifying instances into one of the more than two classes.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Multilabel_Classification -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Multilabel_Classification">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Classification"/>
+        <rdfs:comment>Wikipedia:
+Multi-label classification and the strongly related problem of multi-output classification are variants of the classification problem where multiple target labels must be assigned to each instance.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#NLP -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#NLP"/>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Nominal_Value -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Nominal_Value">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Ordinal_Value"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Object -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Object">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Semanticroles"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Observation -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Observation">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+        <rdfs:comment>Wikipedia:
+Observation is the active acquisition of information from a primary source. In living beings, observation employs the senses. In science, observation can also involve the recording of data via the use of instruments. The term may also refer to any data collected during the scientific activity. Observations can be qualitative, that is, only the absence or presence of a property is noted, or quantitative if a numerical value is attached to the observed phenomenon by counting or measuring.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Ordinal_Value -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Ordinal_Value">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interval_Scale_Value"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Outlier_Detection -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Outlier_Detection">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Predicate -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Predicate">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Semanticroles"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Prediction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Prediction">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#needs"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Labeled_ItemSet"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A prediction for the provided data is returned by the OTF provider. The predictor is selected and trained by the OTF provider using training data of the user.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Predictor -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Predictor">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+        <rdfs:comment>A predictor is returned by the OTF provider. This predictor can be trained by the user himself using his private training data.  Afterwards the trained predictor can be used for predictions on new data. The OTF provider selects an approriate predictor  on basis of data descriptions provided by the user.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Processword -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Processword">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Object"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Refinement"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:minQualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Task"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#BabelID"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Role"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#needs"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#needs"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Predicate"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="en">Main predicate of a sentence or a requirements description.
+Also called &quot;process word&quot; / Prozesswort.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Ranking -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Ranking">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#SupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Learning to rank or machine-learned ranking (MLR) is the application of machine learning, typically supervised, semi-supervised or reinforcement learning, in the construction of ranking models for information retrieval systems. Training data consists of lists of items with some partial order specified between items in each list. This order is typically induced by giving a numerical or ordinal score or a binary judgment (e.g. &quot;relevant&quot; or &quot;not relevant&quot;) for each item. The ranking model&apos;s purpose is to rank, i.e. produce a permutation of items in new, unseen lists in a way which is &quot;similar&quot; to rankings in the training data in some sense.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Ratio_Scale_Value -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Ratio_Scale_Value">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Value_Scale"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Refinement -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Refinement">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Semanticroles"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Regression -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Regression">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#SupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Regression analysis is a statistical process for estimating the relationships among variables. It includes many techniques for modeling and analyzing several variables, when the focus is on the relationship between a dependent variable and one or more independent variables (or &apos;predictors&apos;). More specifically, regression analysis helps one understand how the typical value of the dependent variable (or &apos;criterion variable&apos;) changes when any one of the independent variables is varied, while the other independent variables are held fixed. Most commonly, regression analysis estimates the conditional expectation of the dependent variable given the independent variables – that is, the average value of the dependent variable when the independent variables are fixed.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Role -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Role">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Semanticroles"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Semanticinformation -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Semanticinformation">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#NLP"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Semanticroles -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Semanticroles">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#NLP"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Simple -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Simple">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interfaceComplexity"/>
+        <owl:disjointWith rdf:resource="http://crc901.upb.de/MLTerms#Studio"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Studio -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Studio">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interfaceComplexity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#SupervisedLearningProblem -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#SupervisedLearningProblem">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Problem"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#uses"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Loss_Function"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Labeled_ItemSet"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem"/>
+        <rdfs:comment>Wikipedia:
+Supervised learning is the machine learning task of inferring a function from labeled training data. The training data consist of a set of training examples. In supervised learning, each example is a pair consisting of an input object (typically a vector) and a desired output value (also called the supervisory signal). A supervised learning algorithm analyzes the training data and produces an inferred function, which can be used for mapping new examples. An optimal scenario will allow for the algorithm to correctly determine the class labels for unseen instances. This requires the learning algorithm to generalize from the training data to unseen situations in a &quot;reasonable&quot; way (see inductive bias).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Target_Value -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Target_Value">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Label"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Ratio_Scale_Value"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Task -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Task">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#InputDescriptor"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#ML-Problem"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#ML-Usage"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Userinterface"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#Visualization"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Text -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Text">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Image"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#TimeSeries -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#TimeSeries">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ItemSeries"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#UnsupervisedLearningProblem">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#ML-Problem"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#ItemSet"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#uses"/>
+                <owl:someValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Distance_Measure"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>Unsupervised Learning will not be covered by the OTF provider.</rdfs:comment>
+        <rdfs:comment>Wikipedia:
+Unsupervised machine learning is the machine learning task of inferring a function to describe hidden structure from &quot;unlabeled&quot; data (a classification or categorization is not included in the observations). Since the examples given to the learner are unlabeled, there is no evaluation of the accuracy of the structure that is output by the relevant algorithm—which is one way of distinguishing unsupervised learning from supervised learning and reinforcement learning.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Userinterface -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Userinterface">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#interfaceAccess"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#has"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeinteger">1</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://crc901.upb.de/MLTerms#interfaceComplexity"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#ValuePrediction -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#ValuePrediction">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Prediction"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#dealsWith"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Target_Value"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Value_Scale -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Value_Scale">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#DataDescription"/>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Value_Set -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Value_Set">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#Target_Value"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://crc901.upb.de/MLTerms#contains"/>
+                <owl:allValuesFrom rdf:resource="http://crc901.upb.de/MLTerms#Target_Value"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Visualization -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Visualization">
+        <rdfs:comment>An appropriate visualization of the results is specified by the user. Possible visualizations can be tabular output together with statistical information (mean, histogram,...) for a prediction task or twodimensional scatter plot showing clusters for a clustering task.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://crc901.upb.de/MLTerms#Webinterface -->
+
+    <owl:Class rdf:about="http://crc901.upb.de/MLTerms#Webinterface">
+        <rdfs:subClassOf rdf:resource="http://crc901.upb.de/MLTerms#interfaceAccess"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Clusterer"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Clustering"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Learner"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Prediction"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Predictor"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#CommandLineinterface"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Graphicalinterface"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Webinterface"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#ItemSeries"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#ItemSet"/>
+            <rdf:Description rdf:about="http://crc901.upb.de/MLTerms#Observation"/>
+        </owl:members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
+

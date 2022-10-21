@@ -1,0 +1,65 @@
+<div class="message-box" *ngIf="checked && !requests.length">
+  <p>
+    You didn’t buy anything yet. <br>
+    So you can’t rate anything.
+  </p>
+</div>
+<div *ngIf="requests && requests.length">
+  <mat-card>
+    <label>Rating for service</label>
+    <mat-form-field class="select-request">
+      <mat-select (change)="onChange()" [(ngModel)]="selectedRequest">
+        <mat-option *ngFor="let item of requests" [value]="item">{{item.requestName}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div *ngIf="selectedRequest">
+      <mat-list role="list" class="config">
+        <mat-list-item role="listitem">
+          Composition: <b>{{selectedRequest.acceptedOffer.compositionID}}</b>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          Price: <b>{{selectedRequest.acceptedOffer.nonFunctionalProperties.price}}</b>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card>
+  <br>
+  <mat-card *ngIf="selectedRequest" class="review">
+    <div class="item">
+      <label for="overall">Overall</label>
+      <app-star change="true" size="large" [(count)]="rates.overall"></app-star>
+    </div>
+    <div class="item">
+      <label for="usability">Usability</label>
+      <app-star change="true" size="large" [(count)]="rates.usability"></app-star>
+    </div>
+    <div class="item">
+      <label for="performance">Performance</label>
+      <app-star change="true" size="large" [(count)]="rates.performance"></app-star>
+    </div>
+    <div class="item">
+      <label for="security">Security</label>
+      <app-star change="true" size="large" [(count)]="rates.security"></app-star>
+    </div>
+    <div class="item">
+      <label for="other">Other</label>
+      <app-star change="true" size="large" [(count)]="rates.other"></app-star>
+    </div>
+    <div class="item">
+      <label for="other">Review</label>
+      <mat-form-field class="textarea">
+        <textarea matInput placeholder="Let other users know about what you liked and disliked about your service" [(ngModel)]="rates.reputationMessage" matTextareaAutosize
+          matAutosizeMinRows="2" matAutosizeMaxRows="5"></textarea>
+      </mat-form-field>
+    </div>
+    <div class="text-center">
+      <button [disabled]="result.message !== undefined" class="rate-btn" (click)="onSubmit()" mat-raised-button color="primary">
+        <span *ngIf="!requestInProgress">
+          <mat-icon>star</mat-icon>
+          Rate
+        </span>
+        <mat-spinner color="warn" *ngIf="requestInProgress" [diameter]="30" mode="indeterminate"></mat-spinner>
+      </button>
+    </div>
+  </mat-card>
+</div>

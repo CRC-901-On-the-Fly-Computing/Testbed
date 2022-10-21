@@ -1,0 +1,14 @@
+<div [ngStyle]="style" [class]="size ? 'stars-' + size : 'stars'">
+  <div class="star active" [style.width]="countWidth()"></div>
+  <div class="star deactive"></div>
+  <div #clickableStars *ngIf="change" class="click-wrapper">
+    <div 
+      *ngFor="let i of makeEmptyArray()"
+      (mouseenter)="onMouseOver(i)"
+      (mouseleave)="onMouseOver(i)"
+      (click)="onStarClick(i)"
+      class="star click"
+      [style.left]="calculateLeft(i)"
+    ></div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="message-box" *ngIf="checked && !dataSource.length">
+    <p>
+        There is no executor.
+    </p>
+</div>
+
+<div *ngIf="!uuid && dataSource && dataSource.length">
+    <div class="example-container mat-elevation-z8">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="uuid">
+                <mat-header-cell *matHeaderCellDef> UUID </mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                    <a (click)="onClick(item.uuid)" href="/executors/{{item.uuid}}">
+                        {{item.uuid}}
+                    </a>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="composition">
+                <mat-header-cell *matHeaderCellDef> Basic Services </mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                    {{
+                        objectLength(compositions) && compositions[item.uuid] && compositions[item.uuid].length
+                        ? compositions[item.uuid].join(', ')
+                        : ''
+                    }}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell class="actions text-right" *matCellDef="let item">
+                    <a mat-raised-button color="primary" (click)="onClick(item.uuid)" href="/executors/{{item.uuid}}">
+                        <mat-icon>info</mat-icon>
+                        Logs
+                    </a>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    </div>
+</div>
+<div *ngIf="!!uuid && !!log" class="log">
+    <div class="title">
+        <label><a (click)="goBack()" href="/executors">Executors</a>
+            <mat-icon>chevron_right</mat-icon> <b>{{uuid}}</b>
+        </label>
+    </div>
+    <mat-card>
+        <pre>{{log}}</pre>
+    </mat-card>
+</div>

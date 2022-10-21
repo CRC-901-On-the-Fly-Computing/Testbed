@@ -1,0 +1,66 @@
+def projectName = "kubernetes_executor_spawner"
+def fullProjectName = "sfb901-testbed/${projectName}"
+def nexus = "nexus.cs.upb.de"
+def deploymentName = projectName.replace("_","-")
+//With / at the end but not the beginning
+def projectPath = "execution-gateway/"
+def projectDomain = "execution"
+def newTag = "nexus.cs.upb.de/sfb901-testbed/${projectName}:v${env.BUILD_ID}";
+
+/*
+
+*/
+
+
+
+podTemplate(inheritFrom: 'default') {
+    node(POD_LABEL) {
+		stage('Preparation') {
+			checkout([
+				$class: 'GitSCM',
+				branches: scm.branches,
+				doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+				extensions: scm.extensions,
+				userRemoteConfigs: scm.userRemoteConfigs
+			])
+		}
+		stage("Cleanup"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:clean :${projectName}:cleanBuild :${projectName}:cleanAssemble :${projectName}:cleanCheck
+				"""
+			}
+		}
+		stage("Assemble"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:assemble
+				"""
+			}
+		}
+		stage("Check"){
+			withEnv(['GRADLE_OPTS="-Dorg.gradle.daemon=true"']) {
+				sh """
+				chmod +x ./gradlew
+				./gradlew :${projectName}:check
+				"""
+			}
+		}
+		stage('Build docker image'){
+			sh """chmod +x ./gradlew
+				./gradlew :${projectName}:build  :${projectName}:docker
+		 		./gradlew :${projectName}:dockerLogin
+		 		./gradlew :${projectName}:dockerTag "-PdockerVersion=v${env.BUILD_ID}"
+				./gradlew :${projectName}:dockerTagsPush "-PdockerVersion=v${env.BUILD_ID}"
+		   """
+		}
+		stage('Update Kubernetes image tags'){
+			sh """
+				kubectl -n ${projectDomain} set image deployments/${deploymentName} ${deploymentName}=${newTag}
+			"""
+		}
+	}
+}
+
