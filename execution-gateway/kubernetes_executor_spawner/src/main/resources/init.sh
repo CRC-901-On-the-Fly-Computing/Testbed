@@ -25,10 +25,10 @@ fi
 
   mkdir -p ${SEDE_DIR}
   cd ${SEDE_DIR} || exit 1
-
   ## a. Clone the bootup scripts in current directory, even if it is not empty
   git init .
-  git remote add -t \* -f origin https://github.com/CRC-901-On-the-Fly-Computing/executor-bootup.git
+  git remote add origin https://github.com/CRC-901-On-the-Fly-Computing/executor-bootup.git -master
+  git fetch origin master && git pull origin master
 
   cp /temp/custom.vars "${SEDE_DIR}/custom.vars"
 
