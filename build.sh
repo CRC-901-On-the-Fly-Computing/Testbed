@@ -19,6 +19,14 @@ for project in ${projects[@]}; do
     echo 'Build successfull ' ${project}
 done
 
+echo "Building sede proxy"
+cd execution-gateway/sede_proxy
+echo "Switched to sede proxy directory and building docker image"
+docker build -t $escaped_nexus_base_url/$escaped_docker_repository_name/sede.proxy:latest .
+docker push $escaped_nexus_base_url/$escaped_docker_repository_name/sede.proxy:latest
+echo "Sede proxy Build successfull"
+cd ../..
+
 echo "Building Website"
 cd website/WebContent
 echo "Switch to webcontent directory"
