@@ -1,52 +1,63 @@
-## Architecture
+# General information
 
-![image info](./images/architecture.png)
-
-- **A1** - Self-stabilizing publish-subscribe system for market and OTF provider
-
-- **A3, A4** - Concepts for the reputation system for the rating of service compositions [TODO later] this is currently only realized on a VERY basic level - how to deal with that?
-
-- **B1** - Chatbot for a user-friendly requirements specifications and a matcher for matching non-functional requirements
-
-- **B2** - Configurator for service composition using heuristic search
-
-- **B3** - Verification of functional properties within operation sequences
-
-- **B4** - Certification and validation of functional properties of basic services
-
-- **C1** - Authentication of ratings, authorization for buying service compositions and their access control
-
-- **C2, C4** - Deployment of basic services in Compute Centers and the execution of service compositions in heterogeneous computing environments
-
-- **C5** - Conformance checking of the Proof-of-Concept architecture with the On-the-Fly architecture framework
-
-### Component diagram
-
-![image info](./images/PoC_Component.png)
-
-### Sequence diagrams
+The PoC is based on a microservice architecture, i.e., its functionality is provided by several components which communicate via REST interfaces to realize more complex tasks. These components are packaged as Docker containers and deployed to a Kubernetes cluster.
 
 
-#### 1. Create Request
+# Most important Components
+In the following, all implementations are relative to the `Testbed` git.
 
-The first step is to request for a service. User can do that through the chatbot interface and ask for a initial request. The request is forwarded to ServiceRequester and ServiceRequester respond on the request and ask for more parameteres (domain, details, natural language descriptios). When user provide the domain anme, necessary and relevant description through chatbot, that domain is registered then in OTFProviderRegistry. OTFProviderRegistry then check and return the list of the available OTF providers to the ServiceRequester. ServiceRequester then send that list to the user. This way a request can be created. The next step is execute that request which is described in the next subsection.
+- Web UI
+  - Interface to the user. Translates user inputs into calls to the Service Requester and responses into Ui changes.
+  - Technologies: Angular, JavaScript, CSS
+  - Implementation: ``website\WebContent``
+- Service Requester
+  - Most important service: Orchestrates the creation of a user request for an AI service, and thus communicates with most other services.
+  - Technologies: Java, REST/OpenAPI
+  - Implementation: ``local_client\service_requester_new``
+- Chatbot
+  - Tries to understand the user's input and translate it into a formal specification (e.g., it understands that the user wants to perform image classification from the user's input in natural language).
+  - Technology: Docker container Chatbot (black box, internally: Python)
+- OTFProviderRegistry
+  - Knows about all different OTF providers of the system (currently: only one).
+  - Technologies: Java, REST/OpenAPI
+  - Implementation: ``market_provider\otfp_registry_new``
+- OTFProvider
+  - Is selected by the user based on the suggestions of the Service Requester. Will then perform an interview with the user to gather missing information, and then triggers the creation of the final service.
+  - Technologies: Java, REST/OpenAPI
+  - Implementation: ``otf_provider\proseco_configurator``
+- ConfigurationProcess
+  - Does the actual creation (in OTF terms: configuration) of the final service and then offers the finished service to the Buy Processor
+  - Technology: Docker container Proseco (black box, internally: Java)
+- Buy Processor
+  - Handles the created offers via the OfferDatabase; if the user selects an offer and thus buys the corresponding service, that service is deployed, and the URL for accessing the service is made available to the user
+  - Technologies: Java, REST/OpenAPI
+  - Implementation: ``market_provider\buy_processor``
+- RequestDatabase
+  - stores requests processed by OTF Providers
+  - Technology: PostgreSQL
+- OfferDatabase
+  - stores offers created as result of requests
+  - Technology: PostgreSQL
 
-![image info](./images/Create_Request.png)
 
-#### 2. Execute Request
+# From user request to deployed service
 
-When the request is created (see the Create Request section). OTFProvider ask user severalinterview questions on the request to get a clear idea about the request. User can only interact with ServiceRequester. OTFProvider ask these interview questions to the ServiceRequester and ServiceRequester pass these questions to the user and vice-versa. When OTFProvider have the proper idea on the request it starts execute the request by doing spawn configuration process for the request and sent this configuration to the Configuration Process. ConfigurationProcess is responsible to compute the configuration for the requested service and generate the offer for the specific service and save it to the OfferDatabase. The following sequence diagram shows the steps of a request being executed.
+The following sequence diagrams show the basic flow of information which is taking place during handling a user request.
 
-![image info](./images/Execute_Request.png)
+## Creation of request
 
-#### 3. Buy an Offer
+![Create_Request](pics/create_request_seq.png)
 
-![image info](./images/Buy_an_offer.png)
+The user starts creation of a service by providing a name for the service as well as a natural language description of the service's purpose (e.g., "I want my service to be able to recognize certain objects on my images"). The user input is then passed to the Chatbot which tries to understand the description, identifies the domain of the request (e.g., "image classification"), and returns a formalization of its understandings to the Service Requester. The identified domain is then passed to the OTF Provider Registry, which returns the available OTF Providers for that domain. These are presented to the user, and she will make her selection (e.g., based on the reputation of the respective OTF Providers).
 
+## Execution of request
 
-At the third step the generated offers of different OTFProviders are showed to the user. User select an offer and send to the ServiceRequester. ServiceRequester forward the choice to the BuyProcessor service. The BuyProcessor then deploy the servcie using Service component and generate a service link for that service and send back the link to the ServiceRequester. ServiceRequester provide the link to the user and thus user can access the service. 
+![Execute_Request](pics/exec_request_seq.png)
 
-### Deployment diagram
+Next, the formalized parameters that had earlier been extracted by the Chatbot are passed to the selected OTF Provider. The OTF Provider will then register the user request within the Request Database. Now, the domain knowledge of the OTF Provider comes into play: Based on the passed parameters, the OTF Provider will conduct an interview with the the user and gather the missing information it needs to be able to create a meaningful service (e.g., it might ask how long it is allowed to spend on searching for an appropriate ML solution). If all necessary information is gathered, the request will be updated in the Request Database, and the actual creation of the service is started by spawning a Configuration Process. As soon as the creation of the service has been finished, an according offer will be sent to the Buy Processor, which will save that offer in the Offer Database.
 
-To be Added
-[TODO Panneer] we need to make sure that the deployment diagram is on a "non-UPB-specific" level
+## Buying an Offer
+
+![Buy_an_offer](pics/buy_offer_seq.png)
+
+Finally, in case the user selects an offer and thus buys the offer's service, that service is deployed by the Buy Processor, and a service link is provided to the user, which she can then use to access her service (and e.g. upload images which the service might then tag with the objects it has recognized on the images).

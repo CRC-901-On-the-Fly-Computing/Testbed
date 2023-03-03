@@ -1,48 +1,39 @@
-## General
-Collaborative Research Centre 901: On-the-fly Computing
--------------------------------------------------------
+# Introduction and Goals
 
-The objective of CRC 901 -- On-The-Fly Computing (OTF Computing) -- is to develop techniques and processes for automatic on-the-fly configuration and provision of individual IT services out of base services that are available on world-wide markets. In addition to the configuration by special OTF service providers and the provision by so-called OTF Compute Centers, this involves developing methods for quality assurance and the protection of participating clients and providers, methods for the target-oriented further development of markets, and methods to support the interaction of the participants in dynamically changing markets.
-
-Source: 
-1. <https://sfb901.uni-paderborn.de/> 
-2. <https://sfb901.uni-paderborn.de/projects/tools-and-demonstration-systems/tools-from-the-2nd-funding-period/proof-of-concept>
-
-### Project Organization
--   Project Area A
-    -   A1: Capabilities and limitations of local strategies in dynamic networks
-    -   ~~A2: Realizing and Optimizing Overlays over physical networks~~ (until June 30, 2015)
-    -   A3: The market for services: Incentives, algorithms, implementation
-    -   A4: Empirical Analysis in Markets for OTF Services (since July 1, 2015)
--   Project Area B
-    -   B1: Parameterized Service Specifications
-    -   B2: Configuration and Evaluation
-    -   B3: Composition Analysis in Partially Unknown Contexts
-    -   B4: Proof-Carrying Services
--   Project Area C
-    -   C1: Robustness and Security
-    -   C2: On-The-Fly Compute Centers I: Heterogeneous Execution Environments
-    -   ~~C3: Modeling of optimization problems~~ (until June 30, 2015)
-    -   C4: On-The-Fly Compute Centers II: Execution of Composed Services in Configurable Compute Centers
-    -   C5: Architecture Management of OTF Computing Markets (since July 1, 2015)
-
-#### Proof of Concept
-[TODO Christian] Describe how the PoC is related to the CRC901
-* Which component is related to which subproject?
-* Example for PoC usage
-* Screenshot(s)
+The CRC 901 On-The-Fly Computing has quite ambitious goals, which are worked on by a variety of working groups. One challenge of the CRC is to bring together the concepts and technologies developed by the working groups (which come from different areas of research, including Computer Science and Economics). This is where the Proof of Concept (PoC) comes into play.
 
 
-#### Regular meetings [TODO move into Wiki!?]
-* Developer meeting weekly - Friday 9.00 am CET
-[TODO in general, I think we should make sure that the information contained in the docs folder is not "UPB specific"]
+In the PoC, the research and developments of the various subprojects flow together in a uniform, integrated software system. With the help of the PoC, typical scenarios of an On-The-Fly market can be played through. The goals of the PoC are:
+
+- Demonstration of the general feasibility of On-The-Fly Computing
+- Imparting the concepts of On-The-Fly Computing to both a specialist audience and lay people
+- Clarification of the relationships between the subprojects
+- Testing new approaches and reviewing hypotheses
 
 
-### Contributing to the PoC
 
-#### Usage of issue tracker
-[TODO Christian] This should be about reporting bugs and contributing to the PoC. Thus, we need info about branching, issues, and licensing (more?). Should this be moved into an own file?
+# OTF Machine Learning Scenario
 
-### Preliminary tasks [TODO move into Wiki!?]
+The PoC is designed domain agnostic, such that it can be adopted for any kind of OTF problems. For illustration purposes, the PoC focuses on an application scenario to configure tailor-made Machine Learning Services on the fly. The main problem addressed is the automatic creation of a learning process that generates a predictive model (e.g., a classifier) ​​on the basis of given training data. Such a learning process consists of different algorithms or software components that have to be appropriately parameterized and combined with each other. The result of a corresponding selection and configuration process is a Machine Learning Pipeline. This OTF Machine Learning Scenario has the characteristics of an OTF problem:
 
-#### Get permissions from IRB [TODO move into Wiki!?]
+- end-users do not need to know the underlying software architecture and manual steps in this process,
+- the user is provided with an executable service in the form of a Machine Learning pipeline,
+- this service is optimized for the individual requirements (i.e. training data) and
+- the provision of the service takes place within a short time.
+
+
+# Contributions:
+
+![SFBLogo](pics/SFBLogo.png)
+
+Numerous concepts and methods of OTF computing, which have been developed in the respective subprojects, have already been integrated in the proof of concept.
+
+- A1: Self-stabilizing publish-subscribe system for market and OTF provider
+- A3, A4: Concepts for the reputation system for the rating of service compositions
+- B1: Chatbot for a user-friendly requirements specifications and a matcher for matching non-functional requirements
+- B2: Configurator for service composition using heuristic search
+- B3: Verification of functional properties within operation sequences
+- B4: Certification and validation of functional properties of basic services
+- C1: Authentication of ratings, authorization for buying service compositions and their access control
+- C2, C4: Deployment of basic services in Compute Centers and the execution of service compositions in heterogeneous computing environments
+- C5: Conformance checking of the Proof-of-Concept architecture with the On-the-Fly architecture framework

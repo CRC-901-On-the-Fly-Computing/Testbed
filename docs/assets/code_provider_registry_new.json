@@ -1,0 +1,20 @@
+[
+  {
+    "code_provider_id":"catalano",
+    "repository_url":"https://github.com/CRC-901-On-the-Fly-Computing/ServiceCodeProvider.git",
+    "subfolder":"catalano",
+    "tag":"master"
+  },
+  {
+    "code_provider_id":"weka",
+    "repository_url":"https://github.com/CRC-901-On-the-Fly-Computing/ServiceCodeProvider.git",
+    "subfolder":"weka.ml",
+    "tag":"master"
+  },
+  {
+    "code_provider_id":"c2imaging",
+    "repository_url":"https://github.com/CRC-901-On-the-Fly-Computing/ServiceCodeProvider.git",
+    "subfolder":"CServices",
+    "tag":"master"
+  }
+]
