@@ -8,8 +8,8 @@ This repository contains the *Proof of Concept* (PoC), the demonstrator of  the 
 
 This documentation is targeted at developers who want to make use of some or all of the PoC's services. It is structured as follows:
 
-* A [general introduction](docs/general.md) to the PoC and its goals is given.
-* The PoC's [architecture](docs/architecture.md) is described on the component and deployment level, including sequence diagrams showing the system's flow of information.
+* A [general introduction](docs/General.md) to the PoC and its goals is given.
+* The PoC's [architecture](docs/Architecture.md) is described on the component and deployment level, including sequence diagrams showing the system's flow of information.
 * Developing and building the PoC requires a certain development environment; [setting up that development environment](docs/set-up-dev-environment.md) is described next.
 * The PoC needs a repository manager such as [Nexus](https://www.sonatype.com/products/nexus-repository) to store the generated ML solutions. How to setup a Nexus instance is described [here](docs/setup-nexus-repository-with-nginx.md).
 * We then describe how to actually [build the PoC services](docs/build-poc-services.md).
