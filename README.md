@@ -17,7 +17,7 @@ This documentation is targeted at developers who want to make use of some or all
 * Finally, the [deployment of the PoC to the Kubernetes cluster](docs/deploy-services-to-k8-cluster.md) is described.
 
 
-The PoC code is organized into different Git repositores:
+The PoC code is organized into different Git repositories:
 
 * This repository: The main code base of the POC, including its web frontend
 * [Ansible-k8cluster](https://github.com/CRC-901-On-the-Fly-Computing/Ansible-k8cluster): A set of [Ansible](https://www.ansible.com/) scripts helping to set up a Kubernets cluster as need by the PoC
@@ -25,4 +25,4 @@ The PoC code is organized into different Git repositores:
 * [ServiceCodeProvider](https://github.com/CRC-901-On-the-Fly-Computing/ServiceCodeProvider): The basic services which the PoC uses to compose its ML solutions
 * [executor-bootup](https://github.com/CRC-901-On-the-Fly-Computing/executor-bootup): Support for implementing PoC services in different technologies
 
-This repository and its dependencies have been provided in the hope of being useful. If you want to try the PoC, or if you want to reuse one or more of its components, feel free to do so! And if you happen to need support or feel like providing us feedback, please contact TODO (note that the CRC has reached its end in July 2023, and most of the involved researchers have moved on, so it might be difficult to provide you with an appropriate contact, but we will do our best).
+This repository and its dependencies have been provided in the hope of being useful. If you want to try the PoC, or if you want to reuse one or more of its components, feel free to do so!
