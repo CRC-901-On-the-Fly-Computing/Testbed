@@ -7,7 +7,7 @@ The PoC is based on a microservice architecture, i.e., its functionality is prov
 In the following, all implementations are relative to the `Testbed` git.
 
 - Web UI
-  - Interface to the user. Translates user inputs into calls to the Service Requester and responses into Ui changes.
+  - Interface to the user. Translates user inputs into calls to the Service Requester and responses into UI changes.
   - Technologies: Angular, JavaScript, CSS
   - Implementation: ``website\WebContent``
 - Service Requester
@@ -15,7 +15,7 @@ In the following, all implementations are relative to the `Testbed` git.
   - Technologies: Java, REST/OpenAPI
   - Implementation: ``local_client\service_requester_new``
 - Chatbot
-  - Tries to understand the user's input and translate it into a formal specification (e.g., it understands that the user wants to perform image classification from the user's input in natural language).
+  - Tries to understand the user's input and translates it into a formal specification (e.g., it understands that the user wants to perform image classification from the user's input in natural language).
   - Technology: Docker container Chatbot (black box, internally: Python)
 - OTFProviderRegistry
   - Knows about all different OTF providers of the system (currently: only one).
