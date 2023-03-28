@@ -24,7 +24,7 @@ The PoC is designed domain agnostic, such that it can be adopted for any kind of
 
 # Contributions:
 
-![SFBLogo](pics/SFBLogo.png)
+<img src="SFB_901_Logo_Final_blau.svg" alt="Logo of the Collaborative Research Center 901" width="200"/>
 
 Numerous concepts and methods of OTF computing, which have been developed in the respective subprojects, have already been integrated in the proof of concept.
 
