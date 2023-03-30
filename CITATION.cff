@@ -1,0 +1,136 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: 'CRC 901 On-The-Fly Computing: Demonstrator'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Friedhelm
+    family-names: Meyer auf der Heide
+    email: fmadh@uni-paderborn.de
+    affiliation: 'Heinz Nixdorf Institute, Paderborn University'
+  - given-names: Johannes
+    family-names: Blömer
+    email: bloemer@zitmail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Eric
+    family-names: Bodden
+    email: bodden@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Gregor
+    family-names: Engels
+    email: engels@zitmail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: René
+    family-names: Fahr
+    email: rfahr@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Bernd
+    family-names: Frick
+    email: bfrick@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Michaela
+    family-names: Geierhos
+    email: michaela.geierhos@unibw.de
+    affiliation: University of the Bundeswehr Munich
+  - given-names: Claus-Jochen
+    family-names: Haake
+    email: cjhaake@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Burkhard
+    family-names: Hehenkamp
+    email: mburhehe@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Eyke
+    family-names: Hüllermeier
+    email: eyke@ifi.lmu.de
+    affiliation: Technical University of Munich
+  - given-names: Tibor
+    family-names: Jager
+    email: tibor.jager@uni-wuppertal.de
+    affiliation: University of Wuppertal
+  - given-names: Holger
+    family-names: Karl
+    email: Holger.Karl@hpi.de
+    affiliation: 'Hasso-Plattner-Institut, Potsdam'
+  - given-names: Dennis
+    family-names: Kundisch
+    email: kundisch@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Axel-Cyrill
+    family-names: Ngonga Ngomo
+    email: ngonga@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Marco
+    family-names: Platzner
+    email: platzner@zitmail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Christian
+    family-names: Plessl
+    email: plessl@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Christian
+    family-names: Scheideler
+    email: scheidel@mail.uni-paderborn.de
+    affiliation: Paderborn University
+  - given-names: Henning
+    family-names: Wachsmuth
+    email: h.wachsmuth@ai.uni-hannover.de
+    affiliation: Leibniz University Hannover
+  - given-names: Heike
+    family-names: Wehrheim
+    email: heike.wehrheim@uni-oldenburg.de
+    affiliation: University of Oldenburg
+  - given-names: Nancy
+    family-names: Wünderlich
+    email: wuenderlich@tu-berlin.de
+    affiliation: Technical University of Berlin
+  - given-names: Marie Christin
+    family-names: Platenius-Mohr
+    email: mc.platenius@gmail.com
+    affiliation: 'ABB Corporate Research Center'
+  - given-names: Simon
+    family-names: Schwichtenberg
+    email: sschwichtenberg@dspace.de
+    affiliation: dSPACE GmbH
+  - given-names: Christian
+    family-names: Soltenborn
+    email: christian@uni-paderborn.de
+    affiliation: Paderborn University
+repository-code: 'https://github.com/CRC-901-On-the-Fly-Computing/Testbed'
+abstract: >-
+  The objective of Paderborn University's Collaborative
+  Research Centre 901 On-The-Fly Computing (OTF Computing)
+  is to develop techniques and processes for automatic
+  on-the-fly configuration and provision of individual IT
+  services from base services. The base services are
+  available on world-wide markets. In addition to the
+  configuration by special OTF service providers and the
+  provision by so-called OTF Compute Centres, this involves
+  developing methods for quality assurance and the
+  protection of participating clients and providers, methods
+  for the target-oriented further development of markets,
+  and methods to support the interaction of the participants
+  in dynamically changing markets.
+
+
+  This repository contains the implementation of the CRC's
+  demonstrator ProofOfConcept.
+
+
+  Project lead: Prof. Dr. Friedhelm Meyer auf der Heide
+  (Heinz Nixdorf Institute, Paderborn University)
+
+
+  Project duration: 7/2011 - 6/2023
+
+
+  Publications: https://sfb901.uni-paderborn.de/publications
+keywords:
+  - on-the-fly computing
+  - software market
+  - auto ml
+license: BSD-3-Clause-Attribution
